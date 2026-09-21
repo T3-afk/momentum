@@ -1282,6 +1282,112 @@ body{
 }
 @media(max-width:700px){.cloud-auth-grid{grid-template-columns:1fr}}
 
+
+/* ==================== MOMENTUM 15.1 IPHONE HOTFIX ==================== */
+button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+@media(max-width:760px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{
+    min-height:100svh;
+    -webkit-text-size-adjust:100%;
+    padding-left:0!important;
+    padding-right:0!important
+  }
+  .app{
+    width:100%;max-width:100%;margin:0;
+    padding:calc(8px + var(--safe-top)) 9px calc(90px + var(--safe-bottom))!important
+  }
+  .page,.col,.card{min-width:0!important;max-width:100%!important}
+  input,select,textarea,button{max-width:100%}
+
+  .topbar{
+    position:relative!important;top:auto!important;
+    display:block!important;padding:5px 0 11px!important
+  }
+  .brand{width:100%;justify-content:flex-start;margin-bottom:9px}
+  .brand-mark{font-size:27px!important}
+  .top-hud{
+    width:100%!important;display:grid!important;
+    grid-template-columns:1fr 1fr!important;gap:6px!important
+  }
+  .top-hud>.hud{min-width:0!important;width:100%!important}
+  .music-player{
+    grid-column:1/-1!important;width:100%!important;min-width:0!important
+  }
+  .music-player .track-name{max-width:58vw!important}
+
+  .main-grid,.inbox-layout,.notes-layout,.settings-grid,
+  .rank-top-grid,.stats-detail-grid{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;gap:12px!important
+  }
+  .stats-row,.metrics{
+    grid-template-columns:minmax(0,1fr)!important
+  }
+  .triangle-scene{height:auto!important;min-height:400px!important;padding:8px 0}
+  .tri-shell{width:min(96%,400px)!important}
+  .axis{font-size:11px!important;padding:6px 7px!important}
+  .axis strong{font-size:22px!important}
+  .grade-center{min-width:120px!important;padding:8px 10px!important}
+  .grade-center .grade{font-size:54px!important}
+
+  .task{
+    grid-template-columns:auto minmax(0,1fr)!important;
+    align-items:start!important
+  }
+  .task .tag,.task .pts,.task .task-actions{
+    grid-column:2!important;grid-row:auto!important
+  }
+  .task .task-actions{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+
+  /* The older desktop/mobile CSS fought with the intro grid on iPhone. */
+  .intro.show{
+    display:block!important;
+    width:100vw!important;height:100svh!important;
+    overflow:hidden!important
+  }
+  .intro-left{display:none!important}
+  .intro-right{
+    display:block!important;position:relative!important;
+    width:100%!important;height:100%!important;min-width:0!important
+  }
+  .intro-menu{
+    position:absolute!important;
+    left:7%!important;right:7%!important;top:15%!important;
+    width:auto!important;max-width:none!important
+  }
+  .intro-menu button{
+    width:100%!important;
+    font-size:clamp(28px,9.5vw,46px)!important;
+    padding:7px 10px!important;margin:4px 0!important
+  }
+  .intro-meta{
+    left:8%!important;right:auto!important;
+    bottom:calc(18px + var(--safe-bottom))!important
+  }
+  .intro-hint{display:none!important}
+  .intro-clock{
+    top:calc(12px + var(--safe-top))!important;
+    right:12px!important
+  }
+
+  .mobile-nav{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    width:100%!important
+  }
+  .mobile-nav button{min-width:0!important}
+
+  dialog{
+    position:fixed!important;inset:0!important;
+    width:calc(100vw - 18px)!important;
+    max-width:calc(100vw - 18px)!important;
+    max-height:calc(100svh - 24px - var(--safe-top) - var(--safe-bottom))!important;
+    margin:auto!important
+  }
+  dialog[open]{display:block}
+}
+
 </style>
 </head>
 <body>
@@ -3793,7 +3899,12 @@ $("heatmapGrid").addEventListener("click",e=>{
 
 /* ==================== MOMENTUM 14 PWA / MOBILE ==================== */
 function isStandaloneMode(){
-  return window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone===true
+  try{
+    const mq=window.matchMedia ? window.matchMedia("(display-mode: standalone)") : null;
+    return !!(mq&&mq.matches) || window.navigator.standalone===true
+  }catch{
+    return window.navigator.standalone===true
+  }
 }
 function refreshPWAStatus(){
   const installed=isStandaloneMode();
@@ -3820,9 +3931,17 @@ async function registerMomentumServiceWorker(){
     console.error("[Momentum] Service worker registration failed",err)
   }
 }
-registerMomentumServiceWorker();
-refreshPWAStatus();
-window.matchMedia?.("(display-mode: standalone)")?.addEventListener?.("change",refreshPWAStatus);
+setTimeout(()=>{
+  try{registerMomentumServiceWorker()}catch(err){console.error("[Momentum] SW init failed",err)}
+  try{refreshPWAStatus()}catch(err){console.error("[Momentum] PWA status failed",err)}
+  try{
+    const mq=window.matchMedia&&window.matchMedia("(display-mode: standalone)");
+    if(mq){
+      if(typeof mq.addEventListener==="function")mq.addEventListener("change",refreshPWAStatus);
+      else if(typeof mq.addListener==="function")mq.addListener(refreshPWAStatus);
+    }
+  }catch(err){console.error("[Momentum] display-mode listener failed",err)}
+},0);
 
 /* Mobile navigation */
 function setMobileNavActive(pageId){
@@ -4411,8 +4530,13 @@ $("enablePushBtn")?.addEventListener("click",()=>enableMomentumPush().catch(err=
 }));
 $("disablePushBtn")?.addEventListener("click",()=>disableMomentumPush().catch(console.error));
 
-fillCloudConfigFields();
-setTimeout(()=>initCloud(),250);
+setTimeout(()=>{
+  try{fillCloudConfigFields()}catch(err){console.error("[Momentum Cloud] config UI init failed",err)}
+  try{
+    const p=initCloud();
+    if(p&&typeof p.catch==="function")p.catch(err=>console.error("[Momentum Cloud] init failed",err))
+  }catch(err){console.error("[Momentum Cloud] init failed",err)}
+},350);
 
 $("datePicker").value=localKey();
 
@@ -4611,5 +4735,66 @@ window.addEventListener("load",()=>{
   setTimeout(()=>safeBoot("Permanent deadlines",processPermanentDeadlines),900)
 });
 </script>
+
+<script>
+/* Momentum 15.1 mobile rescue layer */
+(function(){
+  function q(id){return document.getElementById(id)}
+  function openPage(id){
+    document.querySelectorAll(".page").forEach(function(p){
+      p.classList.toggle("active",p.id===id)
+    });
+    document.querySelectorAll(".nav-btn").forEach(function(b){
+      b.classList.toggle("active",b.getAttribute("data-go")===id)
+    });
+    document.querySelectorAll("[data-mobile-go]").forEach(function(b){
+      b.classList.toggle("active",b.getAttribute("data-mobile-go")===id)
+    });
+    var intro=q("intro"); if(intro)intro.classList.remove("show");
+    window.scrollTo(0,0);
+    try{
+      if(typeof showPage==="function")showPage(id)
+    }catch(e){console.error("[Momentum mobile rescue] page renderer failed",e)}
+  }
+
+  document.addEventListener("click",function(e){
+    var mobile=e.target.closest&&e.target.closest("[data-mobile-go]");
+    if(mobile){
+      e.preventDefault();
+      openPage(mobile.getAttribute("data-mobile-go"));
+      var sheet=q("mobileMoreSheet"); if(sheet)sheet.classList.remove("show");
+      return
+    }
+
+    var introButton=e.target.closest&&e.target.closest("#intro [data-go]");
+    if(introButton){
+      e.preventDefault();
+      openPage(introButton.getAttribute("data-go"));
+      return
+    }
+
+    var more=e.target.closest&&e.target.closest("#mobileMoreBtn");
+    if(more){
+      e.preventDefault();
+      var sheet=q("mobileMoreSheet"); if(sheet)sheet.classList.add("show");
+      return
+    }
+
+    var close=e.target.closest&&e.target.closest("#mobileMoreClose");
+    if(close){
+      e.preventDefault();
+      var sheet=q("mobileMoreSheet"); if(sheet)sheet.classList.remove("show");
+      return
+    }
+  },true);
+
+  window.addEventListener("error",function(ev){
+    console.error("[Momentum iPhone]",ev.error||ev.message)
+  });
+
+  document.documentElement.classList.add("momentum-mobile-ready");
+})();
+</script>
+
 </body>
 </html>
