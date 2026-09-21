@@ -1750,6 +1750,309 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   .mobile-nav button{font-size:8px!important}
 }
 
+
+/* ==================== MOMENTUM 15.3 MOBILE INTRO REWORK ==================== */
+/* Portrait-only intro composition. Desktop/tablet intro is unchanged. */
+@media screen and (max-width:600px) and (orientation:portrait){
+  .intro.show{
+    display:block!important;
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    height:100svh!important;
+    min-width:0!important;
+    background:#050505!important;
+    overflow:hidden!important;
+    isolation:isolate!important;
+  }
+
+  /* Full-screen themed background */
+  .intro-right{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    min-width:0!important;
+    z-index:0!important;
+    overflow:hidden!important;
+    animation:none!important;
+    background-size:auto,auto,cover,auto!important;
+    background-position:center,center,var(--intro-bg-position,center),center!important;
+  }
+  .intro-right::before{
+    opacity:.11!important;
+    transform:perspective(500px) rotateX(66deg) translateY(48%)!important;
+  }
+  .intro-right::after{
+    content:""!important;
+    position:absolute!important;
+    inset:0!important;
+    z-index:0!important;
+    pointer-events:none!important;
+    background:
+      linear-gradient(90deg,rgba(0,0,0,.78) 0 27%,rgba(0,0,0,.20) 50%,rgba(0,0,0,.40) 100%),
+      linear-gradient(180deg,rgba(0,0,0,.20),transparent 20%,transparent 72%,rgba(0,0,0,.60))!important;
+  }
+
+  /* Bring the portrait panel back as a narrow Persona-style shard. */
+  .intro-left{
+    display:block!important;
+    position:absolute!important;
+    left:-7vw!important;
+    top:-3svh!important;
+    width:48vw!important;
+    height:108svh!important;
+    z-index:2!important;
+    border:0!important;
+    overflow:hidden!important;
+    background:#f4f4f2!important;
+    transform:rotate(-4deg)!important;
+    transform-origin:center!important;
+    clip-path:polygon(0 0,92% 0,72% 100%,0 94%)!important;
+    animation:none!important;
+    box-shadow:9px 0 0 rgba(0,0,0,.70)!important;
+  }
+  .intro-left::before{
+    left:-42%!important;
+    top:-4%!important;
+    width:94%!important;
+    height:112%!important;
+    transform:rotate(-7deg)!important;
+    clip-path:polygon(15% 0,100% 0,70% 100%,0 90%)!important;
+    background:#090909!important;
+  }
+  .intro-left::after{
+    right:-7%!important;
+    top:-2%!important;
+    width:24%!important;
+    height:106%!important;
+    background:linear-gradient(180deg,var(--accent),#fff 50%,var(--accent2))!important;
+    transform:skewX(-11deg)!important;
+  }
+
+  .intro-avatar{
+    display:block!important;
+    position:absolute!important;
+    left:16%!important;
+    right:5%!important;
+    top:5.5%!important;
+    bottom:auto!important;
+    width:auto!important;
+    height:34svh!important;
+    z-index:4!important;
+    transform:rotate(4deg)!important;
+    clip-path:polygon(11% 0,100% 5%,87% 100%,0 91%)!important;
+    animation:none!important;
+    background:#141414!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.35)!important;
+  }
+  .intro-avatar img{
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+    object-position:center!important;
+  }
+
+  /* App title becomes a controlled vertical accent instead of overflowing. */
+  .intro-word{
+    display:block!important;
+    position:absolute!important;
+    left:5.5vw!important;
+    top:auto!important;
+    bottom:10svh!important;
+    width:auto!important;
+    max-height:48svh!important;
+    writing-mode:vertical-rl!important;
+    transform:rotate(180deg)!important;
+    font-size:clamp(39px,12vw,55px)!important;
+    line-height:.82!important;
+    letter-spacing:-3px!important;
+    color:#080808!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:clip!important;
+    z-index:5!important;
+  }
+
+  /* Menu occupies the usable right side, with spacing sized for six entries. */
+  .intro-menu{
+    position:absolute!important;
+    left:34vw!important;
+    right:4.5vw!important;
+    top:20svh!important;
+    bottom:auto!important;
+    width:auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:clamp(6px,1.4svh,12px)!important;
+    z-index:5!important;
+    animation:none!important;
+  }
+  .intro-menu button{
+    width:100%!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:.05em .14em!important;
+    font-size:clamp(27px,8.2vw,39px)!important;
+    line-height:.88!important;
+    letter-spacing:-2px!important;
+    text-align:left!important;
+    color:rgba(239,252,255,.84)!important;
+    transform:rotate(-1deg)!important;
+    text-shadow:0 2px 0 rgba(0,0,0,.28)!important;
+  }
+  .intro-menu button:nth-child(even){transform:translateX(3vw) rotate(-1deg)!important}
+  .intro-menu button::before{
+    left:-.10em!important;
+    right:-.10em!important;
+    top:-.04em!important;
+    bottom:-.02em!important;
+    box-shadow:5px 5px 0 rgba(0,0,0,.40)!important;
+  }
+  .intro-menu button::after{
+    left:-.04em!important;
+    right:.15em!important;
+    height:.22em!important;
+  }
+  .intro-menu button:hover,
+  .intro-menu button:focus,
+  .intro-menu button:active{
+    color:#050505!important;
+    transform:translateX(1.5vw) rotate(-1deg) scale(1.015)!important;
+  }
+  .intro-menu button:nth-child(even):hover,
+  .intro-menu button:nth-child(even):focus,
+  .intro-menu button:nth-child(even):active{
+    transform:translateX(4vw) rotate(-1deg) scale(1.015)!important;
+  }
+
+  /* Player/date go to a clean top-right HUD. */
+  .intro-meta{
+    position:absolute!important;
+    top:calc(12px + var(--safe-top))!important;
+    right:12px!important;
+    left:auto!important;
+    bottom:auto!important;
+    width:55vw!important;
+    max-width:55vw!important;
+    z-index:7!important;
+    text-align:right!important;
+    padding:6px 8px!important;
+    background:rgba(0,0,0,.42)!important;
+    border-right:4px solid var(--accent)!important;
+    transform:skewX(-5deg)!important;
+  }
+  .intro-meta>*{transform:skewX(5deg)!important}
+  .intro-meta b{
+    display:block!important;
+    font-size:16px!important;
+    line-height:1!important;
+    color:#fff!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+  .intro-meta small{
+    font-size:10px!important;
+    margin-top:2px!important;
+    color:#e7fbff!important;
+  }
+
+  .intro-hint{display:none!important}
+
+  /* Clock gets a stable bottom-right capsule. */
+  .intro-clock{
+    position:absolute!important;
+    right:12px!important;
+    left:auto!important;
+    top:auto!important;
+    bottom:calc(12px + var(--safe-bottom))!important;
+    z-index:7!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:7px!important;
+    padding:5px 9px!important;
+    background:rgba(0,0,0,.50)!important;
+    border-bottom:3px solid var(--accent2)!important;
+    transform:skewX(-5deg)!important;
+  }
+  .intro-clock>*{transform:skewX(5deg)!important}
+  .intro-clock img{
+    width:32px!important;
+    height:32px!important;
+  }
+  .intro-clock b{
+    font-size:22px!important;
+    line-height:1!important;
+  }
+
+  /* Accent scratches that do not steal touch events. */
+  .intro.show::before,
+  .intro.show::after{
+    content:""!important;
+    position:absolute!important;
+    z-index:3!important;
+    pointer-events:none!important;
+    background:var(--accent2)!important;
+    opacity:.86!important;
+  }
+  .intro.show::before{
+    width:72vw!important;
+    height:9px!important;
+    right:-18vw!important;
+    top:14svh!important;
+    transform:rotate(-13deg)!important;
+  }
+  .intro.show::after{
+    width:56vw!important;
+    height:5px!important;
+    right:-14vw!important;
+    bottom:16svh!important;
+    transform:rotate(-9deg)!important;
+  }
+}
+
+/* Extra-small portrait phones */
+@media screen and (max-width:380px) and (orientation:portrait){
+  .intro-left{width:46vw!important}
+  .intro-avatar{height:31svh!important}
+  .intro-word{
+    left:5vw!important;
+    bottom:9svh!important;
+    font-size:clamp(35px,11.5vw,47px)!important;
+  }
+  .intro-menu{
+    left:33vw!important;
+    right:3vw!important;
+    top:19svh!important;
+    gap:5px!important;
+  }
+  .intro-menu button{
+    font-size:clamp(25px,7.9vw,34px)!important;
+  }
+  .intro-meta{width:58vw!important;max-width:58vw!important}
+  .intro-clock img{width:29px!important;height:29px!important}
+  .intro-clock b{font-size:20px!important}
+}
+
+/* Short portrait screens: compress menu vertically without forcing landscape. */
+@media screen and (max-height:700px) and (max-width:600px) and (orientation:portrait){
+  .intro-avatar{height:29svh!important}
+  .intro-menu{
+    top:18svh!important;
+    gap:4px!important;
+  }
+  .intro-menu button{
+    font-size:clamp(24px,7.5vw,34px)!important;
+    line-height:.82!important;
+  }
+  .intro-word{
+    bottom:7svh!important;
+    font-size:clamp(34px,10.8vw,47px)!important;
+  }
+}
+
 </style>
 </head>
 <body>
