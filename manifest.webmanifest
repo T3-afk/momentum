@@ -1,6 +1,7 @@
 {
   "name": "Momentum",
   "short_name": "Momentum",
+  "id": "./",
   "description": "Momentum \u2014 synced daily progress, rank, tasks, projects, focus and reminders.",
   "start_url": "./",
   "scope": "./",
@@ -21,6 +22,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "id": "./"
+  ]
 }

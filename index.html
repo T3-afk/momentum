@@ -1388,6 +1388,368 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   dialog[open]{display:block}
 }
 
+
+/* ==================== MOMENTUM 15.2 PORTRAIT PHONE MODE ==================== */
+/* This block intentionally comes last so portrait rules win over older responsive CSS. */
+@media screen and (max-width:600px) and (orientation:portrait){
+  :root{
+    --phone-gap:9px;
+    --phone-pad:8px;
+  }
+
+  html,body{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-x:hidden!important;
+  }
+
+  body{
+    padding:0!important;
+    padding-bottom:calc(78px + var(--safe-bottom))!important;
+  }
+
+  *{box-sizing:border-box}
+  img,svg,canvas,video,iframe{max-width:100%!important}
+
+  .app{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:
+      calc(7px + var(--safe-top))
+      max(7px,var(--safe-right))
+      calc(88px + var(--safe-bottom))
+      max(7px,var(--safe-left))!important;
+  }
+
+  /* Header: compact but still keeps clock/date/music visible. */
+  .topbar{
+    position:relative!important;
+    top:auto!important;
+    display:block!important;
+    width:100%!important;
+    padding:2px 0 9px!important;
+    margin:0!important;
+  }
+  .brand{
+    width:100%!important;
+    margin:0 0 8px!important;
+    justify-content:center!important;
+  }
+  .brand-mark{
+    font-size:25px!important;
+    letter-spacing:-1px!important;
+    padding:6px 12px 8px!important;
+    box-shadow:3px 3px 0 #fff!important;
+  }
+  .top-hud{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    width:100%!important;
+    gap:6px!important;
+  }
+  .top-hud>.hud{
+    width:100%!important;
+    min-width:0!important;
+    transform:none!important;
+    padding:5px 7px!important;
+    box-shadow:none!important;
+  }
+  .top-hud>.hud>*{transform:none!important}
+  .hud img{width:22px!important;height:22px!important}
+  .hud small{font-size:8px!important}
+  .hud b{font-size:11px!important;white-space:nowrap}
+  .music-player{
+    grid-column:1/-1!important;
+    width:100%!important;
+    min-width:0!important;
+    padding:6px 7px!important;
+    box-shadow:none!important;
+  }
+  .music-player .music-toggle{width:34px!important;height:34px!important}
+  .music-player .track-name{max-width:58vw!important;font-size:11px!important}
+
+  /* Every major desktop split becomes a true portrait stack. */
+  .main-grid,
+  .inbox-layout,
+  .notes-layout,
+  .settings-grid,
+  .rank-top-grid,
+  .stats-detail-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  .page,.col,.card,.profile-card,.triangle-card,.tasks-card,.permanent-card,
+  .form-card,.inbox-card,.notes-card,.settings-card,.rank-hero,.rank-ladder-card,
+  .stats-detail-card,.heatmap-card,.cloud-card,.backup-card{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  .page{margin-top:10px!important}
+  .card{overflow:hidden!important}
+  .card-title{font-size:17px!important}
+
+  /* Profile stays compact instead of becoming a huge one-column block. */
+  .profile{
+    display:grid!important;
+    grid-template-columns:76px minmax(0,1fr)!important;
+    gap:10px!important;
+    align-items:center!important;
+  }
+  .avatar{width:76px!important;height:76px!important}
+  .profile-name{font-size:23px!important}
+  .profile-bio{font-size:11px!important}
+
+  .metrics,
+  .stats-row,
+  .project-summary,
+  .brief-grid,
+  .results-axes{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  .metric,.stat{min-width:0!important;padding:8px 4px!important}
+  .metric b{font-size:18px!important}
+  .stat{min-height:78px!important}
+  .stat b{font-size:23px!important}
+  .stat small,.metric small{font-size:8px!important}
+
+  /* Radar fits inside a portrait viewport without clipping its labels. */
+  .triangle-card{padding:7px 5px 12px!important}
+  .triangle-scene{
+    width:100%!important;
+    height:350px!important;
+    min-height:350px!important;
+    max-height:350px!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  .tri-shell{
+    width:min(82vw,315px)!important;
+    max-width:315px!important;
+  }
+  .axis{
+    font-size:9px!important;
+    padding:5px 6px!important;
+    border-width:2px!important;
+    box-shadow:3px 3px 0 #fff!important;
+    white-space:nowrap!important;
+  }
+  .axis strong{font-size:18px!important}
+  .axis.school{top:6px!important}
+  .axis.home{right:-3px!important;bottom:14px!important}
+  .axis.health{left:-3px!important;bottom:14px!important}
+  .grade-center{
+    min-width:96px!important;
+    padding:6px 7px!important;
+    border-width:2px!important;
+    box-shadow:3px 3px 0 var(--accent2)!important;
+  }
+  .grade-center .grade{font-size:43px!important}
+  .grade-center b{font-size:9px!important}
+
+  .day-status{gap:7px!important}
+  .status{padding:7px 8px!important;font-size:11px!important}
+
+  /* Tasks: text gets the width, actions wrap underneath. */
+  .task{
+    display:grid!important;
+    grid-template-columns:26px minmax(0,1fr)!important;
+    gap:7px!important;
+    padding:9px!important;
+    width:100%!important;
+  }
+  .task .check{grid-column:1!important;grid-row:1!important}
+  .task .task-name{grid-column:2!important;grid-row:1!important;font-size:13px!important;overflow-wrap:anywhere}
+  .task .tag,
+  .task .pts,
+  .task .task-actions{
+    grid-column:2!important;
+    grid-row:auto!important;
+    justify-self:start!important;
+  }
+  .task .task-actions{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:5px!important;
+  }
+  .focus-task,.delete{min-height:34px!important}
+
+  .reminder{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  .reminder-actions{justify-content:flex-start!important}
+
+  /* Stats / game systems */
+  .rank-hero{min-height:250px!important;padding:8px 12px 15px!important}
+  .rank-name{font-size:36px!important;letter-spacing:-2px!important}
+  .rank-points-line b{font-size:26px!important}
+  .rank-ladder{max-height:none!important}
+  .lifetime-stat-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+  .achievement-grid{grid-template-columns:minmax(0,1fr)!important}
+  .project-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .deadline-row{grid-template-columns:minmax(0,1fr)!important}
+  .permanent-task{grid-template-columns:minmax(0,1fr)!important}
+  .timeline-strip{grid-template-columns:repeat(15,minmax(0,1fr))!important}
+  .heatmap-grid{gap:3px!important}
+  .heat-day{min-height:36px!important;padding:3px!important}
+  .heat-grade{font-size:14px!important}
+
+  /* Settings and cloud controls */
+  .theme-swatches{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .cloud-auth-grid{grid-template-columns:minmax(0,1fr)!important}
+  .cloud-actions{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:6px!important;
+  }
+  .cloud-actions button,
+  .backup-actions .btn,
+  .backup-actions .ghost{
+    width:100%!important;
+    min-height:44px!important;
+  }
+  .custom-file-row{align-items:stretch!important}
+  .custom-file-choose,.file-status,.file-remove{max-width:100%!important}
+
+  /* Avoid iOS zooming the page when tapping form fields. */
+  input,select,textarea{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    font-size:16px!important;
+  }
+
+  /* Portrait intro */
+  .intro.show{
+    display:block!important;
+    width:100vw!important;
+    height:100svh!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .intro-left{display:none!important}
+  .intro-right{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    min-width:0!important;
+    position:relative!important;
+  }
+  .intro-menu{
+    position:absolute!important;
+    left:8%!important;
+    right:8%!important;
+    top:18%!important;
+    width:auto!important;
+    gap:8px!important;
+  }
+  .intro-menu button{
+    width:100%!important;
+    font-size:clamp(27px,9vw,39px)!important;
+    line-height:.92!important;
+    letter-spacing:-2px!important;
+    padding:7px 8px!important;
+  }
+  .intro-meta{
+    left:8%!important;
+    right:8%!important;
+    bottom:calc(18px + var(--safe-bottom))!important;
+    max-width:84%!important;
+  }
+  .intro-clock{
+    top:calc(10px + var(--safe-top))!important;
+    right:10px!important;
+  }
+  .intro-clock img{width:38px!important;height:38px!important}
+
+  /* Dialogs and overlays */
+  dialog{
+    width:calc(100vw - 12px)!important;
+    max-width:calc(100vw - 12px)!important;
+    max-height:calc(100svh - 16px - var(--safe-top) - var(--safe-bottom))!important;
+    overflow:auto!important;
+  }
+  .modal{padding:11px!important}
+  .weekday-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important}
+  .weekday-check{min-height:38px!important;font-size:9px!important}
+
+  .focus-panel,
+  .daily-panel{
+    width:calc(100vw - 12px)!important;
+    max-width:calc(100vw - 12px)!important;
+    max-height:calc(100svh - 16px - var(--safe-top) - var(--safe-bottom))!important;
+    overflow:auto!important;
+  }
+  .focus-title{font-size:27px!important}
+  .focus-timer{font-size:58px!important}
+  .daily-heading{font-size:34px!important}
+
+  /* Bottom nav is the primary portrait navigation. */
+  .nav{display:none!important}
+  .mobile-nav{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:3px!important;
+    padding:
+      6px max(5px,var(--safe-right))
+      calc(6px + var(--safe-bottom))
+      max(5px,var(--safe-left))!important;
+  }
+  .mobile-nav button{min-height:49px!important;font-size:9px!important}
+  .mobile-nav .mobile-add{
+    font-size:22px!important;
+    transform:translateY(-10px) rotate(-2deg)!important;
+  }
+  .mobile-more-panel{
+    max-height:80svh!important;
+    overflow:auto!important;
+  }
+
+  .persona-toast-stack{
+    top:calc(8px + var(--safe-top))!important;
+    left:6px!important;
+    right:6px!important;
+    width:auto!important;
+  }
+}
+
+/* Very narrow iPhones */
+@media screen and (max-width:380px) and (orientation:portrait){
+  .app{
+    padding-left:6px!important;
+    padding-right:6px!important;
+  }
+  .brand-mark{font-size:22px!important}
+  .hud{padding:4px!important}
+  .hud img{display:none!important}
+  .metrics,.stats-row,.project-summary,.brief-grid,.results-axes{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  .metric b{font-size:16px!important}
+  .stat b{font-size:20px!important}
+  .triangle-scene{
+    height:325px!important;
+    min-height:325px!important;
+    max-height:325px!important;
+  }
+  .tri-shell{width:min(80vw,285px)!important}
+  .axis{font-size:8px!important}
+  .axis strong{font-size:16px!important}
+  .grade-center .grade{font-size:38px!important}
+  .mobile-nav button{font-size:8px!important}
+}
+
 </style>
 </head>
 <body>
@@ -4793,6 +5155,21 @@ window.addEventListener("load",()=>{
   });
 
   document.documentElement.classList.add("momentum-mobile-ready");
+})();
+</script>
+
+
+<script>
+(function(){
+  function momentumPortraitViewport(){
+    try{
+      var portrait = window.innerHeight >= window.innerWidth;
+      document.documentElement.classList.toggle("phone-portrait", portrait && window.innerWidth <= 600);
+    }catch(e){}
+  }
+  momentumPortraitViewport();
+  window.addEventListener("resize", momentumPortraitViewport, {passive:true});
+  window.addEventListener("orientationchange", function(){setTimeout(momentumPortraitViewport,120)}, {passive:true});
 })();
 </script>
 

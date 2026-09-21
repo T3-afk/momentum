@@ -1,4 +1,4 @@
-const CACHE="momentum-pwa-v15-1-ios";
+const CACHE="momentum-pwa-v15-2-portrait";
 const APP_SHELL=[
   "./",
   "./index.html",
