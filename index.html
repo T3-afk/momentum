@@ -2053,6 +2053,27 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   }
 }
 
+
+/* ==================== MOMENTUM 15.5 ==================== */
+.counter-task-settings{margin:-3px 0 12px;padding:12px;border:2px solid rgba(var(--accent-rgb),.55);background:linear-gradient(135deg,rgba(var(--accent-rgb),.08),#0a0a0a 55%)}
+.counter-form-grid{display:grid;grid-template-columns:1fr .75fr 1fr;gap:8px}
+.counter-form-grid .field{margin:0}
+.task-progress{grid-column:2;width:100%;max-width:460px;display:grid;grid-template-columns:auto 1fr;gap:7px 9px;align-items:center;margin-top:7px}
+.task-progress-label{font-size:11px;font-weight:1000;color:var(--accent);white-space:nowrap}
+.task-progress-track{min-width:80px;height:8px;background:#222;border:1px solid #555;overflow:hidden;transform:skewX(-8deg)}
+.task-progress-fill{display:block;height:100%;background:var(--accent);transition:width .2s ease}
+.counter-controls{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.counter-btn{min-height:32px;padding:5px 9px;border:2px solid #555;background:#141414;color:#fff;font-weight:1000;cursor:pointer}
+.counter-btn.plus{border-color:var(--accent);color:var(--accent)}
+.counter-btn.minus{border-color:#666;color:#bbb}
+.cloud-media-note{margin-top:8px;padding:8px 10px;border-left:4px solid var(--accent);background:#0b0b0b;color:#999;font-size:11px;line-height:1.45}
+@media(max-width:760px){
+  .counter-form-grid{grid-template-columns:1fr!important}
+  .task-progress{grid-column:2!important;grid-template-columns:1fr!important;gap:5px!important}
+  .task-progress-label{white-space:normal!important}
+  .counter-btn{min-height:38px}
+}
+
 </style>
 </head>
 <body>
@@ -2552,6 +2573,7 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
           <button type="button" class="ghost" id="cloudDownloadBtn">Download Cloud</button>
         </div>
 
+        <div class="cloud-media-note"><b>Cloud media:</b> pictures, intro background and uploaded soundtrack can now follow your account between Windows and iPhone. After this update, use <b>Upload This Device</b> once on the device that already has your files.</div>
         <div id="pushStatus" class="push-status">Push notifications are not enabled on this device.</div>
         <div class="cloud-actions">
           <button type="button" class="btn" id="enablePushBtn">Enable Notifications</button>
@@ -2569,8 +2591,8 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
         <div class="cloud-security-note">
           Your password is handled by Supabase Auth and is never stored in Momentum's save file.
           The project publishable key and VAPID public key are designed to be public; the VAPID private key
-          and Supabase server secret stay only in the backend. Uploaded soundtrack files, profile pictures,
-          intro pictures and intro backgrounds stay local to each device.
+          and Supabase server secret stay only in the backend. Profile pictures, intro pictures, intro backgrounds
+          and uploaded soundtrack files now sync through your private Momentum Storage bucket.
         </div>
       </div>
 
@@ -2760,7 +2782,22 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
         <option value="health">Health</option>
       </select>
     </div>
-    <div class="field"><label>Points — any amount</label><input id="taskPoints" type="number" min="0" step="0.1" value="1" required></div>
+    <div class="field"><label>Points — awarded when completed</label><input id="taskPoints" type="number" min="0" step="0.1" value="1" required></div>
+    <div class="field">
+      <label>Task type</label>
+      <select id="taskType">
+        <option value="check">Standard task — complete once</option>
+        <option value="counter">Amount / progress task — build toward a target</option>
+      </select>
+    </div>
+    <div id="counterTaskSettings" class="counter-task-settings hidden">
+      <div class="counter-form-grid">
+        <div class="field"><label>Target amount</label><input id="taskTarget" type="number" min="0.01" step="0.01" value="2"></div>
+        <div class="field"><label>Unit</label><input id="taskUnit" maxlength="16" value="L" placeholder="L, pages, reps..."></div>
+        <div class="field"><label>Add each tap</label><input id="taskStep" type="number" min="0.01" step="0.01" value="0.25"></div>
+      </div>
+      <div class="settings-note">Example: Water — target 2 L, add 0.25 L each time. Points are awarded when the target is reached.</div>
+    </div>
     <div class="field">
       <label id="taskDateLabel">Task date</label>
       <input id="taskDate" type="date" required>
@@ -2814,7 +2851,7 @@ const KEY="momentum-progress-v4";
 const OLD_KEYS=["daily-rank-v3","daily-rank-v2","daily-rank-v1"];
 const $=id=>document.getElementById(id);
 const DEFAULT_AVATAR=`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><rect width="100%" height="100%" fill="#111"/><circle cx="250" cy="185" r="92" fill="#eee"/><path d="M90 470c25-115 105-170 160-170s135 55 160 170" fill="#eee"/></svg>`)}`;
-function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack"},days:{},reminders:[],recurringTasks:[],rankLedger:{},permanentTasks:[],projects:[],focusSessions:[],achievements:{}}}
+function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack",cloudMedia:{avatar:false,introImage:false,introBackground:false,soundtrack:false}},days:{},reminders:[],recurringTasks:[],rankLedger:{},permanentTasks:[],projects:[],focusSessions:[],achievements:{}}}
 function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
 function load(){
   try{const d=JSON.parse(localStorage.getItem(KEY));if(d)return normalize(d)}catch{}
@@ -2823,9 +2860,31 @@ function load(){
 }
 function normalize(d){
   d.profile={...defaults().profile,...(d.profile||{})};
+  d.profile.cloudMedia={...defaults().profile.cloudMedia,...(d.profile.cloudMedia||{})};
   d.days=d.days||{};
+  const normalizeProgressTask=t=>{
+    if(!t||typeof t!=="object")return;
+    t.taskType=t.taskType==="counter"?"counter":"check";
+    if(t.taskType==="counter"){
+      t.target=Math.max(.01,Number(t.target)||1);
+      t.step=Math.max(.01,Number(t.step)||1);
+      t.unit=String(t.unit||"").slice(0,16);
+      t.current=Math.max(0,Math.min(t.target,Number(t.current)||0));
+      if(t.done&&t.current<t.target)t.current=t.target;
+      t.done=t.current>=t.target
+    }else t.done=!!t.done
+  };
+  Object.values(d.days).forEach(day=>(day?.tasks||[]).forEach(normalizeProgressTask));
   d.reminders=d.reminders||[];
   d.recurringTasks=d.recurringTasks||[];
+  d.recurringTasks.forEach(r=>{
+    r.taskType=r.taskType==="counter"?"counter":"check";
+    if(r.taskType==="counter"){
+      r.target=Math.max(.01,Number(r.target)||1);
+      r.step=Math.max(.01,Number(r.step)||1);
+      r.unit=String(r.unit||"").slice(0,16)
+    }
+  });
   d.rankLedger=d.rankLedger||{};
   d.permanentTasks=d.permanentTasks||[];
   d.projects=d.projects||[];
@@ -2865,6 +2924,11 @@ function ensureRecurringTasksForDay(d,key){
       name:rule.name,
       category:rule.category,
       points:Number(rule.points),
+      taskType:rule.taskType==="counter"?"counter":"check",
+      target:rule.taskType==="counter"?Math.max(.01,Number(rule.target)||1):undefined,
+      current:rule.taskType==="counter"?0:undefined,
+      unit:rule.taskType==="counter"?String(rule.unit||""):undefined,
+      step:rule.taskType==="counter"?Math.max(.01,Number(rule.step)||1):undefined,
       done:false
     });
     changed=true
@@ -3394,6 +3458,7 @@ function saveFocusSession(markTaskComplete){
   }
 
   if(markTaskComplete&&task){
+    if(task.taskType==="counter")task.current=Math.max(.01,Number(task.target)||1);
     task.done=true;
     const newGrade=grade(avg(day,current.date,data));
     if(order[newGrade]>order[oldGrade])recordRankGrade(data,current.date,newGrade)
@@ -3712,6 +3777,32 @@ function renderMainCoreOnly(){
   $("dayStatus").classList.toggle("pass",a>3)
 }
 
+function taskProgressText(t){
+  if(t.taskType!=="counter")return"";
+  const cur=Number(t.current||0),target=Math.max(.01,Number(t.target)||1),unit=String(t.unit||"").trim();
+  const n=x=>Number(x.toFixed(3)).toLocaleString();
+  return `${n(cur)} / ${n(target)}${unit?` ${esc(unit)}`:""}`
+}
+function taskCardHTML(t,i){
+  const counter=t.taskType==="counter";
+  const target=counter?Math.max(.01,Number(t.target)||1):0;
+  const current=counter?Math.max(0,Math.min(target,Number(t.current)||0)):0;
+  const pct=counter?Math.max(0,Math.min(100,current/target*100)):0;
+  const unit=String(t.unit||"").trim(),step=counter?Math.max(.01,Number(t.step)||1):0;
+  const n=x=>Number(x.toFixed(3)).toLocaleString();
+  return `<div class="task ${t.done?"done":""}">
+    <input class="check" type="checkbox" data-check="${i}" ${t.done?"checked":""}>
+    <div class="task-name">${esc(t.name)}${t.recurringId?`<span class="repeat-mini">↻ ${t.repeatType}</span>`:""}
+      ${counter?`<div class="task-progress"><span class="task-progress-label">${taskProgressText(t)}</span><span class="task-progress-track"><span class="task-progress-fill" style="width:${pct}%"></span></span></div>`:""}
+    </div>
+    <div class="tag">${t.category==="school"?"School":t.category==="home"?"Home":"Health"}</div>
+    <div class="pts">+${Number(t.points)} pts${counter?" at target":""}</div>
+    <div class="task-actions">
+      ${counter?`<span class="counter-controls"><button type="button" class="counter-btn minus" data-counter-minus="${i}">− ${n(step)}${unit?` ${esc(unit)}`:""}</button><button type="button" class="counter-btn plus" data-counter-plus="${i}">+ ${n(step)}${unit?` ${esc(unit)}`:""}</button></span>`:""}
+      <button class="focus-task" data-focus="${i}">Focus</button><button class="delete" data-delete="${i}">×</button>
+    </div>
+  </div>`
+}
 function renderMain(){
   const key=$("datePicker").value,{data,day}=getDay(key),s=scores(day,key,data),a=avg(day,key,data),g=grade(a),done=(day.tasks||[]).filter(t=>t.done).length;
   applyTheme(data.profile);
@@ -3726,13 +3817,7 @@ function renderMain(){
   $("taskDayLabel").textContent=`Tasks for ${pretty(key)}`;
   animateRadar(s);
   $("dayStatus").textContent=a>3?"✓ Completed day":"Not completed yet";$("dayStatus").classList.toggle("pass",a>3);
-  $("taskList").innerHTML=(day.tasks||[]).length?day.tasks.map((t,i)=>`<div class="task ${t.done?"done":""}">
-    <input class="check" type="checkbox" data-check="${i}" ${t.done?"checked":""}>
-    <div class="task-name">${esc(t.name)}${t.recurringId?`<span class="repeat-mini">↻ ${t.repeatType}</span>`:""}</div>
-    <div class="tag">${t.category==="school"?"School":t.category==="home"?"Home":"Health"}</div>
-    <div class="pts">+${Number(t.points)} pts</div>
-    <div class="task-actions"><button class="focus-task" data-focus="${i}">Focus</button><button class="delete" data-delete="${i}">×</button></div>
-    </div>`).join(""):`<div class="empty">No tasks for this day yet.</div>`;
+  $("taskList").innerHTML=(day.tasks||[]).length?day.tasks.map(taskCardHTML).join(""):`<div class="empty">No tasks for this day yet.</div>`;
 
   const recurring=(data.recurringTasks||[]).filter(r=>r.active);
   $("recurringRuleList").innerHTML=recurring.length?recurring.map(r=>{
@@ -3752,12 +3837,18 @@ function renderMain(){
   renderProjects();
   renderStats();
 }
-function addTask(name,category,points,taskDate){
+function addTask(name,category,points,taskDate,taskType="check",target=1,unit="",step=1){
   const key=taskDate||$("datePicker").value;
-  const {data,day}=getDay(key);
+  const {data,day}=getDay(key),counter=taskType==="counter";
   day.tasks.push({
     id:crypto.randomUUID?.()||String(Date.now()+Math.random()),
-    name,category,points:Number(points),done:false
+    name,category,points:Number(points),
+    taskType:counter?"counter":"check",
+    target:counter?Math.max(.01,Number(target)||1):undefined,
+    current:counter?0:undefined,
+    unit:counter?String(unit||"").slice(0,16):undefined,
+    step:counter?Math.max(.01,Number(step)||1):undefined,
+    done:false
   });
   save(data);
 
@@ -3767,23 +3858,21 @@ function addTask(name,category,points,taskDate){
       console.error("[Momentum] Task saved but main refresh failed",err);
       /* Always show the newly saved task even if an optional stats panel breaks. */
       const fresh=getDay(key).day;
-      $("taskList").innerHTML=(fresh.tasks||[]).map((t,i)=>`<div class="task ${t.done?"done":""}">
-        <input class="check" type="checkbox" data-check="${i}" ${t.done?"checked":""}>
-        <div class="task-name">${esc(t.name)}${t.recurringId?`<span class="repeat-mini">↻ ${t.repeatType}</span>`:""}</div>
-        <div class="tag">${t.category==="school"?"School":t.category==="home"?"Home":"Health"}</div>
-        <div class="pts">+${Number(t.points)} pts</div>
-        <div class="task-actions"><button class="focus-task" data-focus="${i}">Focus</button><button class="delete" data-delete="${i}">×</button></div>
-      </div>`).join("")
+      $("taskList").innerHTML=(fresh.tasks||[]).map(taskCardHTML).join("")
     }
   }else{
     showPersonaToast("inbox","Task Scheduled",`${name} • ${pretty(key)}`)
   }
 }
-function addRecurringTask(name,category,points,startDate,repeat,weeklyDay,excludedDays){
-  const d=load();
+function addRecurringTask(name,category,points,startDate,repeat,weeklyDay,excludedDays,taskType="check",target=1,unit="",step=1){
+  const d=load(),counter=taskType==="counter";
   const rule={
     id:crypto.randomUUID?.()||String(Date.now()+Math.random()),
     name,category,points:Number(points),
+    taskType:counter?"counter":"check",
+    target:counter?Math.max(.01,Number(target)||1):undefined,
+    unit:counter?String(unit||"").slice(0,16):undefined,
+    step:counter?Math.max(.01,Number(step)||1):undefined,
     startDate,
     repeat,
     weeklyDay:Number(weeklyDay),
@@ -3875,16 +3964,12 @@ function openIntro(force=false){
   }
 }
 function imageToProfile(file,key){
-  if(!file)return;
-  const fr=new FileReader();
-  fr.onload=()=>{
-    const d=load();
-    d.profile[key]=fr.result;
-    save(d);
-    renderMain();
-    fillSettings()
-  };
-  fr.readAsDataURL(file)
+  if(!file)return Promise.resolve();
+  return new Promise((resolve,reject)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{const d=load();d.profile[key]=fr.result;save(d);renderMain();fillSettings();resolve()};
+    fr.onerror=()=>reject(fr.error);fr.readAsDataURL(file)
+  })
 }
 
 function setFileStatus(statusId,removeId,chosen){
@@ -4362,10 +4447,8 @@ $("musicFirstClickSetting").addEventListener("change",e=>{
 $("soundtrackFile").addEventListener("change",async e=>{
   const file=e.target.files?.[0];if(!file)return;
   await storeSoundtrack(file);
-  const d=load();
-  d.profile.musicName=file.name;
-  d.profile.musicSource="local";
-  save(d);
+  const d=load();d.profile.musicName=file.name;d.profile.musicSource="local";save(d);
+  if(cloudState.user)await uploadCloudMediaBlob("soundtrack",file,{name:file.name}).catch(err=>setCloudStatus(err.message,"error"));
   e.target.value="";
   pauseYouTube();
   await hydrateSoundtrack()
@@ -4373,8 +4456,8 @@ $("soundtrackFile").addEventListener("change",async e=>{
 $("removeSoundtrackBtn").onclick=async()=>{
   audioEl.pause();
   await deleteSoundtrackBlob().catch(()=>{});
-  const d=load();
-  d.profile.musicName="";
+  const d=load();d.profile.musicName="";d.profile.cloudMedia.soundtrack=false;
+  if(cloudState.user)await deleteCloudMedia("soundtrack").catch(err=>setCloudStatus(err.message,"error"));
   if(d.profile.musicSource==="local"){
     d.profile.musicSource=(d.profile.youtubeVideoId||d.profile.youtubeListId)?"youtube":"local"
   }
@@ -4626,8 +4709,10 @@ document.querySelectorAll("[data-mobile-go]").forEach(btn=>{
 $("mobileAddTaskBtn")?.addEventListener("click",()=>{
   $("taskDate").value=$("datePicker").value;
   $("taskRepeat").value="once";
+  $("taskType").value="check";
+  $("taskTarget").value="2";$("taskUnit").value="L";$("taskStep").value="0.25";
   document.querySelectorAll(".skipWeekday").forEach(x=>x.checked=false);
-  syncRepeatUI();
+  syncTaskTypeUI();syncRepeatUI();
   $("taskDialog").showModal()
 });
 $("mobileMoreBtn")?.addEventListener("click",()=>$("mobileMoreSheet")?.classList.add("show"));
@@ -4813,7 +4898,6 @@ function sanitizeForCloud(data){
   copy.profile={...(copy.profile||{})};
   delete copy.profile.avatar;
   delete copy.profile.introImage;
-  delete copy.profile.musicName;
   return copy
 }
 function mergeCloudWithLocal(remote){
@@ -4823,8 +4907,7 @@ function mergeCloudWithLocal(remote){
     ...local.profile,
     ...(merged.profile||{}),
     avatar:local.profile.avatar,
-    introImage:local.profile.introImage,
-    musicName:local.profile.musicName
+    introImage:local.profile.introImage
   };
   return merged
 }
@@ -4847,6 +4930,65 @@ save=function(data){
   if(!cloudState.applyingRemote)scheduleCloudUpload()
 };
 
+const CLOUD_MEDIA_BUCKET="momentum-media";
+const CLOUD_MEDIA_PATHS={avatar:"avatar",introImage:"intro-image",introBackground:"intro-background",soundtrack:"soundtrack"};
+function cloudMediaPath(kind){return cloudState.user?`${cloudState.user.id}/${CLOUD_MEDIA_PATHS[kind]}`:null}
+function setCloudMediaFlag(kind,value,extra={}){
+  const d=load();
+  d.profile.cloudMedia={...defaults().profile.cloudMedia,...(d.profile.cloudMedia||{}),[kind]:!!value};
+  Object.assign(d.profile,extra);save(d)
+}
+async function uploadCloudMediaBlob(kind,blob,{quiet=false,name=""}={}){
+  if(!blob||!cloudState.client||!cloudState.user)return false;
+  const {error}=await cloudState.client.storage.from(CLOUD_MEDIA_BUCKET).upload(cloudMediaPath(kind),blob,{upsert:true,contentType:blob.type||"application/octet-stream",cacheControl:"3600"});
+  if(error)throw error;
+  setCloudMediaFlag(kind,true,kind==="soundtrack"&&name?{musicName:name}:{});
+  if(!quiet)setCloudStatus("Media saved to Momentum Cloud.","online");
+  return true
+}
+async function deleteCloudMedia(kind){
+  if(cloudState.client&&cloudState.user){
+    const {error}=await cloudState.client.storage.from(CLOUD_MEDIA_BUCKET).remove([cloudMediaPath(kind)]);
+    if(error&&!String(error.message||"").toLowerCase().includes("not found"))throw error
+  }
+  setCloudMediaFlag(kind,false,kind==="soundtrack"?{musicName:""}:{})
+}
+async function downloadCloudMediaBlob(kind){
+  if(!cloudState.client||!cloudState.user)return null;
+  const {data,error}=await cloudState.client.storage.from(CLOUD_MEDIA_BUCKET).download(cloudMediaPath(kind));
+  if(error){
+    const msg=String(error.message||"").toLowerCase();
+    if(msg.includes("not found")||msg.includes("object not found"))return null;
+    throw error
+  }
+  return data
+}
+function blobToProfileDataURL(blob){return new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=()=>reject(fr.error);fr.readAsDataURL(blob)})}
+function profileDataURLToBlob(dataUrl){if(!dataUrl||!String(dataUrl).startsWith("data:"))return null;try{return dataURLToBlob(dataUrl)}catch{return null}}
+async function uploadAllCloudMedia(){
+  if(!cloudState.client||!cloudState.user)return;
+  const d=load(),avatar=profileDataURLToBlob(d.profile.avatar!==DEFAULT_AVATAR?d.profile.avatar:null),intro=profileDataURLToBlob(d.profile.introImage!==DEFAULT_AVATAR?d.profile.introImage:null);
+  const introBg=await loadIntroBackgroundBlob().catch(()=>null),soundtrack=await loadSoundtrackBlob().catch(()=>null);
+  if(avatar)await uploadCloudMediaBlob("avatar",avatar,{quiet:true});else setCloudMediaFlag("avatar",false);
+  if(intro)await uploadCloudMediaBlob("introImage",intro,{quiet:true});else setCloudMediaFlag("introImage",false);
+  if(introBg)await uploadCloudMediaBlob("introBackground",introBg,{quiet:true});else setCloudMediaFlag("introBackground",false);
+  if(soundtrack)await uploadCloudMediaBlob("soundtrack",soundtrack,{quiet:true,name:d.profile.musicName||soundtrack.name||"soundtrack"});else setCloudMediaFlag("soundtrack",false);
+  setCloudStatus("Cloud data and media uploaded.","online")
+}
+async function downloadAllCloudMedia(){
+  if(!cloudState.client||!cloudState.user)return;
+  const d=load(),flags={...defaults().profile.cloudMedia,...(d.profile.cloudMedia||{})};
+  cloudState.applyingRemote=true;
+  try{
+    if(flags.avatar){const b=await downloadCloudMediaBlob("avatar");if(b)d.profile.avatar=await blobToProfileDataURL(b)}else d.profile.avatar=DEFAULT_AVATAR;
+    if(flags.introImage){const b=await downloadCloudMediaBlob("introImage");if(b)d.profile.introImage=await blobToProfileDataURL(b)}else d.profile.introImage=DEFAULT_AVATAR;
+    if(flags.introBackground){const b=await downloadCloudMediaBlob("introBackground");if(b)await storeIntroBackground(b)}else await deleteIntroBackgroundBlob().catch(()=>{});
+    if(flags.soundtrack){const b=await downloadCloudMediaBlob("soundtrack");if(b)await storeSoundtrack(new File([b],d.profile.musicName||"soundtrack",{type:b.type||"application/octet-stream"}))}else await deleteSoundtrackBlob().catch(()=>{});
+    momentumLocalSave(d);
+    await hydrateIntroBackground().catch(()=>{});await hydrateSoundtrack().catch(()=>{});
+    renderAfterCloudChange();setCloudStatus("Cloud data and media downloaded.","online")
+  }finally{cloudState.applyingRemote=false}
+}
 async function loadSupabaseSDK(){
   if(cloudState.sdk)return cloudState.sdk;
   cloudState.sdk=await import("https://esm.sh/@supabase/supabase-js@2");
@@ -4914,6 +5056,7 @@ async function connectCloudUser(){
   if(!cloudState.client||!cloudState.user)return;
   await unsubscribeCloudRealtime();
   await smartCloudSync();
+  await downloadAllCloudMedia().catch(err=>console.error("[Momentum Cloud] media download failed",err));
 
   const uid=cloudState.user.id;
   cloudState.channel=cloudState.client
@@ -4957,8 +5100,9 @@ async function applyCloudRow(row){
     cloudState.applyingRemote=false
   }
 }
-async function uploadCloudNow(){
+async function uploadCloudNow(includeMedia=false){
   if(!cloudState.client||!cloudState.user)throw new Error("Sign in to Momentum Cloud first.");
+  if(includeMedia)await uploadAllCloudMedia();
   const now=new Date().toISOString();
   const payload={
     user_id:cloudState.user.id,
@@ -4986,16 +5130,13 @@ function scheduleCloudUpload(){
 async function downloadCloudNow(){
   const row=await getCloudRow();
   if(!row)throw new Error("There is no cloud save yet.");
-  await applyCloudRow(row)
+  await applyCloudRow(row);await downloadAllCloudMedia()
 }
 async function smartCloudSync(){
   const row=await getCloudRow();
   const localTs=Number(localStorage.getItem(CLOUD_LOCAL_TS_KEY)||0);
 
-  if(!row){
-    await uploadCloudNow();
-    return
-  }
+  if(!row){await uploadCloudNow(true);return}
 
   const remoteTs=Date.parse(row.updated_at||0)||0;
   cloudState.lastRemoteAt=remoteTs;
@@ -5188,7 +5329,7 @@ $("cloudSignInBtn")?.addEventListener("click",()=>cloudSignIn().catch(err=>setCl
 $("cloudSignUpBtn")?.addEventListener("click",()=>cloudSignUp().catch(err=>setCloudStatus(err.message,"error")));
 $("cloudSignOutBtn")?.addEventListener("click",()=>cloudSignOut().catch(err=>setCloudStatus(err.message,"error")));
 $("cloudSyncNowBtn")?.addEventListener("click",()=>smartCloudSync().catch(err=>setCloudStatus(err.message,"error")));
-$("cloudUploadBtn")?.addEventListener("click",()=>uploadCloudNow().catch(err=>setCloudStatus(err.message,"error")));
+$("cloudUploadBtn")?.addEventListener("click",()=>uploadCloudNow(true).catch(err=>setCloudStatus(err.message,"error")));
 $("cloudDownloadBtn")?.addEventListener("click",()=>downloadCloudNow().catch(err=>setCloudStatus(err.message,"error")));
 $("enablePushBtn")?.addEventListener("click",()=>enableMomentumPush().catch(err=>{
   console.error(err);$("pushStatus").textContent=err.message||"Could not enable notifications."
@@ -5248,6 +5389,12 @@ safeBoot("YouTube launch mode",()=>{
     hint.style.color="var(--accent)"
   }
 });
+function syncTaskTypeUI(){
+  const counter=$("taskType").value==="counter";
+  $("counterTaskSettings").classList.toggle("hidden",!counter);
+  $("taskTarget").required=counter;
+  $("taskStep").required=counter
+}
 function syncRepeatUI(){
   const repeat=$("taskRepeat").value;
   $("dailyRepeatSettings").classList.toggle("hidden",repeat!=="daily");
@@ -5263,12 +5410,15 @@ function syncRepeatUI(){
 $("addTaskBtn").onclick=()=>{
   $("taskDate").value=$("datePicker").value;
   $("taskRepeat").value="once";
+  $("taskType").value="check";
+  $("taskTarget").value="2";$("taskUnit").value="L";$("taskStep").value="0.25";
   document.querySelectorAll(".skipWeekday").forEach(x=>x.checked=false);
-  syncRepeatUI();
+  syncTaskTypeUI();syncRepeatUI();
   $("taskDialog").showModal()
 };
 $("cancelTask").onclick=()=>$("taskDialog").close();
 $("taskRepeat").addEventListener("change",syncRepeatUI);
+$("taskType").addEventListener("change",syncTaskTypeUI);
 $("taskDate").addEventListener("change",()=>{
   if($("taskRepeat").value==="weekly" && $("taskDate").value){
     $("weeklyDay").value=String(new Date($("taskDate").value+"T12:00:00").getDay())
@@ -5284,51 +5434,59 @@ $("taskForm").addEventListener("submit",e=>{
   const points=$("taskPoints").value;
   const taskDate=$("taskDate").value;
   const repeat=$("taskRepeat").value;
+  const taskType=$("taskType").value;
+  const target=$("taskTarget").value,unit=$("taskUnit").value.trim(),step=$("taskStep").value;
 
   if(repeat==="once"){
-    addTask(name,category,points,taskDate)
+    addTask(name,category,points,taskDate,taskType,target,unit,step)
   }else{
     const excludedDays=[...document.querySelectorAll(".skipWeekday:checked")].map(x=>Number(x.value));
-    addRecurringTask(name,category,points,taskDate,repeat,$("weeklyDay").value,excludedDays)
+    addRecurringTask(name,category,points,taskDate,repeat,$("weeklyDay").value,excludedDays,taskType,target,unit,step)
   }
 
   $("taskName").value="";
   $("taskPoints").value="1";
+  $("taskType").value="check";
   $("taskRepeat").value="once";
   document.querySelectorAll(".skipWeekday").forEach(x=>x.checked=false);
   $("taskDialog").close();
   taskSubmitBusy=false
 });
+function mutateTaskAndRefresh(i,mutator){
+  const key=$("datePicker").value,{data,day}=getDay(key),task=day.tasks[i];
+  if(!task)return;
+  syncRankLedger(data);
+  const oldLifetimeRank=lifetimeRankInfo(data),oldGrade=grade(avg(day,key,data));
+  mutator(task);
+  const newGrade=grade(avg(day,key,data));
+  if(order[newGrade]>order[oldGrade])recordRankGrade(data,key,newGrade);
+  const newLifetimeRank=lifetimeRankInfo(data);
+  save(data);renderMain();
+  if(order[newGrade]>order[oldGrade])showPersonaToast("grade","New Grade Achieved!",`Your daily grade is now ${newGrade}.`,newGrade);
+  if(newLifetimeRank.index>oldLifetimeRank.index)showPersonaToast("rank","Rank Up!",`You reached ${newLifetimeRank.current.name}.`);
+  checkAchievementsNow()
+}
+function adjustCounterTask(i,direction){
+  mutateTaskAndRefresh(i,task=>{
+    if(task.taskType!=="counter")return;
+    const target=Math.max(.01,Number(task.target)||1),step=Math.max(.01,Number(task.step)||1);
+    task.current=Math.max(0,Math.min(target,Number(((Number(task.current)||0)+direction*step).toFixed(6))));
+    task.done=task.current>=target
+  })
+}
 $("taskList").addEventListener("change",e=>{
   if(e.target.dataset.check!==undefined){
-    const key=$("datePicker").value;
-    const {data,day}=getDay(key),i=Number(e.target.dataset.check);
-
-    syncRankLedger(data);
-    const oldLifetimeRank=lifetimeRankInfo(data);
-    const oldGrade=grade(avg(day,key,data));
-
-    day.tasks[i].done=!day.tasks[i].done;
-    const newGrade=grade(avg(day,key,data));
-
-    if(order[newGrade]>order[oldGrade]){
-      recordRankGrade(data,key,newGrade)
-    }
-
-    const newLifetimeRank=lifetimeRankInfo(data);
-    save(data);
-    renderMain();
-
-    if(order[newGrade]>order[oldGrade]){
-      showPersonaToast("grade","New Grade Achieved!",`Your daily grade is now ${newGrade}.`,newGrade)
-    }
-    if(newLifetimeRank.index>oldLifetimeRank.index){
-      showPersonaToast("rank","Rank Up!",`You reached ${newLifetimeRank.current.name}.`)
-    }
-    checkAchievementsNow()
+    mutateTaskAndRefresh(Number(e.target.dataset.check),task=>{
+      if(task.taskType==="counter"){
+        const target=Math.max(.01,Number(task.target)||1);
+        if(task.done){task.current=0;task.done=false}else{task.current=target;task.done=true}
+      }else task.done=!task.done
+    })
   }
 });
 $("taskList").addEventListener("click",e=>{
+  if(e.target.dataset.counterPlus!==undefined){adjustCounterTask(Number(e.target.dataset.counterPlus),1);return}
+  if(e.target.dataset.counterMinus!==undefined){adjustCounterTask(Number(e.target.dataset.counterMinus),-1);return}
   if(e.target.dataset.focus!==undefined){
     openFocusMode(Number(e.target.dataset.focus));
     return
@@ -5359,32 +5517,21 @@ $("reminderList").addEventListener("click",e=>{if(e.target.dataset.read)markRead
 $("clearReadBtn").onclick=()=>{const d=load();d.reminders=d.reminders.filter(r=>!r.read);save(d);renderInbox()};
 $("popClose").onclick=closePop;$("popDone").onclick=()=>activePop&&markRead(activePop);$("popOpenInbox").onclick=()=>{showPage("inboxPage");closePop()};
 $("saveSettingsBtn").onclick=saveProfileSettings;
-$("avatarFile").addEventListener("change",e=>{
-  imageToProfile(e.target.files[0],"avatar");
-  e.target.value=""
-});
-$("introFile").addEventListener("change",e=>{
-  imageToProfile(e.target.files[0],"introImage");
-  e.target.value=""
-});
-$("removeAvatarBtn").onclick=()=>{
-  const d=load();d.profile.avatar=DEFAULT_AVATAR;save(d);
-  $("avatarFile").value="";renderMain();fillSettings()
-};
-$("removeIntroImageBtn").onclick=()=>{
-  const d=load();d.profile.introImage=DEFAULT_AVATAR;save(d);
-  $("introFile").value="";renderMain();fillSettings()
-};
+$("avatarFile").addEventListener("change",async e=>{const file=e.target.files?.[0];if(!file)return;await imageToProfile(file,"avatar");if(cloudState.user)await uploadCloudMediaBlob("avatar",file).catch(err=>setCloudStatus(err.message,"error"));e.target.value=""});
+$("introFile").addEventListener("change",async e=>{const file=e.target.files?.[0];if(!file)return;await imageToProfile(file,"introImage");if(cloudState.user)await uploadCloudMediaBlob("introImage",file).catch(err=>setCloudStatus(err.message,"error"));e.target.value=""});
+$("removeAvatarBtn").onclick=async()=>{const d=load();d.profile.avatar=DEFAULT_AVATAR;d.profile.cloudMedia.avatar=false;save(d);if(cloudState.user)await deleteCloudMedia("avatar").catch(err=>setCloudStatus(err.message,"error"));$("avatarFile").value="";renderMain();fillSettings()};
+$("removeIntroImageBtn").onclick=async()=>{const d=load();d.profile.introImage=DEFAULT_AVATAR;d.profile.cloudMedia.introImage=false;save(d);if(cloudState.user)await deleteCloudMedia("introImage").catch(err=>setCloudStatus(err.message,"error"));$("introFile").value="";renderMain();fillSettings()};
 $("introBackgroundFile").addEventListener("change",async e=>{
   const file=e.target.files?.[0];if(!file)return;
   await storeIntroBackground(file);
-  e.target.value="";
-  await hydrateIntroBackground()
+  if(cloudState.user)await uploadCloudMediaBlob("introBackground",file).catch(err=>setCloudStatus(err.message,"error"));
+  e.target.value="";await hydrateIntroBackground()
 });
 $("removeIntroBackgroundBtn").onclick=async()=>{
   await deleteIntroBackgroundBlob().catch(()=>{});
-  $("introBackgroundFile").value="";
-  await hydrateIntroBackground()
+  const d=load();d.profile.cloudMedia.introBackground=false;save(d);
+  if(cloudState.user)await deleteCloudMedia("introBackground").catch(err=>setCloudStatus(err.message,"error"));
+  $("introBackgroundFile").value="";await hydrateIntroBackground()
 };
 document.querySelectorAll(".swatch").forEach(s=>s.onclick=()=>{const [a,b]=s.dataset.theme.split(",");setTheme(a,b)});
 $("applyThemeBtn").onclick=()=>setTheme($("accentInput").value,$("accent2Input").value);
