@@ -2090,6 +2090,14 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   .counter-amount-input{width:104px!important;min-width:104px!important;font-size:16px!important}
 }
 
+
+/* Momentum 15.6.1 verification / cache hotfix */
+.counter-build-note{
+  display:inline-block;margin:0 0 9px;padding:3px 7px;
+  border:1px solid var(--accent);color:var(--accent);
+  font-size:9px;font-weight:1000;letter-spacing:.8px;
+}
+
 </style>
 </head>
 <body>
@@ -2803,15 +2811,15 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
       <label>Task type</label>
       <select id="taskType">
         <option value="check">Standard task — complete once</option>
-        <option value="counter">Amount / progress task — build toward a target</option>
+        <option value="counter">Amount / progress task — enter any amount each time</option>
       </select>
     </div>
-    <div id="counterTaskSettings" class="counter-task-settings hidden">
+    <div id="counterTaskSettings" class="counter-task-settings hidden"><div class="counter-build-note">FREE-AMOUNT MODE • v15.6.1</div>
       <div class="counter-form-grid">
         <div class="field"><label>Target amount</label><input id="taskTarget" type="number" min="0.01" step="0.01" value="2"></div>
         <div class="field"><label>Unit</label><input id="taskUnit" maxlength="16" value="L" placeholder="L, pages, reps..."></div>
       </div>
-      <div class="settings-note">Example: Water — target 2 L. Each time, enter whatever amount you drank and add it. Points are awarded when the target is reached.</div>
+      <div class="settings-note">No fixed increment. Example: Water — target 2 L. Later you can add 0.2 L, then 0.55 L, then 0.1 L — whatever amount you actually did.</div>
     </div>
     <div class="field">
       <label id="taskDateLabel">Task date</label>
@@ -5645,6 +5653,19 @@ window.addEventListener("load",()=>{
   momentumPortraitViewport();
   window.addEventListener("resize", momentumPortraitViewport, {passive:true});
   window.addEventListener("orientationchange", function(){setTimeout(momentumPortraitViewport,120)}, {passive:true});
+})();
+</script>
+
+
+<script>
+(function(){
+  if(!("serviceWorker" in navigator))return;
+  let reloadedForNewWorker=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{
+    if(reloadedForNewWorker)return;
+    reloadedForNewWorker=true;
+    setTimeout(()=>location.reload(),150)
+  });
 })();
 </script>
 

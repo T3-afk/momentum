@@ -1,4 +1,4 @@
-const CACHE="momentum-pwa-v15-6-free-amount-push";
+const CACHE="momentum-pwa-v15-6-1-free-amount";
 const APP_SHELL=[
   "./",
   "./index.html",
@@ -10,7 +10,16 @@ const APP_SHELL=[
 ];
 
 self.addEventListener("install",event=>{
-  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_SHELL)));
+  event.waitUntil(
+    caches.open(CACHE).then(async cache=>{
+      for(const url of APP_SHELL){
+        try{
+          const response=await fetch(url,{cache:"reload"});
+          if(response.ok)await cache.put(url,response.clone())
+        }catch{}
+      }
+    })
+  );
   self.skipWaiting();
 });
 
@@ -40,7 +49,7 @@ self.addEventListener("fetch",event=>{
 
   if(event.request.mode==="navigate"){
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request,{cache:"no-store"})
         .then(response=>{
           const clone=response.clone();
           caches.open(CACHE).then(cache=>cache.put("./index.html",clone));
