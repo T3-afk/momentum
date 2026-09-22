@@ -1,4 +1,4 @@
-const CACHE="momentum-pwa-v15-5-media-counter";
+const CACHE="momentum-pwa-v15-6-free-amount-push";
 const APP_SHELL=[
   "./",
   "./index.html",

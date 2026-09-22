@@ -2074,6 +2074,22 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   .counter-btn{min-height:38px}
 }
 
+
+/* ==================== MOMENTUM 15.6 FREE-AMOUNT TASKS ==================== */
+.counter-entry{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.counter-amount-input{
+  width:96px!important;min-width:80px!important;max-width:120px!important;
+  min-height:34px;padding:5px 7px!important;border:2px solid #555!important;
+  background:#0e0e0e!important;color:#fff!important;font-weight:1000!important
+}
+.counter-unit-label{font-size:10px;color:#aaa;font-weight:1000;min-width:18px}
+.counter-btn.add{border-color:var(--accent);color:var(--accent)}
+.counter-btn.remove{border-color:#777;color:#bbb}
+@media(max-width:760px){
+  .counter-entry{width:100%}
+  .counter-amount-input{width:104px!important;min-width:104px!important;font-size:16px!important}
+}
+
 </style>
 </head>
 <body>
@@ -2794,9 +2810,8 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
       <div class="counter-form-grid">
         <div class="field"><label>Target amount</label><input id="taskTarget" type="number" min="0.01" step="0.01" value="2"></div>
         <div class="field"><label>Unit</label><input id="taskUnit" maxlength="16" value="L" placeholder="L, pages, reps..."></div>
-        <div class="field"><label>Add each tap</label><input id="taskStep" type="number" min="0.01" step="0.01" value="0.25"></div>
       </div>
-      <div class="settings-note">Example: Water — target 2 L, add 0.25 L each time. Points are awarded when the target is reached.</div>
+      <div class="settings-note">Example: Water — target 2 L. Each time, enter whatever amount you drank and add it. Points are awarded when the target is reached.</div>
     </div>
     <div class="field">
       <label id="taskDateLabel">Task date</label>
@@ -2867,7 +2882,6 @@ function normalize(d){
     t.taskType=t.taskType==="counter"?"counter":"check";
     if(t.taskType==="counter"){
       t.target=Math.max(.01,Number(t.target)||1);
-      t.step=Math.max(.01,Number(t.step)||1);
       t.unit=String(t.unit||"").slice(0,16);
       t.current=Math.max(0,Math.min(t.target,Number(t.current)||0));
       if(t.done&&t.current<t.target)t.current=t.target;
@@ -2881,7 +2895,6 @@ function normalize(d){
     r.taskType=r.taskType==="counter"?"counter":"check";
     if(r.taskType==="counter"){
       r.target=Math.max(.01,Number(r.target)||1);
-      r.step=Math.max(.01,Number(r.step)||1);
       r.unit=String(r.unit||"").slice(0,16)
     }
   });
@@ -2928,7 +2941,6 @@ function ensureRecurringTasksForDay(d,key){
       target:rule.taskType==="counter"?Math.max(.01,Number(rule.target)||1):undefined,
       current:rule.taskType==="counter"?0:undefined,
       unit:rule.taskType==="counter"?String(rule.unit||""):undefined,
-      step:rule.taskType==="counter"?Math.max(.01,Number(rule.step)||1):undefined,
       done:false
     });
     changed=true
@@ -3788,7 +3800,7 @@ function taskCardHTML(t,i){
   const target=counter?Math.max(.01,Number(t.target)||1):0;
   const current=counter?Math.max(0,Math.min(target,Number(t.current)||0)):0;
   const pct=counter?Math.max(0,Math.min(100,current/target*100)):0;
-  const unit=String(t.unit||"").trim(),step=counter?Math.max(.01,Number(t.step)||1):0;
+  const unit=String(t.unit||"").trim();
   const n=x=>Number(x.toFixed(3)).toLocaleString();
   return `<div class="task ${t.done?"done":""}">
     <input class="check" type="checkbox" data-check="${i}" ${t.done?"checked":""}>
@@ -3798,7 +3810,12 @@ function taskCardHTML(t,i){
     <div class="tag">${t.category==="school"?"School":t.category==="home"?"Home":"Health"}</div>
     <div class="pts">+${Number(t.points)} pts${counter?" at target":""}</div>
     <div class="task-actions">
-      ${counter?`<span class="counter-controls"><button type="button" class="counter-btn minus" data-counter-minus="${i}">− ${n(step)}${unit?` ${esc(unit)}`:""}</button><button type="button" class="counter-btn plus" data-counter-plus="${i}">+ ${n(step)}${unit?` ${esc(unit)}`:""}</button></span>`:""}
+      ${counter?`<span class="counter-entry">
+        <input class="counter-amount-input" data-counter-amount="${i}" type="number" min="0.001" step="any" inputmode="decimal" placeholder="Amount" aria-label="Amount to add or remove">
+        <span class="counter-unit-label">${unit?esc(unit):""}</span>
+        <button type="button" class="counter-btn add" data-counter-add="${i}">+ Add</button>
+        <button type="button" class="counter-btn remove" data-counter-remove="${i}">− Remove</button>
+      </span>`:""}
       <button class="focus-task" data-focus="${i}">Focus</button><button class="delete" data-delete="${i}">×</button>
     </div>
   </div>`
@@ -3837,7 +3854,7 @@ function renderMain(){
   renderProjects();
   renderStats();
 }
-function addTask(name,category,points,taskDate,taskType="check",target=1,unit="",step=1){
+function addTask(name,category,points,taskDate,taskType="check",target=1,unit=""){
   const key=taskDate||$("datePicker").value;
   const {data,day}=getDay(key),counter=taskType==="counter";
   day.tasks.push({
@@ -3847,7 +3864,6 @@ function addTask(name,category,points,taskDate,taskType="check",target=1,unit=""
     target:counter?Math.max(.01,Number(target)||1):undefined,
     current:counter?0:undefined,
     unit:counter?String(unit||"").slice(0,16):undefined,
-    step:counter?Math.max(.01,Number(step)||1):undefined,
     done:false
   });
   save(data);
@@ -3864,7 +3880,7 @@ function addTask(name,category,points,taskDate,taskType="check",target=1,unit=""
     showPersonaToast("inbox","Task Scheduled",`${name} • ${pretty(key)}`)
   }
 }
-function addRecurringTask(name,category,points,startDate,repeat,weeklyDay,excludedDays,taskType="check",target=1,unit="",step=1){
+function addRecurringTask(name,category,points,startDate,repeat,weeklyDay,excludedDays,taskType="check",target=1,unit=""){
   const d=load(),counter=taskType==="counter";
   const rule={
     id:crypto.randomUUID?.()||String(Date.now()+Math.random()),
@@ -3872,7 +3888,6 @@ function addRecurringTask(name,category,points,startDate,repeat,weeklyDay,exclud
     taskType:counter?"counter":"check",
     target:counter?Math.max(.01,Number(target)||1):undefined,
     unit:counter?String(unit||"").slice(0,16):undefined,
-    step:counter?Math.max(.01,Number(step)||1):undefined,
     startDate,
     repeat,
     weeklyDay:Number(weeklyDay),
@@ -4710,7 +4725,7 @@ $("mobileAddTaskBtn")?.addEventListener("click",()=>{
   $("taskDate").value=$("datePicker").value;
   $("taskRepeat").value="once";
   $("taskType").value="check";
-  $("taskTarget").value="2";$("taskUnit").value="L";$("taskStep").value="0.25";
+  $("taskTarget").value="2";$("taskUnit").value="L";
   document.querySelectorAll(".skipWeekday").forEach(x=>x.checked=false);
   syncTaskTypeUI();syncRepeatUI();
   $("taskDialog").showModal()
@@ -5393,7 +5408,6 @@ function syncTaskTypeUI(){
   const counter=$("taskType").value==="counter";
   $("counterTaskSettings").classList.toggle("hidden",!counter);
   $("taskTarget").required=counter;
-  $("taskStep").required=counter
 }
 function syncRepeatUI(){
   const repeat=$("taskRepeat").value;
@@ -5411,7 +5425,7 @@ $("addTaskBtn").onclick=()=>{
   $("taskDate").value=$("datePicker").value;
   $("taskRepeat").value="once";
   $("taskType").value="check";
-  $("taskTarget").value="2";$("taskUnit").value="L";$("taskStep").value="0.25";
+  $("taskTarget").value="2";$("taskUnit").value="L";
   document.querySelectorAll(".skipWeekday").forEach(x=>x.checked=false);
   syncTaskTypeUI();syncRepeatUI();
   $("taskDialog").showModal()
@@ -5435,13 +5449,13 @@ $("taskForm").addEventListener("submit",e=>{
   const taskDate=$("taskDate").value;
   const repeat=$("taskRepeat").value;
   const taskType=$("taskType").value;
-  const target=$("taskTarget").value,unit=$("taskUnit").value.trim(),step=$("taskStep").value;
+  const target=$("taskTarget").value,unit=$("taskUnit").value.trim();
 
   if(repeat==="once"){
-    addTask(name,category,points,taskDate,taskType,target,unit,step)
+    addTask(name,category,points,taskDate,taskType,target,unit)
   }else{
     const excludedDays=[...document.querySelectorAll(".skipWeekday:checked")].map(x=>Number(x.value));
-    addRecurringTask(name,category,points,taskDate,repeat,$("weeklyDay").value,excludedDays,taskType,target,unit,step)
+    addRecurringTask(name,category,points,taskDate,repeat,$("weeklyDay").value,excludedDays,taskType,target,unit)
   }
 
   $("taskName").value="";
@@ -5466,11 +5480,22 @@ function mutateTaskAndRefresh(i,mutator){
   if(newLifetimeRank.index>oldLifetimeRank.index)showPersonaToast("rank","Rank Up!",`You reached ${newLifetimeRank.current.name}.`);
   checkAchievementsNow()
 }
-function adjustCounterTask(i,direction){
+function changeCounterTaskByEnteredAmount(i,direction){
+  const input=document.querySelector(`[data-counter-amount="${i}"]`);
+  const amount=Number(input?.value);
+  if(!input||!Number.isFinite(amount)||amount<=0){
+    if(input){
+      input.setCustomValidity("Enter an amount greater than 0.");
+      input.reportValidity();
+      setTimeout(()=>input.setCustomValidity(""),700)
+    }
+    return
+  }
   mutateTaskAndRefresh(i,task=>{
     if(task.taskType!=="counter")return;
-    const target=Math.max(.01,Number(task.target)||1),step=Math.max(.01,Number(task.step)||1);
-    task.current=Math.max(0,Math.min(target,Number(((Number(task.current)||0)+direction*step).toFixed(6))));
+    const target=Math.max(.01,Number(task.target)||1);
+    const next=(Number(task.current)||0)+(direction*amount);
+    task.current=Math.max(0,Math.min(target,Number(next.toFixed(6))));
     task.done=task.current>=target
   })
 }
@@ -5485,8 +5510,8 @@ $("taskList").addEventListener("change",e=>{
   }
 });
 $("taskList").addEventListener("click",e=>{
-  if(e.target.dataset.counterPlus!==undefined){adjustCounterTask(Number(e.target.dataset.counterPlus),1);return}
-  if(e.target.dataset.counterMinus!==undefined){adjustCounterTask(Number(e.target.dataset.counterMinus),-1);return}
+  if(e.target.dataset.counterAdd!==undefined){changeCounterTaskByEnteredAmount(Number(e.target.dataset.counterAdd),1);return}
+  if(e.target.dataset.counterRemove!==undefined){changeCounterTaskByEnteredAmount(Number(e.target.dataset.counterRemove),-1);return}
   if(e.target.dataset.focus!==undefined){
     openFocusMode(Number(e.target.dataset.focus));
     return
