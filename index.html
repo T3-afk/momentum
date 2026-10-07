@@ -2099,48 +2099,83 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
 }
 
 
-/* ==================== MOMENTUM 16 SOCIAL STATS ==================== */
-.social-stats-shell{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(320px,.82fr);gap:14px;margin-bottom:14px}
-.social-radar-card,.social-level-card{padding:10px 16px 16px;min-width:0}
-.social-kicker{text-transform:uppercase;font-size:10px;letter-spacing:1.3px;font-weight:1000;color:#999;margin:-4px 0 4px}
-.social-radar-wrap{position:relative;width:min(100%,560px);height:410px;margin:0 auto}
-.social-radar-svg{position:absolute;inset:6px 5% 0;width:90%;height:96%;overflow:visible;filter:drop-shadow(0 10px 18px rgba(0,0,0,.28))}
-.social-rings polygon,.social-spokes line{fill:none;stroke:rgba(255,255,255,.16);stroke-width:2}
-.social-rings polygon:last-child{stroke:rgba(255,255,255,.38);stroke-width:3}
-.social-spokes line{stroke-width:1.2}
-.social-radar-glow{fill:rgba(var(--accent-rgb),.22);stroke:rgba(var(--accent-rgb),.35);stroke-width:11;stroke-linejoin:round}
-.social-radar-area{fill:rgba(var(--accent-rgb),.42);stroke:var(--accent);stroke-width:4;stroke-linejoin:round}
-.social-radar-dot{fill:#fff;stroke:var(--accent2);stroke-width:3}
-.social-radar-label{position:absolute;z-index:3;display:flex;flex-direction:column;line-height:.92;text-transform:uppercase;font-weight:1000;text-shadow:2px 2px 0 #000}
-.social-radar-label b{font-size:14px;color:#fff}.social-radar-label span{font-size:11px;color:var(--accent);margin-top:4px}
-.social-radar-label.knowledge{top:3px;left:50%;transform:translateX(-50%);text-align:center;align-items:center}
-.social-radar-label.guts{right:0;top:31%;text-align:right;align-items:flex-end}
-.social-radar-label.proficiency{right:5%;bottom:2%;text-align:right;align-items:flex-end}
-.social-radar-label.kindness{left:5%;bottom:2%}
-.social-radar-label.charm{left:0;top:31%}
-.social-explain{padding:10px 12px;border-left:4px solid var(--accent);background:#0b0b0b;color:#aaa;font-size:11px;line-height:1.45;font-weight:750}
-.social-migration-note{margin-top:8px;padding:9px 11px;border:1px solid rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.07);font-size:10px;color:#bbb;font-weight:850}
-.social-stats-list{display:grid;gap:9px;margin-top:8px}
-.social-stat-row{padding:10px 11px;background:#0a0a0a;border:1px solid #303030;position:relative;overflow:hidden}
-.social-stat-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
-.social-stat-head{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
-.social-stat-name{display:flex;align-items:center;gap:8px;font-weight:1000;text-transform:uppercase;font-size:13px}.social-stat-icon{color:var(--accent);font-size:17px}
-.social-stat-level{font-size:22px;font-weight:1000;color:#fff;line-height:1}
-.social-stat-level small{font-size:9px;color:#888;margin-right:4px}
-.social-stat-progress{height:8px;background:#202020;border:1px solid #444;margin-top:8px;overflow:hidden;transform:skewX(-9deg)}
-.social-stat-progress span{display:block;height:100%;background:var(--accent);transition:width .35s ease}
-.social-stat-foot{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:9px;color:#777;font-weight:900}
+/* ==================== MOMENTUM 17 — P5 SOCIAL STATS ==================== */
+.p5-social-shell{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.55fr);gap:14px;margin-bottom:16px;align-items:stretch}
+.p5-social-panel{position:relative;min-height:620px;background:#050505;border:4px solid #fff;overflow:hidden;isolation:isolate;box-shadow:9px 9px 0 #000,13px 13px 0 #e40020}
+.p5-social-panel::before{content:"";position:absolute;inset:-12%;z-index:-3;background:repeating-linear-gradient(-18deg,#090909 0 26px,#111 27px 45px,#050505 46px 64px);transform:rotate(-2deg)}
+.p5-social-panel::after{content:"";position:absolute;left:-10%;right:-12%;top:17%;height:68%;z-index:-2;background:#343434;clip-path:polygon(8% 28%,38% 28%,50% 0,62% 28%,94% 28%,69% 49%,78% 87%,50% 66%,22% 87%,31% 49%);transform:rotate(-1.5deg);filter:drop-shadow(0 8px 0 #000)}
+.p5-paper-shard{position:absolute;z-index:-1;pointer-events:none;background:#e40020}
+.p5-paper-shard.shard-a{width:52%;height:17%;right:-8%;top:-4%;transform:rotate(8deg);clip-path:polygon(0 24%,100% 0,84% 100%,6% 78%)}
+.p5-paper-shard.shard-b{width:35%;height:11%;left:-7%;bottom:2%;transform:rotate(-8deg);clip-path:polygon(0 8%,100% 22%,84% 100%,5% 82%)}
+.p5-social-heading{position:absolute;left:18px;top:12px;z-index:8;display:flex;align-items:flex-end;gap:7px;transform:rotate(-4deg);font-weight:1000;text-transform:uppercase;line-height:.82}
+.p5-social-heading span{font-size:28px;background:#fff;color:#050505;padding:6px 9px 8px;box-shadow:5px 5px 0 #050505}
+.p5-social-heading b{font-size:48px;background:#e40020;color:#fff;padding:4px 10px 7px;text-shadow:3px 3px 0 #050505;box-shadow:6px 6px 0 #fff}
+.p5-social-subhead{position:absolute;right:20px;top:22px;z-index:8;color:#fff;font-size:10px;font-weight:1000;letter-spacing:1.3px;transform:rotate(2deg)}
+.p5-social-radar{position:relative;width:min(100%,650px);height:590px;margin:18px auto 0}
+.social-radar-svg{position:absolute;left:50%;top:53%;width:min(91%,570px);height:min(91%,570px);transform:translate(-50%,-50%) rotate(-.5deg);overflow:visible;filter:drop-shadow(0 12px 8px rgba(0,0,0,.55))}
+.p5-star-rings polygon{fill:none;stroke:#090909;stroke-width:8;stroke-linejoin:round}
+.p5-star-rings polygon:nth-child(odd){stroke:#f2f2f2;stroke-width:2.5;opacity:.70}
+.p5-star-rings polygon:last-child{stroke:#050505;stroke-width:14;opacity:1}
+.p5-star-rings polygon:nth-last-child(2){stroke:#fff;stroke-width:3.5;opacity:.92}
+.social-radar-glow{fill:#ffb700;stroke:#000;stroke-width:16;stroke-linejoin:round;opacity:.22;filter:blur(4px)}
+.social-radar-area{fill:#ffc21a;stroke:#050505;stroke-width:9;stroke-linejoin:round;transition:points .4s cubic-bezier(.2,.9,.2,1);filter:drop-shadow(0 0 0 #000)}
+.p5-star-core{fill:#ffe26a;stroke:#f7ad00;stroke-width:4;opacity:.95;pointer-events:none}
+.social-radar-dot{fill:#fff;stroke:#050505;stroke-width:4}
+.social-radar-label{position:absolute;z-index:7;display:flex;flex-direction:column;align-items:flex-start;line-height:1;text-transform:none;font-weight:1000;text-shadow:none}
+.p5-stat-tag{display:flex;align-items:center;gap:5px;background:#ffd521;border:4px solid #050505;color:#050505;padding:4px 7px 5px;box-shadow:3px 3px 0 #fff;transform:skewX(-6deg) rotate(-2deg);white-space:nowrap}
+.p5-stat-tag b{font-size:18px;letter-spacing:-1.1px;font-style:italic;text-transform:none}
+.p5-stat-tag span{display:grid;place-items:center;min-width:24px;height:24px;padding:0 3px;background:#050505;color:#ffd521;font-size:15px;font-weight:1000;transform:skewX(6deg);border:2px solid #050505}
+.social-radar-label em{display:block;margin:6px 4px 0;color:#fff;font-size:15px;font-style:normal;font-weight:1000;text-shadow:3px 3px 0 #050505;white-space:nowrap}
+.social-radar-label.knowledge{top:3.5%;left:50%;transform:translateX(-50%);align-items:center}
+.social-radar-label.knowledge .p5-stat-tag{transform:translateX(2px) skewX(-6deg) rotate(-2deg)}
+.social-radar-label.guts{right:1.5%;top:31%}
+.social-radar-label.guts .p5-stat-tag{transform:skewX(-6deg) rotate(2deg)}
+.social-radar-label.proficiency{right:7%;bottom:3.5%}
+.social-radar-label.proficiency .p5-stat-tag{transform:skewX(-6deg) rotate(-2deg)}
+.social-radar-label.kindness{left:7%;bottom:3.5%}
+.social-radar-label.kindness .p5-stat-tag{transform:skewX(-6deg) rotate(2deg)}
+.social-radar-label.charm{left:1.5%;top:31%}
+.social-radar-label.charm .p5-stat-tag{transform:skewX(-6deg) rotate(-2deg)}
+.social-migration-note{position:absolute;left:18px;right:18px;bottom:10px;z-index:8;padding:8px 10px;background:#050505;border:2px solid #fff;color:#bbb;font-size:9px;font-weight:850}
+.p5-social-detail{position:relative;background:#f1f1ed;color:#050505;border:4px solid #050505;padding:54px 12px 12px;overflow:hidden;box-shadow:8px 8px 0 #e40020;transform:rotate(.6deg)}
+.p5-social-detail::before{content:"";position:absolute;inset:-20px -35px auto -35px;height:65px;background:#050505;transform:rotate(-3deg);z-index:0}
+.p5-detail-heading{position:absolute;left:10px;top:8px;z-index:2;display:flex;gap:5px;align-items:end;font-weight:1000;transform:rotate(-3deg)}
+.p5-detail-heading span{font-size:17px;color:#fff;padding:4px 6px}
+.p5-detail-heading b{font-size:25px;background:#e40020;color:#fff;padding:3px 7px 5px;text-shadow:2px 2px 0 #050505}
+.social-stats-list{display:grid;gap:9px;margin-top:2px}
+.social-stat-row{padding:9px 9px 10px;background:#050505;border:0;position:relative;overflow:hidden;box-shadow:4px 4px 0 #e40020;transform:rotate(-.35deg)}
+.social-stat-row:nth-child(even){transform:rotate(.45deg)}
+.social-stat-row::before{content:"";position:absolute;left:-22px;top:-12px;width:70px;height:70px;background:#ffd521;transform:rotate(18deg);opacity:.18}
+.social-stat-head{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center}
+.social-stat-name{display:flex;align-items:center;gap:7px;font-weight:1000;text-transform:none;font-size:14px;color:#fff;letter-spacing:-.3px}
+.social-stat-icon{display:grid;place-items:center;width:25px;height:25px;background:#ffd521;color:#050505;border:2px solid #fff;box-shadow:2px 2px 0 #050505;font-size:14px;transform:rotate(-7deg)}
+.social-stat-level{font-size:22px;font-weight:1000;color:#ffd521;line-height:.9;text-align:right}
+.social-stat-level small{display:block;font-size:8px;color:#fff;margin:0 0 2px;text-transform:uppercase}
+.social-stat-title{display:block;margin:5px 0 0 32px;color:#fff;font-size:12px;font-weight:1000;text-transform:none}
+.social-stat-progress{height:8px;background:#252525;border:2px solid #fff;margin-top:7px;overflow:hidden;transform:skewX(-11deg)}
+.social-stat-progress span{display:block;height:100%;background:#ffd521;transition:width .35s ease}
+.social-stat-foot{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:8px;color:#aaa;font-weight:900}
+.p5-social-detail .social-explain{margin-top:12px;padding:9px 10px;border:0;background:#050505;color:#bbb;font-size:10px;line-height:1.4;font-weight:800;box-shadow:4px 4px 0 #e40020;transform:rotate(-.5deg)}
 .social-task-chip{display:inline-flex;margin:5px 5px 0 0;padding:2px 5px;border:1px solid rgba(var(--accent-rgb),.5);color:var(--accent);font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.35px}
 .social-reward-pill{color:var(--accent)!important;border-color:rgba(var(--accent-rgb),.6)!important}
-@media(max-width:980px){.social-stats-shell{grid-template-columns:1fr}.social-radar-wrap{height:390px}}
+@media(max-width:1050px){.p5-social-shell{grid-template-columns:1fr}.p5-social-panel{min-height:610px}.p5-social-detail{transform:none}}
 @media(max-width:600px){
-  .social-radar-card,.social-level-card{padding:8px 9px 12px!important}
-  .social-radar-wrap{height:330px;width:100%}
-  .social-radar-svg{inset:8px 2% 0;width:96%;height:92%}
-  .social-radar-label b{font-size:10px}.social-radar-label span{font-size:9px}
-  .social-radar-label.guts{right:1%;top:30%}.social-radar-label.charm{left:1%;top:30%}
-  .social-radar-label.proficiency{right:1%;bottom:1%}.social-radar-label.kindness{left:1%;bottom:1%}
-  .social-stat-level{font-size:19px}
+  .p5-social-panel{min-height:510px;border-width:3px;box-shadow:5px 5px 0 #000,8px 8px 0 #e40020}
+  .p5-social-heading{left:9px;top:8px;gap:4px}.p5-social-heading span{font-size:17px;padding:4px 6px}.p5-social-heading b{font-size:31px;padding:3px 7px 5px}
+  .p5-social-subhead{display:none}
+  .p5-social-radar{height:485px;margin-top:9px}
+  .social-radar-svg{top:52%;width:94%;height:94%}
+  .p5-stat-tag{border-width:3px;padding:3px 5px 4px;box-shadow:2px 2px 0 #fff}
+  .p5-stat-tag b{font-size:12px;letter-spacing:-.6px}.p5-stat-tag span{min-width:19px;height:19px;font-size:11px;padding:0 2px}
+  .social-radar-label em{font-size:10px;margin-top:4px;text-shadow:2px 2px 0 #050505}
+  .social-radar-label.knowledge{top:8%}
+  .social-radar-label.guts{right:0;top:31%}
+  .social-radar-label.charm{left:0;top:31%}
+  .social-radar-label.proficiency{right:1%;bottom:7%}
+  .social-radar-label.kindness{left:1%;bottom:7%}
+  .social-migration-note{left:8px;right:8px;bottom:7px;font-size:8px}
+  .p5-social-detail{padding:48px 8px 9px;box-shadow:5px 5px 0 #e40020}
+  .p5-detail-heading b{font-size:21px}.p5-detail-heading span{font-size:14px}
 }
 
 </style>
@@ -2384,45 +2419,51 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   <section id="statsPage" class="page">
     <div class="stats-page-shell">
 
-      <div class="social-stats-shell">
-        <div class="card social-radar-card">
-          <div class="card-title">Social Stats</div>
-          <div class="social-kicker">Five independent stats • Level 1–10</div>
-          <div class="social-radar-wrap">
-            <svg class="social-radar-svg" viewBox="0 0 440 400" aria-label="Social Stats radar">
-              <g class="social-rings">
-                <polygon points="220,165 253,189 240,228 200,228 187,189"></polygon>
-                <polygon points="220,130 286,178 260,256 180,256 154,178"></polygon>
-                <polygon points="220,95 319,167 280,284 160,284 121,167"></polygon>
-                <polygon points="220,60 352,156 300,312 140,312 88,156"></polygon>
-                <polygon points="220,25 385,145 320,340 120,340 55,145"></polygon>
-              </g>
-              <g class="social-spokes">
-                <line x1="220" y1="200" x2="220" y2="25"></line>
-                <line x1="220" y1="200" x2="385" y2="145"></line>
-                <line x1="220" y1="200" x2="320" y2="340"></line>
-                <line x1="220" y1="200" x2="120" y2="340"></line>
-                <line x1="220" y1="200" x2="55" y2="145"></line>
-              </g>
-              <polygon id="socialRadarGlow" class="social-radar-glow" points="220,182.5 236.5,194.5 230,214 210,214 203.5,194.5"></polygon>
-              <polygon id="socialRadarArea" class="social-radar-area" points="220,182.5 236.5,194.5 230,214 210,214 203.5,194.5"></polygon>
+      <div class="social-stats-shell p5-social-shell">
+        <div class="p5-social-panel">
+          <div class="p5-paper-shard shard-a"></div>
+          <div class="p5-paper-shard shard-b"></div>
+          <div class="p5-social-heading"><span>SOCIAL</span><b>STATS</b></div>
+          <div class="p5-social-subhead">BUILD YOURSELF. ONE DAY AT A TIME.</div>
+
+          <div class="social-radar-wrap p5-social-radar">
+            <svg class="social-radar-svg" viewBox="0 0 500 500" aria-label="Social Stats star">
+              <g id="socialStarRings" class="p5-star-rings"></g>
+              <polygon id="socialRadarGlow" class="social-radar-glow" points="250,220 268,242 300,250 268,258 250,290 232,258 200,250 232,242"></polygon>
+              <polygon id="socialRadarArea" class="social-radar-area" points="250,220 268,242 300,250 268,258 250,290 232,258 200,250 232,242"></polygon>
+              <polygon class="p5-star-core" points="250,220 260,240 282,243 266,258 270,280 250,269 230,280 234,258 218,243 240,240"></polygon>
               <g id="socialRadarDots"></g>
             </svg>
-            <div class="social-radar-label knowledge"><b>Knowledge</b><span id="socialRadarKnowledge">Lv. 1</span></div>
-            <div class="social-radar-label guts"><b>Guts</b><span id="socialRadarGuts">Lv. 1</span></div>
-            <div class="social-radar-label proficiency"><b>Proficiency</b><span id="socialRadarProficiency">Lv. 1</span></div>
-            <div class="social-radar-label kindness"><b>Kindness</b><span id="socialRadarKindness">Lv. 1</span></div>
-            <div class="social-radar-label charm"><b>Charm</b><span id="socialRadarCharm">Lv. 1</span></div>
+
+            <div class="social-radar-label knowledge">
+              <div class="p5-stat-tag"><b>Knowledge</b><span id="socialRadarKnowledge">1</span></div>
+              <em id="socialTitleKnowledge">Oblivious</em>
+            </div>
+            <div class="social-radar-label guts">
+              <div class="p5-stat-tag"><b>Guts</b><span id="socialRadarGuts">1</span></div>
+              <em id="socialTitleGuts">Milquetoast</em>
+            </div>
+            <div class="social-radar-label proficiency">
+              <div class="p5-stat-tag"><b>Proficiency</b><span id="socialRadarProficiency">1</span></div>
+              <em id="socialTitleProficiency">Bumbling</em>
+            </div>
+            <div class="social-radar-label kindness">
+              <div class="p5-stat-tag"><b>Kindness</b><span id="socialRadarKindness">1</span></div>
+              <em id="socialTitleKindness">Inoffensive</em>
+            </div>
+            <div class="social-radar-label charm">
+              <div class="p5-stat-tag"><b>Charm</b><span id="socialRadarCharm">1</span></div>
+              <em id="socialTitleCharm">Existent</em>
+            </div>
           </div>
-          <div class="social-explain">
-            Complete tasks and projects to build the Social Stat assigned to them. XP is permanent once earned, so unchecking or deleting an old task cannot be used to farm or erase progress.
-          </div>
+
           <div id="socialMigrationNote" class="social-migration-note hidden"></div>
         </div>
 
-        <div class="card social-level-card">
-          <div class="card-title">Social Stat Levels</div>
+        <div class="social-level-card p5-social-detail">
+          <div class="p5-detail-heading"><span>LEVEL</span><b>PROGRESS</b></div>
           <div id="socialStatsList" class="social-stats-list"></div>
+          <div class="social-explain">Complete tasks and projects to build the Social Stat assigned to them. Earned XP is permanent, so completed work cannot be farmed by toggling it repeatedly.</div>
         </div>
       </div>
 
@@ -2945,16 +2986,21 @@ const $=id=>document.getElementById(id);
 const DEFAULT_AVATAR=`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><rect width="100%" height="100%" fill="#111"/><circle cx="250" cy="185" r="92" fill="#eee"/><path d="M90 470c25-115 105-170 160-170s135 55 160 170" fill="#eee"/></svg>`)}`;
 const SOCIAL_STAT_KEYS=["knowledge","guts","proficiency","kindness","charm"];
 const SOCIAL_STAT_META={
-  knowledge:{name:"Knowledge",icon:"◆"},
-  guts:{name:"Guts",icon:"▲"},
-  proficiency:{name:"Proficiency",icon:"✦"},
-  kindness:{name:"Kindness",icon:"♥"},
-  charm:{name:"Charm",icon:"★"}
+  knowledge:{name:"Knowledge",icon:"◆",titles:["Oblivious","Curious","Learned","Studious","Scholarly","Well-Read","Encyclopedic","Brilliant","Sage","Erudite"]},
+  guts:{name:"Guts",icon:"▲",titles:["Milquetoast","Resolute","Bold","Fearless","Staunch","Unshaken","Dauntless","Iron-Willed","Heroic","Lionhearted"]},
+  proficiency:{name:"Proficiency",icon:"✦",titles:["Bumbling","Capable","Decent","Adept","Skilled","Expert","Masterful","Virtuoso","Peerless","Transcendent"]},
+  kindness:{name:"Kindness",icon:"♥",titles:["Inoffensive","Thoughtful","Considerate","Caring","Empathetic","Compassionate","Selfless","Benevolent","Saintly","Angelic"]},
+  charm:{name:"Charm",icon:"★",titles:["Existent","Noticeable","Head-turning","Polished","Suave","Magnetic","Charismatic","Captivating","Irresistible","Debonair"]}
 };
 const SOCIAL_LEVEL_THRESHOLDS=[0,5,12,22,35,51,70,92,117,145];
 const SOCIAL_MAX_XP=SOCIAL_LEVEL_THRESHOLDS[SOCIAL_LEVEL_THRESHOLDS.length-1];
 function defaultSocialStatForCategory(category){return category==="school"?"knowledge":category==="home"?"proficiency":"guts"}
 function socialStatName(key){return SOCIAL_STAT_META[key]?.name||"Knowledge"}
+function socialStatTitle(key,level){
+  const titles=SOCIAL_STAT_META[key]?.titles||[];
+  const lv=Math.max(1,Math.min(10,Number(level)||1));
+  return titles[lv-1]||`Level ${lv}`
+}
 
 function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack",cloudMedia:{avatar:false,introImage:false,introBackground:false,soundtrack:false}},days:{},reminders:[],recurringTasks:[],rankLedger:{},socialStats:{knowledge:0,guts:0,proficiency:0,kindness:0,charm:0},socialStatLedger:{},socialStatsVersion:0,legacyRankPointsMigrated:0,permanentTasks:[],projects:[],focusSessions:[],achievements:{}}}
 function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
@@ -3245,7 +3291,7 @@ function notifySocialAward(result,sourceName=""){
   if(!result?.awarded)return;
   const name=socialStatName(result.stat);
   if(result.levelUp){
-    showPersonaToast("stat",`${name} LEVEL UP!`,`Lv. ${result.before.level} → Lv. ${result.after.level}${sourceName?` • ${sourceName}`:""}`,String(result.after.level))
+    showPersonaToast("stat",`${name} LEVEL UP!`,`Lv. ${result.after.level} • ${socialStatTitle(result.stat,result.after.level)}${sourceName?` • ${sourceName}`:""}`,result.after.level>=10?"MAX":String(result.after.level))
   }else{
     showPersonaToast("stat",`${name} +${result.xp} XP`,sourceName||"Social Stat progress",SOCIAL_STAT_META[result.stat]?.icon||"◆")
   }
@@ -3263,20 +3309,45 @@ function socialXPBySource(d,source){
 function strongestSocialStat(d){
   return SOCIAL_STAT_KEYS.map(k=>({key:k,info:socialStatInfo(k,d)})).sort((a,b)=>b.info.level-a.info.level||b.info.xp-a.info.xp)[0]
 }
-function setSocialRadarGeometry(d){
-  const center={x:220,y:200};
-  const vertices={knowledge:{x:220,y:25},guts:{x:385,y:145},proficiency:{x:320,y:340},kindness:{x:120,y:340},charm:{x:55,y:145}};
-  const pts=[];let dots="";
-  for(const key of SOCIAL_STAT_KEYS){
-    const info=socialStatInfo(key,d),v=vertices[key],ratio=info.level/10;
-    const x=center.x+(v.x-center.x)*ratio,y=center.y+(v.y-center.y)*ratio;
-    pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
-    dots+=`<circle class="social-radar-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5"></circle>`;
-    const label=$("socialRadar"+key[0].toUpperCase()+key.slice(1));if(label)label.textContent=`Lv. ${info.level}`
+function p5StarPoints(levels){
+  const cx=250,cy=250;
+  const outerMin=60,outerMax=190,innerMin=27,innerMax=82;
+  const pts=[];
+  for(let i=0;i<5;i++){
+    const lv=Math.max(1,Math.min(10,Number(levels[i])||1));
+    const next=Math.max(1,Math.min(10,Number(levels[(i+1)%5])||1));
+    const ratio=(lv-1)/9,nextRatio=(next-1)/9;
+    const outer=outerMin+(outerMax-outerMin)*ratio;
+    const inner=innerMin+(innerMax-innerMin)*((ratio+nextRatio)/2);
+    const a=(-90+i*72)*Math.PI/180;
+    const ia=(-54+i*72)*Math.PI/180;
+    pts.push(`${(cx+Math.cos(a)*outer).toFixed(1)},${(cy+Math.sin(a)*outer).toFixed(1)}`);
+    pts.push(`${(cx+Math.cos(ia)*inner).toFixed(1)},${(cy+Math.sin(ia)*inner).toFixed(1)}`)
   }
-  const points=pts.join(" ");
-  $("socialRadarArea")?.setAttribute("points",points);$("socialRadarGlow")?.setAttribute("points",points);
-  if($("socialRadarDots"))$("socialRadarDots").innerHTML=dots
+  return pts.join(" ")
+}
+function setSocialRadarGeometry(d){
+  const infos=SOCIAL_STAT_KEYS.map(k=>socialStatInfo(k,d));
+  const levels=infos.map(x=>x.level);
+  const rings=$("socialStarRings");
+  if(rings){
+    rings.innerHTML=Array.from({length:10},(_,idx)=>{
+      const lv=idx+1;
+      return `<polygon points="${p5StarPoints([lv,lv,lv,lv,lv])}"></polygon>`
+    }).join("")
+  }
+  const points=p5StarPoints(levels);
+  $("socialRadarArea")?.setAttribute("points",points);
+  $("socialRadarGlow")?.setAttribute("points",points);
+  if($("socialRadarDots"))$("socialRadarDots").innerHTML="";
+  SOCIAL_STAT_KEYS.forEach((key,i)=>{
+    const info=infos[i];
+    const cap=key[0].toUpperCase()+key.slice(1);
+    const label=$("socialRadar"+cap);
+    const title=$("socialTitle"+cap);
+    if(label)label.textContent=info.level>=10?"MAX":String(info.level);
+    if(title)title.textContent=socialStatTitle(key,info.level)
+  })
 }
 function renderSocialStats(d){
   setSocialRadarGeometry(d);
@@ -3285,7 +3356,8 @@ function renderSocialStats(d){
     const into=info.next===null?info.xp-SOCIAL_LEVEL_THRESHOLDS[9]:info.xp-info.base;
     const needed=info.next===null?0:info.span;
     return `<div class="social-stat-row">
-      <div class="social-stat-head"><div class="social-stat-name"><span class="social-stat-icon">${meta.icon}</span>${meta.name}</div><div class="social-stat-level"><small>LV.</small>${info.level}</div></div>
+      <div class="social-stat-head"><div class="social-stat-name"><span class="social-stat-icon">${meta.icon}</span>${meta.name}</div><div class="social-stat-level"><small>${info.level>=10?"MAX":"LV."}</small>${info.level}</div></div>
+      <span class="social-stat-title">${socialStatTitle(key,info.level)}</span>
       <div class="social-stat-progress"><span style="width:${(info.progress*100).toFixed(1)}%"></span></div>
       <div class="social-stat-foot"><span>${info.xp.toLocaleString()} total XP</span><span>${info.next===null?"MAX LEVEL":`${into} / ${needed} XP to Lv. ${info.level+1}`}</span></div>
     </div>`
