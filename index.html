@@ -2098,6 +2098,51 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   font-size:9px;font-weight:1000;letter-spacing:.8px;
 }
 
+
+/* ==================== MOMENTUM 16 SOCIAL STATS ==================== */
+.social-stats-shell{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(320px,.82fr);gap:14px;margin-bottom:14px}
+.social-radar-card,.social-level-card{padding:10px 16px 16px;min-width:0}
+.social-kicker{text-transform:uppercase;font-size:10px;letter-spacing:1.3px;font-weight:1000;color:#999;margin:-4px 0 4px}
+.social-radar-wrap{position:relative;width:min(100%,560px);height:410px;margin:0 auto}
+.social-radar-svg{position:absolute;inset:6px 5% 0;width:90%;height:96%;overflow:visible;filter:drop-shadow(0 10px 18px rgba(0,0,0,.28))}
+.social-rings polygon,.social-spokes line{fill:none;stroke:rgba(255,255,255,.16);stroke-width:2}
+.social-rings polygon:last-child{stroke:rgba(255,255,255,.38);stroke-width:3}
+.social-spokes line{stroke-width:1.2}
+.social-radar-glow{fill:rgba(var(--accent-rgb),.22);stroke:rgba(var(--accent-rgb),.35);stroke-width:11;stroke-linejoin:round}
+.social-radar-area{fill:rgba(var(--accent-rgb),.42);stroke:var(--accent);stroke-width:4;stroke-linejoin:round}
+.social-radar-dot{fill:#fff;stroke:var(--accent2);stroke-width:3}
+.social-radar-label{position:absolute;z-index:3;display:flex;flex-direction:column;line-height:.92;text-transform:uppercase;font-weight:1000;text-shadow:2px 2px 0 #000}
+.social-radar-label b{font-size:14px;color:#fff}.social-radar-label span{font-size:11px;color:var(--accent);margin-top:4px}
+.social-radar-label.knowledge{top:3px;left:50%;transform:translateX(-50%);text-align:center;align-items:center}
+.social-radar-label.guts{right:0;top:31%;text-align:right;align-items:flex-end}
+.social-radar-label.proficiency{right:5%;bottom:2%;text-align:right;align-items:flex-end}
+.social-radar-label.kindness{left:5%;bottom:2%}
+.social-radar-label.charm{left:0;top:31%}
+.social-explain{padding:10px 12px;border-left:4px solid var(--accent);background:#0b0b0b;color:#aaa;font-size:11px;line-height:1.45;font-weight:750}
+.social-migration-note{margin-top:8px;padding:9px 11px;border:1px solid rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.07);font-size:10px;color:#bbb;font-weight:850}
+.social-stats-list{display:grid;gap:9px;margin-top:8px}
+.social-stat-row{padding:10px 11px;background:#0a0a0a;border:1px solid #303030;position:relative;overflow:hidden}
+.social-stat-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.social-stat-head{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.social-stat-name{display:flex;align-items:center;gap:8px;font-weight:1000;text-transform:uppercase;font-size:13px}.social-stat-icon{color:var(--accent);font-size:17px}
+.social-stat-level{font-size:22px;font-weight:1000;color:#fff;line-height:1}
+.social-stat-level small{font-size:9px;color:#888;margin-right:4px}
+.social-stat-progress{height:8px;background:#202020;border:1px solid #444;margin-top:8px;overflow:hidden;transform:skewX(-9deg)}
+.social-stat-progress span{display:block;height:100%;background:var(--accent);transition:width .35s ease}
+.social-stat-foot{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:9px;color:#777;font-weight:900}
+.social-task-chip{display:inline-flex;margin:5px 5px 0 0;padding:2px 5px;border:1px solid rgba(var(--accent-rgb),.5);color:var(--accent);font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.35px}
+.social-reward-pill{color:var(--accent)!important;border-color:rgba(var(--accent-rgb),.6)!important}
+@media(max-width:980px){.social-stats-shell{grid-template-columns:1fr}.social-radar-wrap{height:390px}}
+@media(max-width:600px){
+  .social-radar-card,.social-level-card{padding:8px 9px 12px!important}
+  .social-radar-wrap{height:330px;width:100%}
+  .social-radar-svg{inset:8px 2% 0;width:96%;height:92%}
+  .social-radar-label b{font-size:10px}.social-radar-label span{font-size:9px}
+  .social-radar-label.guts{right:1%;top:30%}.social-radar-label.charm{left:1%;top:30%}
+  .social-radar-label.proficiency{right:1%;bottom:1%}.social-radar-label.kindness{left:1%;bottom:1%}
+  .social-stat-level{font-size:19px}
+}
+
 </style>
 </head>
 <body>
@@ -2270,10 +2315,9 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
           </div>
           <div id="permanentTaskList" class="permanent-list"></div>
           <div class="permanent-note">
-            Permanent tasks are high-stakes goals. Completing one awards Rank Points only.
-            Failing one deducts your chosen Rank Points and also applies your chosen daily penalty
-            to the selected category on the failure day. Deadline tasks fail automatically after the deadline;
-            tasks without a deadline can only fail when you mark them failed.
+            Permanent tasks are high-stakes goals. Completing one grants Social Stat XP to the stat you choose.
+            Failing one applies the chosen daily penalty to that day, but Social Stats never lose earned XP.
+            Deadline tasks fail automatically after the deadline; tasks without a deadline can only fail when you mark them failed.
           </div>
         </div>
       </div>
@@ -2321,7 +2365,7 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
       <div class="project-summary">
         <div class="card project-stat"><small>Active Projects</small><b id="projectActiveCount">0</b></div>
         <div class="card project-stat"><small>Bosses Defeated</small><b id="projectCompletedCount">0</b></div>
-        <div class="card project-stat"><small>Project RP Earned</small><b id="projectRPEarned">0</b></div>
+        <div class="card project-stat"><small>Project Stat XP</small><b id="projectStatXPEarned">0</b></div>
       </div>
 
       <div class="card" style="padding:8px 15px 16px">
@@ -2330,7 +2374,7 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
           <button class="btn" id="addProjectBtn">+ New Project</button>
         </div>
         <p class="settings-note">
-          Projects are larger goals made of multiple steps. Finish every step to defeat the project and earn its Rank Point reward.
+          Projects are larger goals made of multiple steps. Finish every step to defeat the project and earn Social Stat XP.
         </p>
         <div id="projectList" class="project-list"></div>
       </div>
@@ -2340,39 +2384,45 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   <section id="statsPage" class="page">
     <div class="stats-page-shell">
 
-      <div class="rank-top-grid">
-        <div class="card rank-hero">
-          <div class="card-title">Lifetime Rank</div>
-          <div class="rank-kicker">Current standing</div>
-          <div class="rank-name" id="lifetimeRankName">Noobie III</div>
-
-          <div class="rank-points-line">
-            <b><span id="rankPoints">0</span> RP</b>
-            <span id="rankLifetimeHint">Lifetime Rank Points</span>
+      <div class="social-stats-shell">
+        <div class="card social-radar-card">
+          <div class="card-title">Social Stats</div>
+          <div class="social-kicker">Five independent stats • Level 1–10</div>
+          <div class="social-radar-wrap">
+            <svg class="social-radar-svg" viewBox="0 0 440 400" aria-label="Social Stats radar">
+              <g class="social-rings">
+                <polygon points="220,165 253,189 240,228 200,228 187,189"></polygon>
+                <polygon points="220,130 286,178 260,256 180,256 154,178"></polygon>
+                <polygon points="220,95 319,167 280,284 160,284 121,167"></polygon>
+                <polygon points="220,60 352,156 300,312 140,312 88,156"></polygon>
+                <polygon points="220,25 385,145 320,340 120,340 55,145"></polygon>
+              </g>
+              <g class="social-spokes">
+                <line x1="220" y1="200" x2="220" y2="25"></line>
+                <line x1="220" y1="200" x2="385" y2="145"></line>
+                <line x1="220" y1="200" x2="320" y2="340"></line>
+                <line x1="220" y1="200" x2="120" y2="340"></line>
+                <line x1="220" y1="200" x2="55" y2="145"></line>
+              </g>
+              <polygon id="socialRadarGlow" class="social-radar-glow" points="220,182.5 236.5,194.5 230,214 210,214 203.5,194.5"></polygon>
+              <polygon id="socialRadarArea" class="social-radar-area" points="220,182.5 236.5,194.5 230,214 210,214 203.5,194.5"></polygon>
+              <g id="socialRadarDots"></g>
+            </svg>
+            <div class="social-radar-label knowledge"><b>Knowledge</b><span id="socialRadarKnowledge">Lv. 1</span></div>
+            <div class="social-radar-label guts"><b>Guts</b><span id="socialRadarGuts">Lv. 1</span></div>
+            <div class="social-radar-label proficiency"><b>Proficiency</b><span id="socialRadarProficiency">Lv. 1</span></div>
+            <div class="social-radar-label kindness"><b>Kindness</b><span id="socialRadarKindness">Lv. 1</span></div>
+            <div class="social-radar-label charm"><b>Charm</b><span id="socialRadarCharm">Lv. 1</span></div>
           </div>
-          <div class="permanent-delta">Permanent-task net adjustment: <b id="permanentRankDeltaText">0 RP</b></div>
-          <div class="permanent-delta">Project rewards: <b id="projectRankDeltaText">+0 RP</b></div>
-
-          <div class="rank-progress"><span id="rankProgressFill"></span></div>
-          <div class="rank-next">
-            <span id="rankProgressText">0 / 100 RP to Noobie II</span>
-            <span id="rankBDaysText">10 B-rank days to next rank</span>
+          <div class="social-explain">
+            Complete tasks and projects to build the Social Stat assigned to them. XP is permanent once earned, so unchecking or deleting an old task cannot be used to farm or erase progress.
           </div>
-
-          <div class="rank-explain">
-            Rank Points are based on the <b>best grade you achieve on each day</b>, so earned progress does not disappear if you later edit that day.
-            A B day is worth <b>10 RP</b>; reaching <b>The Chosen One</b> requires 3,650 RP — exactly about <b>365 B-rank days</b>.
-            A and S days advance you faster.
-          </div>
-
-          <div class="rank-reward-note">
-            <b>Unlock system ready:</b> each rank has its own progression slot, so future Momentum versions can attach themes, features, badges, sounds, or other rewards to specific ranks.
-          </div>
+          <div id="socialMigrationNote" class="social-migration-note hidden"></div>
         </div>
 
-        <div class="card rank-ladder-card">
-          <div class="card-title">Rank Ladder</div>
-          <div id="rankLadder" class="rank-ladder"></div>
+        <div class="card social-level-card">
+          <div class="card-title">Social Stat Levels</div>
+          <div id="socialStatsList" class="social-stats-list"></div>
         </div>
       </div>
 
@@ -2564,7 +2614,7 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
       <div class="card cloud-card">
         <div class="card-title">Cloud Sync + Notifications</div>
         <p class="settings-note">
-          Sign into the same Momentum account on Windows and iPhone to share tasks, Rank Points, notes,
+          Sign into the same Momentum account on Windows and iPhone to share tasks, Social Stats, notes,
           reminders, projects, achievements and most settings automatically.
         </p>
 
@@ -2712,8 +2762,14 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
       <input id="projectDeadline" type="datetime-local">
     </div>
     <div class="field">
-      <label>Rank Point reward</label>
-      <input id="projectReward" type="number" min="0" step="1" value="50" required>
+      <label>Social Stat reward</label>
+      <select id="projectRewardStat">
+        <option value="knowledge">Knowledge</option><option value="guts">Guts</option><option value="proficiency">Proficiency</option><option value="kindness">Kindness</option><option value="charm">Charm</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Social Stat XP reward</label>
+      <input id="projectReward" type="number" min="0" step="1" value="5" required>
     </div>
     <div class="field">
       <label>Starting steps — one per line</label>
@@ -2778,13 +2834,15 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
     </div>
 
     <div class="field">
-      <label>Rank Points deducted if failed</label>
-      <input id="permanentRankPenalty" type="number" min="0" step="1" value="25" required>
+      <label>Social Stat reward</label>
+      <select id="permanentRewardStat">
+        <option value="knowledge">Knowledge</option><option value="guts">Guts</option><option value="proficiency">Proficiency</option><option value="kindness">Kindness</option><option value="charm">Charm</option>
+      </select>
     </div>
 
     <div class="field">
-      <label>Rank Points awarded if completed</label>
-      <input id="permanentRankReward" type="number" min="0" step="1" value="25" required>
+      <label>Social Stat XP awarded if completed</label>
+      <input id="permanentStatReward" type="number" min="0" step="1" value="3" required>
     </div>
 
     <div class="modal-actions">
@@ -2807,6 +2865,17 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
       </select>
     </div>
     <div class="field"><label>Points — awarded when completed</label><input id="taskPoints" type="number" min="0" step="0.1" value="1" required></div>
+    <div class="field">
+      <label>Social Stat</label>
+      <select id="taskSocialStat">
+        <option value="knowledge">Knowledge</option><option value="guts">Guts</option><option value="proficiency">Proficiency</option><option value="kindness">Kindness</option><option value="charm">Charm</option>
+      </select>
+      <small class="settings-note">Recommended automatically from the task category, but you can choose any stat.</small>
+    </div>
+    <div class="field">
+      <label>Social Stat XP</label>
+      <input id="taskSocialXP" type="number" min="0" step="1" value="1" required>
+    </div>
     <div class="field">
       <label>Task type</label>
       <select id="taskType">
@@ -2874,7 +2943,20 @@ const KEY="momentum-progress-v4";
 const OLD_KEYS=["daily-rank-v3","daily-rank-v2","daily-rank-v1"];
 const $=id=>document.getElementById(id);
 const DEFAULT_AVATAR=`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><rect width="100%" height="100%" fill="#111"/><circle cx="250" cy="185" r="92" fill="#eee"/><path d="M90 470c25-115 105-170 160-170s135 55 160 170" fill="#eee"/></svg>`)}`;
-function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack",cloudMedia:{avatar:false,introImage:false,introBackground:false,soundtrack:false}},days:{},reminders:[],recurringTasks:[],rankLedger:{},permanentTasks:[],projects:[],focusSessions:[],achievements:{}}}
+const SOCIAL_STAT_KEYS=["knowledge","guts","proficiency","kindness","charm"];
+const SOCIAL_STAT_META={
+  knowledge:{name:"Knowledge",icon:"◆"},
+  guts:{name:"Guts",icon:"▲"},
+  proficiency:{name:"Proficiency",icon:"✦"},
+  kindness:{name:"Kindness",icon:"♥"},
+  charm:{name:"Charm",icon:"★"}
+};
+const SOCIAL_LEVEL_THRESHOLDS=[0,5,12,22,35,51,70,92,117,145];
+const SOCIAL_MAX_XP=SOCIAL_LEVEL_THRESHOLDS[SOCIAL_LEVEL_THRESHOLDS.length-1];
+function defaultSocialStatForCategory(category){return category==="school"?"knowledge":category==="home"?"proficiency":"guts"}
+function socialStatName(key){return SOCIAL_STAT_META[key]?.name||"Knowledge"}
+
+function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack",cloudMedia:{avatar:false,introImage:false,introBackground:false,soundtrack:false}},days:{},reminders:[],recurringTasks:[],rankLedger:{},socialStats:{knowledge:0,guts:0,proficiency:0,kindness:0,charm:0},socialStatLedger:{},socialStatsVersion:0,legacyRankPointsMigrated:0,permanentTasks:[],projects:[],focusSessions:[],achievements:{}}}
 function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
 function load(){
   try{const d=JSON.parse(localStorage.getItem(KEY));if(d)return normalize(d)}catch{}
@@ -2888,6 +2970,8 @@ function normalize(d){
   const normalizeProgressTask=t=>{
     if(!t||typeof t!=="object")return;
     t.taskType=t.taskType==="counter"?"counter":"check";
+    t.socialStat=SOCIAL_STAT_KEYS.includes(t.socialStat)?t.socialStat:defaultSocialStatForCategory(t.category);
+    t.socialXP=Math.max(0,Math.round(Number(t.socialXP ?? 1)||0));
     if(t.taskType==="counter"){
       t.target=Math.max(.01,Number(t.target)||1);
       t.unit=String(t.unit||"").slice(0,16);
@@ -2901,16 +2985,62 @@ function normalize(d){
   d.recurringTasks=d.recurringTasks||[];
   d.recurringTasks.forEach(r=>{
     r.taskType=r.taskType==="counter"?"counter":"check";
+    r.socialStat=SOCIAL_STAT_KEYS.includes(r.socialStat)?r.socialStat:defaultSocialStatForCategory(r.category);
+    r.socialXP=Math.max(0,Math.round(Number(r.socialXP ?? 1)||0));
     if(r.taskType==="counter"){
       r.target=Math.max(.01,Number(r.target)||1);
       r.unit=String(r.unit||"").slice(0,16)
     }
   });
   d.rankLedger=d.rankLedger||{};
+  d.socialStats={...defaults().socialStats,...(d.socialStats||{})};
+  d.socialStatLedger=d.socialStatLedger||{};
+  SOCIAL_STAT_KEYS.forEach(k=>d.socialStats[k]=Math.max(0,Number(d.socialStats[k])||0));
   d.permanentTasks=d.permanentTasks||[];
   d.projects=d.projects||[];
   d.focusSessions=d.focusSessions||[];
   d.achievements=d.achievements||{};
+
+  // One-time migration from the old single Rank system.
+  if(!Number(d.socialStatsVersion||0)){
+    const oldGradeRP={F:0,D:2,C:5,B:10,A:13,S:16};
+    const gradeRP=Object.entries(d.rankLedger||{}).filter(([key])=>key<=localKey()).reduce((s,[,g])=>s+(oldGradeRP[g]||0),0);
+    const permanentRP=(d.permanentTasks||[]).reduce((s,p)=>s+(p.status==="completed"?(Number(p.rankReward)||0):p.status==="failed"?-(Number(p.rankPenalty)||0):0),0);
+    const projectRP=(d.projects||[]).reduce((s,p)=>s+(p.status==="completed"?(Number(p.rankReward)||0):0),0);
+    const legacyRP=Math.max(0,gradeRP+permanentRP+projectRP);
+    const seedXP=Math.round(Math.min(1,legacyRP/3650)*SOCIAL_MAX_XP);
+    SOCIAL_STAT_KEYS.forEach(k=>d.socialStats[k]=Math.max(Number(d.socialStats[k])||0,seedXP));
+    d.legacyRankPointsMigrated=legacyRP;
+
+    // Old completed tasks are already represented by the migration seed; mark them so they cannot be re-awarded.
+    for(const [date,day] of Object.entries(d.days||{})){
+      for(const t of day.tasks||[]){
+        t.socialStat=SOCIAL_STAT_KEYS.includes(t.socialStat)?t.socialStat:defaultSocialStatForCategory(t.category);
+        t.socialXP=Math.max(0,Math.round(Number(t.socialXP ?? 1)||0));
+        if(t.done&&t.id)d.socialStatLedger[`task:${date}:${t.id}`]={stat:t.socialStat,xp:0,source:"legacy-task",date,at:new Date().toISOString()}
+      }
+    }
+    for(const p of d.projects||[]){
+      p.rewardStat=SOCIAL_STAT_KEYS.includes(p.rewardStat)?p.rewardStat:defaultSocialStatForCategory(p.category);
+      p.statReward=Math.max(0,Math.round(Number(p.statReward ?? ((Number(p.rankReward)||0)/10))||0));
+      if(p.status==="completed")p.socialAwarded=true
+    }
+    for(const p of d.permanentTasks||[]){
+      p.rewardStat=SOCIAL_STAT_KEYS.includes(p.rewardStat)?p.rewardStat:defaultSocialStatForCategory(p.category);
+      p.statReward=Math.max(0,Math.round(Number(p.statReward ?? ((Number(p.rankReward)||0)/10))||0));
+      if(p.status!=="active")p.socialAwarded=true
+    }
+    d.socialStatsVersion=1
+  }else{
+    for(const p of d.projects||[]){
+      p.rewardStat=SOCIAL_STAT_KEYS.includes(p.rewardStat)?p.rewardStat:defaultSocialStatForCategory(p.category);
+      p.statReward=Math.max(0,Math.round(Number(p.statReward ?? 5)||0))
+    }
+    for(const p of d.permanentTasks||[]){
+      p.rewardStat=SOCIAL_STAT_KEYS.includes(p.rewardStat)?p.rewardStat:defaultSocialStatForCategory(p.category);
+      p.statReward=Math.max(0,Math.round(Number(p.statReward ?? 3)||0))
+    }
+  }
   return d
 }
 function localKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
@@ -2945,6 +3075,8 @@ function ensureRecurringTasksForDay(d,key){
       name:rule.name,
       category:rule.category,
       points:Number(rule.points),
+      socialStat:SOCIAL_STAT_KEYS.includes(rule.socialStat)?rule.socialStat:defaultSocialStatForCategory(rule.category),
+      socialXP:Math.max(0,Math.round(Number(rule.socialXP ?? 1)||0)),
       taskType:rule.taskType==="counter"?"counter":"check",
       target:rule.taskType==="counter"?Math.max(.01,Number(rule.target)||1):undefined,
       current:rule.taskType==="counter"?0:undefined,
@@ -3082,6 +3214,90 @@ function rankInfoFromPoints(points){
 function lifetimeRankInfo(d){
   return rankInfoFromPoints(totalRankPoints(d))
 }
+
+/* ==================== SOCIAL STATS ==================== */
+function socialStatInfo(statOrXP,d=null){
+  const xp=typeof statOrXP==="string"?Math.max(0,Number((d||load()).socialStats?.[statOrXP])||0):Math.max(0,Number(statOrXP)||0);
+  let index=0;
+  for(let i=0;i<SOCIAL_LEVEL_THRESHOLDS.length;i++){
+    if(xp>=SOCIAL_LEVEL_THRESHOLDS[i])index=i;else break
+  }
+  const level=index+1,next=index<SOCIAL_LEVEL_THRESHOLDS.length-1?SOCIAL_LEVEL_THRESHOLDS[index+1]:null;
+  const base=SOCIAL_LEVEL_THRESHOLDS[index];
+  const span=next===null?0:next-base;
+  const progress=next===null?1:Math.max(0,Math.min(1,(xp-base)/span));
+  return{xp,index,level,next,base,span,progress}
+}
+function socialStatSnapshot(d){return Object.fromEntries(SOCIAL_STAT_KEYS.map(k=>[k,socialStatInfo(k,d)]))}
+function awardSocialStat(d,awardKey,stat,xp,source="task",date=localKey()){
+  stat=SOCIAL_STAT_KEYS.includes(stat)?stat:"knowledge";
+  xp=Math.max(0,Math.round(Number(xp)||0));
+  d.socialStatLedger=d.socialStatLedger||{};
+  d.socialStats={...defaults().socialStats,...(d.socialStats||{})};
+  if(!xp||d.socialStatLedger[awardKey])return{awarded:false,stat,xp:0};
+  const before=socialStatInfo(d.socialStats[stat]);
+  d.socialStats[stat]=Math.max(0,(Number(d.socialStats[stat])||0)+xp);
+  const after=socialStatInfo(d.socialStats[stat]);
+  d.socialStatLedger[awardKey]={stat,xp,source,date,at:new Date().toISOString()};
+  return{awarded:true,stat,xp,before,after,levelUp:after.level>before.level}
+}
+function notifySocialAward(result,sourceName=""){
+  if(!result?.awarded)return;
+  const name=socialStatName(result.stat);
+  if(result.levelUp){
+    showPersonaToast("stat",`${name} LEVEL UP!`,`Lv. ${result.before.level} → Lv. ${result.after.level}${sourceName?` • ${sourceName}`:""}`,String(result.after.level))
+  }else{
+    showPersonaToast("stat",`${name} +${result.xp} XP`,sourceName||"Social Stat progress",SOCIAL_STAT_META[result.stat]?.icon||"◆")
+  }
+}
+function awardTaskSocialStat(d,date,task){
+  if(!task?.id)return{awarded:false};
+  return awardSocialStat(d,`task:${date}:${task.id}`,task.socialStat,task.socialXP,"task",date)
+}
+function socialXPOnDate(d,date){
+  return Object.values(d.socialStatLedger||{}).filter(x=>x?.date===date).reduce((s,x)=>s+(Number(x.xp)||0),0)
+}
+function socialXPBySource(d,source){
+  return Object.values(d.socialStatLedger||{}).filter(x=>x?.source===source).reduce((s,x)=>s+(Number(x.xp)||0),0)
+}
+function strongestSocialStat(d){
+  return SOCIAL_STAT_KEYS.map(k=>({key:k,info:socialStatInfo(k,d)})).sort((a,b)=>b.info.level-a.info.level||b.info.xp-a.info.xp)[0]
+}
+function setSocialRadarGeometry(d){
+  const center={x:220,y:200};
+  const vertices={knowledge:{x:220,y:25},guts:{x:385,y:145},proficiency:{x:320,y:340},kindness:{x:120,y:340},charm:{x:55,y:145}};
+  const pts=[];let dots="";
+  for(const key of SOCIAL_STAT_KEYS){
+    const info=socialStatInfo(key,d),v=vertices[key],ratio=info.level/10;
+    const x=center.x+(v.x-center.x)*ratio,y=center.y+(v.y-center.y)*ratio;
+    pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+    dots+=`<circle class="social-radar-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5"></circle>`;
+    const label=$("socialRadar"+key[0].toUpperCase()+key.slice(1));if(label)label.textContent=`Lv. ${info.level}`
+  }
+  const points=pts.join(" ");
+  $("socialRadarArea")?.setAttribute("points",points);$("socialRadarGlow")?.setAttribute("points",points);
+  if($("socialRadarDots"))$("socialRadarDots").innerHTML=dots
+}
+function renderSocialStats(d){
+  setSocialRadarGeometry(d);
+  $("socialStatsList").innerHTML=SOCIAL_STAT_KEYS.map(key=>{
+    const meta=SOCIAL_STAT_META[key],info=socialStatInfo(key,d);
+    const into=info.next===null?info.xp-SOCIAL_LEVEL_THRESHOLDS[9]:info.xp-info.base;
+    const needed=info.next===null?0:info.span;
+    return `<div class="social-stat-row">
+      <div class="social-stat-head"><div class="social-stat-name"><span class="social-stat-icon">${meta.icon}</span>${meta.name}</div><div class="social-stat-level"><small>LV.</small>${info.level}</div></div>
+      <div class="social-stat-progress"><span style="width:${(info.progress*100).toFixed(1)}%"></span></div>
+      <div class="social-stat-foot"><span>${info.xp.toLocaleString()} total XP</span><span>${info.next===null?"MAX LEVEL":`${into} / ${needed} XP to Lv. ${info.level+1}`}</span></div>
+    </div>`
+  }).join("");
+  const note=$("socialMigrationNote");
+  if(note){
+    const rp=Number(d.legacyRankPointsMigrated)||0;
+    note.classList.toggle("hidden",!rp);
+    if(rp)note.textContent=`Legacy migration: your previous ${rp.toLocaleString()} Rank Points were converted into an equivalent starting level across all five Social Stats.`
+  }
+}
+
 function longestCompletedStreak(d){
   const completed=new Set(statDayEntries(d).filter(([key,day])=>complete(day,key,d)).map(([key])=>key));
   if(!completed.size)return 0;
@@ -3179,7 +3395,7 @@ function showPersonaToast(type,title,detail,gradeValue=""){
   toast.innerHTML=`
     <div class="persona-toast-avatar"><img src="${data.profile.avatar||DEFAULT_AVATAR}" alt=""></div>
     <div class="persona-toast-copy">
-      <small>${type==="grade"?"Progress Update":type==="rank"?"Rank Up":type==="achievement"?"Achievement":"Inbox Update"}</small>
+      <small>${type==="grade"?"Progress Update":type==="rank"?"Rank Up":type==="stat"?"Social Stat":type==="achievement"?"Achievement":"Inbox Update"}</small>
       <strong>${esc(title)}</strong>
       <span>${esc(detail||"")}</span>
     </div>
@@ -3320,7 +3536,7 @@ function renderProjects(){
   const completed=projects.filter(p=>p.status==="completed").length;
   $("projectActiveCount").textContent=active;
   $("projectCompletedCount").textContent=completed;
-  $("projectRPEarned").textContent=projectRankDelta(d).toLocaleString();
+  $("projectStatXPEarned").textContent=socialXPBySource(d,"project").toLocaleString();
 
   $("projectList").innerHTML=projects.length?projects.map(p=>{
     const prog=projectProgress(p);
@@ -3333,7 +3549,7 @@ function renderProjects(){
           <div class="project-meta">
             <span class="project-pill">${category}</span>
             <span class="project-pill">${p.deadline?new Date(p.deadline).toLocaleString():"No deadline"}</span>
-            <span class="project-pill reward">+${Number(p.rankReward)||0} RP</span>
+            <span class="project-pill reward social-reward-pill">${esc(socialStatName(p.rewardStat))} +${Number(p.statReward)||0} XP</span>
             ${overdue?`<span class="project-pill" style="color:#ff9d9d;border-color:var(--accent2)">Overdue</span>`:""}
           </div>
         </div>
@@ -3357,27 +3573,27 @@ function renderProjects(){
     </div>`
   }).join(""):`<div class="empty">No boss projects yet.</div>`
 }
-function addProject(name,category,deadline,rankReward,stepNames){
+function addProject(name,category,deadline,rewardStat,statReward,stepNames){
   const d=load();
   d.projects.push({
     id:crypto.randomUUID?.()||String(Date.now()+Math.random()),
-    name,category,deadline:deadline||null,rankReward:Number(rankReward)||0,
-    status:"active",createdAt:new Date().toISOString(),completedAt:null,
+    name,category,deadline:deadline||null,rewardStat:SOCIAL_STAT_KEYS.includes(rewardStat)?rewardStat:defaultSocialStatForCategory(category),statReward:Math.max(0,Math.round(Number(statReward)||0)),
+    status:"active",createdAt:new Date().toISOString(),completedAt:null,socialAwarded:false,
     subtasks:(stepNames||[]).filter(Boolean).map(name=>({id:crypto.randomUUID?.()||String(Math.random()),name,done:false}))
   });
   save(d);renderProjects();renderStats();
   showPersonaToast("inbox","Boss Project Added",name)
 }
 function completeProject(id){
-  const d=load();syncRankLedger(d);
-  const before=lifetimeRankInfo(d),p=(d.projects||[]).find(x=>x.id===id);
+  const d=load(),p=(d.projects||[]).find(x=>x.id===id);
   if(!p||p.status!=="active")return;
   p.status="completed";p.completedAt=new Date().toISOString();
   (p.subtasks||[]).forEach(s=>s.done=true);
-  const after=lifetimeRankInfo(d);save(d);
-  renderProjects();renderStats();
-  showPersonaToast("rank","Boss Defeated!",`+${Number(p.rankReward)||0} RP • ${p.name}`,"★");
-  if(after.index>before.index)showPersonaToast("rank","Rank Up!",`You reached ${after.current.name}.`);
+  const award=awardSocialStat(d,`project:${p.id}`,p.rewardStat,p.statReward,"project",localKey());
+  p.socialAwarded=true;
+  save(d);renderProjects();renderStats();
+  notifySocialAward(award,p.name);
+  showPersonaToast("achievement","Boss Defeated!",p.name,"★");
   checkAchievementsNow()
 }
 function toggleProjectStep(projectId,index,checked){
@@ -3398,7 +3614,7 @@ function addProjectStep(projectId,name){
 function deleteProject(id){
   const d=load(),p=(d.projects||[]).find(x=>x.id===id);
   if(!p)return;
-  if(p.status==="completed"&&!confirm("Removing a completed project also removes its Rank Point reward. Remove it?"))return;
+  if(p.status==="completed"&&!confirm("Remove this completed project? Earned Social Stat XP will stay permanently."))return;
   d.projects=d.projects.filter(x=>x.id!==id);
   save(d);renderProjects();renderStats()
 }
@@ -3477,13 +3693,17 @@ function saveFocusSession(markTaskComplete){
     })
   }
 
+  let socialAward={awarded:false};
   if(markTaskComplete&&task){
+    const wasDone=!!task.done;
     if(task.taskType==="counter")task.current=Math.max(.01,Number(task.target)||1);
     task.done=true;
     const newGrade=grade(avg(day,current.date,data));
-    if(order[newGrade]>order[oldGrade])recordRankGrade(data,current.date,newGrade)
+    if(order[newGrade]>order[oldGrade])recordRankGrade(data,current.date,newGrade);
+    if(!wasDone)socialAward=awardTaskSocialStat(data,current.date,task)
   }
   save(data);closeFocusMode();renderMain();renderStats();
+  notifySocialAward(socialAward,current.title);
   if(minutes>0)showPersonaToast("achievement","Focus Saved",`${minutes.toFixed(1)} minutes • ${current.title}`,"◎");
   checkAchievementsNow()
 }
@@ -3508,7 +3728,7 @@ function showDailyOverlay(mode="briefing"){
       <div class="brief-grid">
         <div class="brief-card"><small>Tasks</small><b>${done}/${total}</b></div>
         <div class="brief-card"><small>Daily Average</small><b>${a.toFixed(1)}</b></div>
-        <div class="brief-card"><small>Best Grade RP</small><b>+${GRADE_RP[best]||0}</b></div>
+        <div class="brief-card"><small>Stat XP Earned</small><b>+${socialXPOnDate(data,key)}</b></div>
       </div>
       <div class="brief-item">Current streak: ${streakFrom(key)} day${streakFrom(key)===1?"":"s"}.</div>
     `
@@ -3521,7 +3741,7 @@ function showDailyOverlay(mode="briefing"){
     });
     const permanentDue=(data.permanentTasks||[]).filter(p=>p.status==="active"&&p.deadline&&p.deadline.slice(0,10)===key);
     const projectDue=(data.projects||[]).filter(p=>p.status==="active"&&p.deadline&&p.deadline.slice(0,10)===key);
-    const rank=lifetimeRankInfo(data);
+    const strongest=strongestSocialStat(data);
 
     const lines=[];
     if(pending.length)lines.push(`${pending.length} unfinished task${pending.length===1?"":"s"} scheduled.`);
@@ -3534,7 +3754,7 @@ function showDailyOverlay(mode="briefing"){
       <div class="brief-grid">
         <div class="brief-card"><small>Pending Tasks</small><b>${pending.length}</b></div>
         <div class="brief-card"><small>Current Streak</small><b>${streakFrom(key)}</b></div>
-        <div class="brief-card"><small>Lifetime Rank</small><b style="font-size:17px;margin-top:9px">${esc(rank.current.name)}</b></div>
+        <div class="brief-card"><small>Top Social Stat</small><b style="font-size:15px;margin-top:9px">${esc(socialStatName(strongest.key))} Lv. ${strongest.info.level}</b></div>
       </div>
       <div class="brief-list">${lines.map(x=>`<div class="brief-item">${esc(x)}</div>`).join("")}</div>
     `
@@ -3553,43 +3773,12 @@ function renderStats(){
   if(ledgerChanged)save(d);
 
   const entries=statDayEntries(d);
-  const rank=lifetimeRankInfo(d);
-  const points=rank.points;
-
-  $("lifetimeRankName").textContent=rank.current.name;
-  $("rankPoints").textContent=points.toLocaleString();
-  const permDelta=permanentRankDelta(d);
-  const projDelta=projectRankDelta(d);
-  $("permanentRankDeltaText").textContent=`${permDelta>=0?"+":""}${Number(permDelta).toLocaleString()} RP`;
-  $("projectRankDeltaText").textContent=`+${Number(projDelta).toLocaleString()} RP`;
-
-  if(rank.next){
-    const into=points-rank.current.threshold;
-    const needed=rank.next.threshold-rank.current.threshold;
-    const remaining=Math.max(0,rank.next.threshold-points);
-    $("rankProgressFill").style.width=`${(rank.progress*100).toFixed(1)}%`;
-    $("rankProgressText").textContent=`${into.toLocaleString()} / ${needed.toLocaleString()} RP to ${rank.next.name}`;
-    $("rankBDaysText").textContent=`${Math.ceil(remaining/GRADE_RP.B)} B-rank days to next rank`
-  }else{
-    $("rankProgressFill").style.width="100%";
-    $("rankProgressText").textContent="Maximum lifetime rank reached";
-    $("rankBDaysText").textContent="The Chosen One"
-  }
-
-  $("rankLadder").innerHTML=RANKS.map((r,i)=>{
-    const state=i<rank.index?"unlocked":i===rank.index?"current":"locked";
-    return `<div class="rank-step ${state}">
-      <div class="rank-index">${String(i+1).padStart(2,"0")}</div>
-      <div><b>${esc(r.name)}</b><small>${r.threshold.toLocaleString()} RP</small></div>
-      <small>${i<rank.index?"UNLOCKED":i===rank.index?"NOW":"LOCKED"}</small>
-    </div>`
-  }).join("");
+  renderSocialStats(d);
 
   let tasksCompleted=0,taskPoints=0,totalAverage=0;
   const rawCategories={school:0,home:0,health:0};
 
-  for(const [,day] of entries){
-    const dayKey=entries.find(e=>e[1]===day)?.[0]||null;
+  for(const [dayKey,day] of entries){
     totalAverage+=avg(day,dayKey,d);
     for(const t of day.tasks||[]){
       if(t.done){
@@ -3601,10 +3790,7 @@ function renderStats(){
     }
   }
 
-  const ledgerGrades=Object.entries(d.rankLedger||{})
-    .filter(([key])=>key<=localKey())
-    .map(([,g])=>g);
-
+  const ledgerGrades=Object.entries(d.rankLedger||{}).filter(([key])=>key<=localKey()).map(([,g])=>g);
   const gradeCounts={S:0,A:0,B:0,C:0,D:0,F:0};
   ledgerGrades.forEach(g=>{if(gradeCounts[g]!==undefined)gradeCounts[g]++});
 
@@ -3622,24 +3808,13 @@ function renderStats(){
 
   const maxGradeCount=Math.max(1,...Object.values(gradeCounts));
   $("gradeDistribution").innerHTML=["S","A","B","C","D","F"].map(g=>`
-    <div class="grade-dist-row">
-      <strong>${g}</strong>
-      <div class="grade-dist-bar"><span style="width:${(gradeCounts[g]/maxGradeCount*100).toFixed(1)}%"></span></div>
-      <em>${gradeCounts[g]}</em>
-    </div>
+    <div class="grade-dist-row"><strong>${g}</strong><div class="grade-dist-bar"><span style="width:${(gradeCounts[g]/maxGradeCount*100).toFixed(1)}%"></span></div><em>${gradeCounts[g]}</em></div>
   `).join("");
 
   const maxCategory=Math.max(1,...Object.values(rawCategories));
-  const categoryNames={
-    school:"Productivity (School)",
-    home:"Productivity (Home)",
-    health:"Health"
-  };
+  const categoryNames={school:"Productivity (School)",home:"Productivity (Home)",health:"Health"};
   $("categoryLifetime").innerHTML=["school","home","health"].map(k=>`
-    <div class="category-life-row">
-      <div class="head"><span>${categoryNames[k]}</span><span>${Number(rawCategories[k].toFixed(1)).toLocaleString()} pts</span></div>
-      <div class="category-life-bar"><span style="width:${(rawCategories[k]/maxCategory*100).toFixed(1)}%"></span></div>
-    </div>
+    <div class="category-life-row"><div class="head"><span>${categoryNames[k]}</span><span>${Number(rawCategories[k].toFixed(1)).toLocaleString()} pts</span></div><div class="category-life-bar"><span style="width:${(rawCategories[k]/maxCategory*100).toFixed(1)}%"></span></div></div>
   `).join("");
 
   renderAchievements(d);
@@ -3651,49 +3826,34 @@ function renderStats(){
   renderHeatmap()
 }
 
-
 function permanentFailureDate(task,manual=false){
   if(manual || !task.deadline)return localKey();
   return task.deadline.slice(0,10)
 }
 function processPermanentDeadlines(){
-  const d=load();
-  const beforeRank=lifetimeRankInfo(d);
-  let changed=false;
-  const now=Date.now();
-
+  const d=load();let changed=false;const now=Date.now();
   for(const task of d.permanentTasks||[]){
-    if(task.status!=="active" || !task.deadline)continue;
+    if(task.status!=="active"||!task.deadline)continue;
     const deadlineMs=new Date(task.deadline).getTime();
-    if(Number.isFinite(deadlineMs) && deadlineMs<=now){
-      task.status="failed";
-      task.resolvedAt=new Date().toISOString();
-      task.failureDate=task.deadline.slice(0,10);
-      changed=true
+    if(Number.isFinite(deadlineMs)&&deadlineMs<=now){
+      task.status="failed";task.resolvedAt=new Date().toISOString();task.failureDate=task.deadline.slice(0,10);changed=true
     }
   }
-
   if(changed){
-    const afterRank=lifetimeRankInfo(d);
-    save(d);
-    renderPermanentTasks(d);
-    renderStats();
-    renderMainCoreOnly();
-    showPersonaToast("rank","Permanent Task Failed","A deadline was missed. Daily and Rank penalties were applied.");
-    if(afterRank.index<beforeRank.index){
-      showPersonaToast("rank","Rank Decreased",`You are now ${afterRank.current.name}.`)
-    }
+    save(d);renderPermanentTasks(d);renderStats();renderMainCoreOnly();
+    showPersonaToast("inbox","Permanent Task Failed","A deadline was missed. The daily penalty was applied.","!")
   }
 }
-function addPermanentTask(name,category,deadline,dailyPenalty,rankPenalty,rankReward){
+function addPermanentTask(name,category,deadline,dailyPenalty,rewardStat,statReward){
   const d=load();
   d.permanentTasks.push({
     id:crypto.randomUUID?.()||String(Date.now()+Math.random()),
     name,category,
     deadline:deadline||null,
     dailyPenalty:Number(dailyPenalty)||0,
-    rankPenalty:Number(rankPenalty)||0,
-    rankReward:Number(rankReward)||0,
+    rewardStat:SOCIAL_STAT_KEYS.includes(rewardStat)?rewardStat:defaultSocialStatForCategory(category),
+    statReward:Math.max(0,Math.round(Number(statReward)||0)),
+    socialAwarded:false,
     status:"active",
     createdAt:new Date().toISOString(),
     resolvedAt:null,
@@ -3704,33 +3864,21 @@ function addPermanentTask(name,category,deadline,dailyPenalty,rankPenalty,rankRe
   showPersonaToast("inbox","Permanent Task Added",name)
 }
 function resolvePermanentTask(id,status){
-  const d=load();
-  syncRankLedger(d);
-  const beforeRank=lifetimeRankInfo(d);
-  const task=(d.permanentTasks||[]).find(x=>x.id===id);
-  if(!task || task.status!=="active")return;
-
-  task.status=status;
-  task.resolvedAt=new Date().toISOString();
+  const d=load(),task=(d.permanentTasks||[]).find(x=>x.id===id);
+  if(!task||task.status!=="active")return;
+  task.status=status;task.resolvedAt=new Date().toISOString();
   if(status==="failed")task.failureDate=permanentFailureDate(task,true);
-
-  const afterRank=lifetimeRankInfo(d);
-  save(d);
-
-  renderMain();
-  renderStats();
-
+  let award={awarded:false};
   if(status==="completed"){
-    showPersonaToast("rank","Permanent Task Completed!",`+${Number(task.rankReward)||0} RP • ${task.name}`);
-    if(afterRank.index>beforeRank.index){
-      showPersonaToast("rank","Rank Up!",`You reached ${afterRank.current.name}.`)
-    }
-    checkAchievementsNow()
+    award=awardSocialStat(d,`permanent:${task.id}`,task.rewardStat,task.statReward,"permanent",localKey());
+    task.socialAwarded=true
+  }
+  save(d);renderMain();renderStats();
+  if(status==="completed"){
+    notifySocialAward(award,task.name);
+    showPersonaToast("achievement","Permanent Task Completed!",task.name,"!");checkAchievementsNow()
   }else{
-    showPersonaToast("rank","Permanent Task Failed",`-${Number(task.rankPenalty)||0} RP • -${Number(task.dailyPenalty)||0} daily points`);
-    if(afterRank.index<beforeRank.index){
-      showPersonaToast("rank","Rank Decreased",`You are now ${afterRank.current.name}.`)
-    }
+    showPersonaToast("inbox","Permanent Task Failed",`-${Number(task.dailyPenalty)||0} daily points • earned Social Stat XP stays safe`,"!")
   }
 }
 function deletePermanentTask(id){
@@ -3738,7 +3886,7 @@ function deletePermanentTask(id){
   const task=(d.permanentTasks||[]).find(x=>x.id===id);
   if(!task)return;
   if(task.status!=="active"){
-    const ok=confirm("Removing a resolved permanent task will also remove its Rank reward/penalty and any daily failure penalty. Remove it?");
+    const ok=confirm("Remove this resolved Permanent Task? Earned Social Stat XP stays permanently; any recorded daily failure penalty will be removed.");
     if(!ok)return
   }
   d.permanentTasks=d.permanentTasks.filter(x=>x.id!==id);
@@ -3766,8 +3914,7 @@ function renderPermanentTasks(data=null){
         <div class="permanent-meta">
           <span class="permanent-pill">${esc(category)}</span>
           <span class="permanent-pill">${esc(deadline)}</span>
-          <span class="permanent-pill reward">Complete: +${Number(t.rankReward)||0} RP</span>
-          <span class="permanent-pill penalty">Fail: -${Number(t.rankPenalty)||0} RP</span>
+          <span class="permanent-pill reward social-reward-pill">Complete: ${esc(socialStatName(t.rewardStat))} +${Number(t.statReward)||0} XP</span>
           <span class="permanent-pill penalty">Daily: -${Number(t.dailyPenalty)||0}</span>
         </div>
       </div>
@@ -3813,6 +3960,7 @@ function taskCardHTML(t,i){
   return `<div class="task ${t.done?"done":""}">
     <input class="check" type="checkbox" data-check="${i}" ${t.done?"checked":""}>
     <div class="task-name">${esc(t.name)}${t.recurringId?`<span class="repeat-mini">↻ ${t.repeatType}</span>`:""}
+      <span class="social-task-chip">${SOCIAL_STAT_META[t.socialStat]?.icon||"◆"} ${esc(socialStatName(t.socialStat))} +${Number(t.socialXP)||0} XP</span>
       ${counter?`<div class="task-progress"><span class="task-progress-label">${taskProgressText(t)}</span><span class="task-progress-track"><span class="task-progress-fill" style="width:${pct}%"></span></span></div>`:""}
     </div>
     <div class="tag">${t.category==="school"?"School":t.category==="home"?"Home":"Health"}</div>
@@ -3850,7 +3998,7 @@ function renderMain(){
       ?`Every ${["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][Number(r.weeklyDay)]} • starts ${pretty(r.startDate)}`
       :`Daily${(r.excludedDays||[]).length?` • skips ${(r.excludedDays||[]).map(x=>["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][Number(x)]).join(", ")}`:""} • starts ${pretty(r.startDate)}`;
     return `<div class="recurring-rule">
-      <div><b>${esc(r.name)}</b><small>${esc(detail)}</small></div>
+      <div><b>${esc(r.name)}</b><small>${esc(detail)} • ${esc(socialStatName(r.socialStat))} +${Number(r.socialXP)||0} XP</small></div>
       <button class="stop-repeat" data-stop-repeat="${r.id}">Stop</button>
     </div>`
   }).join(""):`<div class="empty" style="padding:10px">No repeating tasks.</div>`;
@@ -3862,12 +4010,14 @@ function renderMain(){
   renderProjects();
   renderStats();
 }
-function addTask(name,category,points,taskDate,taskType="check",target=1,unit=""){
+function addTask(name,category,points,taskDate,taskType="check",target=1,unit="",socialStat=defaultSocialStatForCategory(category),socialXP=1){
   const key=taskDate||$("datePicker").value;
   const {data,day}=getDay(key),counter=taskType==="counter";
   day.tasks.push({
     id:crypto.randomUUID?.()||String(Date.now()+Math.random()),
     name,category,points:Number(points),
+    socialStat:SOCIAL_STAT_KEYS.includes(socialStat)?socialStat:defaultSocialStatForCategory(category),
+    socialXP:Math.max(0,Math.round(Number(socialXP)||0)),
     taskType:counter?"counter":"check",
     target:counter?Math.max(.01,Number(target)||1):undefined,
     current:counter?0:undefined,
@@ -3888,11 +4038,13 @@ function addTask(name,category,points,taskDate,taskType="check",target=1,unit=""
     showPersonaToast("inbox","Task Scheduled",`${name} • ${pretty(key)}`)
   }
 }
-function addRecurringTask(name,category,points,startDate,repeat,weeklyDay,excludedDays,taskType="check",target=1,unit=""){
+function addRecurringTask(name,category,points,startDate,repeat,weeklyDay,excludedDays,taskType="check",target=1,unit="",socialStat=defaultSocialStatForCategory(category),socialXP=1){
   const d=load(),counter=taskType==="counter";
   const rule={
     id:crypto.randomUUID?.()||String(Date.now()+Math.random()),
     name,category,points:Number(points),
+    socialStat:SOCIAL_STAT_KEYS.includes(socialStat)?socialStat:defaultSocialStatForCategory(category),
+    socialXP:Math.max(0,Math.round(Number(socialXP)||0)),
     taskType:counter?"counter":"check",
     target:counter?Math.max(.01,Number(target)||1):undefined,
     unit:counter?String(unit||"").slice(0,16):undefined,
@@ -4568,8 +4720,8 @@ $("addPermanentTaskBtn").onclick=()=>{
   $("permanentName").value="";
   $("permanentCategory").value="school";
   $("permanentDailyPenalty").value="1";
-  $("permanentRankPenalty").value="25";
-  $("permanentRankReward").value="25";
+  $("permanentRewardStat").value=defaultSocialStatForCategory($("permanentCategory").value);
+  $("permanentStatReward").value="3";
   $("permanentNoDeadline").checked=false;
   const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);tomorrow.setHours(23,59,0,0);
   const localIso=new Date(tomorrow.getTime()-tomorrow.getTimezoneOffset()*60000).toISOString().slice(0,16);
@@ -4578,6 +4730,7 @@ $("addPermanentTaskBtn").onclick=()=>{
   $("permanentTaskDialog").showModal()
 };
 $("cancelPermanentTask").onclick=()=>$("permanentTaskDialog").close();
+$("permanentCategory").addEventListener("change",()=>$("permanentRewardStat").value=defaultSocialStatForCategory($("permanentCategory").value));
 $("permanentNoDeadline").addEventListener("change",e=>{
   $("permanentDeadline").disabled=e.target.checked;
   if(e.target.checked)$("permanentDeadline").value=""
@@ -4592,8 +4745,8 @@ $("permanentTaskForm").addEventListener("submit",e=>{
     $("permanentCategory").value,
     deadline,
     $("permanentDailyPenalty").value,
-    $("permanentRankPenalty").value,
-    $("permanentRankReward").value
+    $("permanentRewardStat").value,
+    $("permanentStatReward").value
   );
   $("permanentTaskDialog").close();
   renderMain();renderStats()
@@ -4624,15 +4777,17 @@ $("addProjectBtn").onclick=()=>{
   $("projectName").value="";
   $("projectCategory").value="school";
   $("projectDeadline").value="";
-  $("projectReward").value="50";
+  $("projectReward").value="5";
+  $("projectRewardStat").value=defaultSocialStatForCategory($("projectCategory").value);
   $("projectStepsInput").value="";
   $("projectDialog").showModal()
 };
 $("cancelProject").onclick=()=>$("projectDialog").close();
+$("projectCategory").addEventListener("change",()=>$("projectRewardStat").value=defaultSocialStatForCategory($("projectCategory").value));
 $("projectForm").addEventListener("submit",e=>{
   e.preventDefault();
   const steps=$("projectStepsInput").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  addProject($("projectName").value.trim(),$("projectCategory").value,$("projectDeadline").value,$("projectReward").value,steps);
+  addProject($("projectName").value.trim(),$("projectCategory").value,$("projectDeadline").value,$("projectRewardStat").value,$("projectReward").value,steps);
   $("projectDialog").close()
 });
 $("projectList").addEventListener("change",e=>{
@@ -4734,6 +4889,7 @@ $("mobileAddTaskBtn")?.addEventListener("click",()=>{
   $("taskRepeat").value="once";
   $("taskType").value="check";
   $("taskTarget").value="2";$("taskUnit").value="L";
+  $("taskCategory").value="school";$("taskSocialStat").value="knowledge";$("taskSocialXP").value="1";
   document.querySelectorAll(".skipWeekday").forEach(x=>x.checked=false);
   syncTaskTypeUI();syncRepeatUI();
   $("taskDialog").showModal()
@@ -5434,6 +5590,7 @@ $("addTaskBtn").onclick=()=>{
   $("taskRepeat").value="once";
   $("taskType").value="check";
   $("taskTarget").value="2";$("taskUnit").value="L";
+  $("taskCategory").value="school";$("taskSocialStat").value="knowledge";$("taskSocialXP").value="1";
   document.querySelectorAll(".skipWeekday").forEach(x=>x.checked=false);
   syncTaskTypeUI();syncRepeatUI();
   $("taskDialog").showModal()
@@ -5441,6 +5598,7 @@ $("addTaskBtn").onclick=()=>{
 $("cancelTask").onclick=()=>$("taskDialog").close();
 $("taskRepeat").addEventListener("change",syncRepeatUI);
 $("taskType").addEventListener("change",syncTaskTypeUI);
+$("taskCategory").addEventListener("change",()=>$("taskSocialStat").value=defaultSocialStatForCategory($("taskCategory").value));
 $("taskDate").addEventListener("change",()=>{
   if($("taskRepeat").value==="weekly" && $("taskDate").value){
     $("weeklyDay").value=String(new Date($("taskDate").value+"T12:00:00").getDay())
@@ -5458,12 +5616,13 @@ $("taskForm").addEventListener("submit",e=>{
   const repeat=$("taskRepeat").value;
   const taskType=$("taskType").value;
   const target=$("taskTarget").value,unit=$("taskUnit").value.trim();
+  const socialStat=$("taskSocialStat").value,socialXP=$("taskSocialXP").value;
 
   if(repeat==="once"){
-    addTask(name,category,points,taskDate,taskType,target,unit)
+    addTask(name,category,points,taskDate,taskType,target,unit,socialStat,socialXP)
   }else{
     const excludedDays=[...document.querySelectorAll(".skipWeekday:checked")].map(x=>Number(x.value));
-    addRecurringTask(name,category,points,taskDate,repeat,$("weeklyDay").value,excludedDays,taskType,target,unit)
+    addRecurringTask(name,category,points,taskDate,repeat,$("weeklyDay").value,excludedDays,taskType,target,unit,socialStat,socialXP)
   }
 
   $("taskName").value="";
@@ -5478,14 +5637,14 @@ function mutateTaskAndRefresh(i,mutator){
   const key=$("datePicker").value,{data,day}=getDay(key),task=day.tasks[i];
   if(!task)return;
   syncRankLedger(data);
-  const oldLifetimeRank=lifetimeRankInfo(data),oldGrade=grade(avg(day,key,data));
+  const oldGrade=grade(avg(day,key,data)),wasDone=!!task.done;
   mutator(task);
   const newGrade=grade(avg(day,key,data));
   if(order[newGrade]>order[oldGrade])recordRankGrade(data,key,newGrade);
-  const newLifetimeRank=lifetimeRankInfo(data);
+  const socialAward=!wasDone&&task.done?awardTaskSocialStat(data,key,task):{awarded:false};
   save(data);renderMain();
   if(order[newGrade]>order[oldGrade])showPersonaToast("grade","New Grade Achieved!",`Your daily grade is now ${newGrade}.`,newGrade);
-  if(newLifetimeRank.index>oldLifetimeRank.index)showPersonaToast("rank","Rank Up!",`You reached ${newLifetimeRank.current.name}.`);
+  notifySocialAward(socialAward,task.name);
   checkAchievementsNow()
 }
 function changeCounterTaskByEnteredAmount(i,direction){
