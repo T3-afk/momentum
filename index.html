@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="./icon-180.png">
 <script src="./cloud-config.js"></script>
 
-<title>Momentum 15 Cloud</title>
+<title>Momentum 19</title>
 <style>
 :root{
   --accent:#ffd21f;
@@ -2099,125 +2099,109 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
 }
 
 
-/* ==================== MOMENTUM 18 — P3 SOCIAL STATS ==================== */
+/* ==================== MOMENTUM 19 — DARK SOCIAL STATS ==================== */
 .p5-social-shell{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:16px;margin-bottom:16px;align-items:stretch}
 .p5-social-panel{
   position:relative;min-height:620px;overflow:hidden;isolation:isolate;
-  background:linear-gradient(180deg,#f8fbff 0%,#eef5fb 52%,#e5eef7 100%);
-  border:1px solid #bfd2e4;
-  box-shadow:0 16px 34px rgba(19,48,84,.12), inset 0 0 0 1px rgba(255,255,255,.75)
+  background:
+    radial-gradient(circle at 50% 48%,rgba(var(--accent-rgb),.10),transparent 38%),
+    linear-gradient(180deg,#0b0c0f 0%,#07080a 100%);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 18px 44px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.035)
 }
 .p5-social-panel::before{
-  content:"";position:absolute;inset:0;z-index:-3;
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.15) 26%,transparent 70%),
-    radial-gradient(circle at 50% 52%,rgba(93,148,206,.16),transparent 38%),
-    linear-gradient(135deg,rgba(109,159,213,.07),transparent 42%,rgba(34,73,125,.08) 100%);
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;z-index:-1;
+  background:linear-gradient(180deg,var(--accent),var(--accent2));opacity:.95
 }
 .p5-social-panel::after{
-  content:"";position:absolute;left:24px;right:24px;top:78px;height:1px;z-index:-2;
-  background:linear-gradient(90deg,transparent,rgba(82,124,176,.45),transparent);
+  content:"";position:absolute;left:24px;right:24px;top:76px;height:1px;z-index:-1;
+  background:linear-gradient(90deg,rgba(var(--accent-rgb),.75),rgba(255,255,255,.08) 36%,transparent)
 }
 .p5-paper-shard{display:none}
 .p5-social-heading{
-  position:absolute;left:22px;top:18px;z-index:8;display:flex;flex-direction:column;gap:2px;
-  transform:none;font-weight:700;text-transform:uppercase;line-height:1;letter-spacing:1.4px
+  position:absolute;left:24px;top:18px;z-index:8;display:flex;flex-direction:column;gap:3px;
+  transform:none;font-weight:800;text-transform:uppercase;line-height:1;letter-spacing:1.3px
 }
-.p5-social-heading span{
-  font-size:12px;background:transparent;color:#5d82a6;padding:0;border:0;box-shadow:none
-}
-.p5-social-heading b{
-  font-size:30px;background:transparent;color:#18365d;padding:0;border:0;box-shadow:none;text-shadow:none;font-weight:1000;letter-spacing:.8px
-}
-.p5-social-heading::after{
-  content:"";display:block;margin-top:9px;width:84px;height:3px;background:#6da2d8;border-radius:999px
-}
-.p5-social-subhead{
-  position:absolute;right:24px;top:26px;z-index:8;color:#6a86a2;font-size:10px;font-weight:800;letter-spacing:1.15px;transform:none
-}
+.p5-social-heading span{font-size:10px;background:transparent;color:var(--accent);padding:0;border:0;box-shadow:none;letter-spacing:2px}
+.p5-social-heading b{font-size:29px;background:transparent;color:#f4f6f8;padding:0;border:0;box-shadow:none;text-shadow:none;font-weight:1000;letter-spacing:.4px}
+.p5-social-heading::after{content:"";display:block;margin-top:8px;width:72px;height:3px;background:var(--accent);box-shadow:30px 0 0 var(--accent2)}
+.p5-social-subhead{position:absolute;right:24px;top:27px;z-index:8;color:#777f89;font-size:9px;font-weight:900;letter-spacing:1.25px;transform:none}
 .p5-social-radar{position:relative;width:min(100%,650px);height:590px;margin:20px auto 0}
 .social-radar-svg{
   position:absolute;left:50%;top:54%;width:min(90%,560px);height:min(90%,560px);
-  transform:translate(-50%,-50%);overflow:visible;filter:drop-shadow(0 14px 22px rgba(25,57,93,.14))
+  transform:translate(-50%,-50%);overflow:visible;filter:drop-shadow(0 16px 24px rgba(0,0,0,.34))
 }
-.p5-star-rings polygon{fill:none;stroke:#d8e6f2;stroke-width:3;stroke-linejoin:round}
-.p5-star-rings polygon:nth-child(odd){stroke:#c6d8e8;opacity:.8}
-.p5-star-rings polygon:last-child{stroke:#9fb9d5;stroke-width:2.2;opacity:1}
-.p5-star-rings polygon:nth-last-child(2){stroke:#b4cce3;stroke-width:1.8;opacity:.95}
-.social-radar-glow{fill:#8cc5f0;stroke:none;opacity:.16;filter:blur(10px)}
-.social-radar-area{fill:rgba(96,172,229,.62);stroke:#5c97ca;stroke-width:3.4;stroke-linejoin:round;transition:points .4s cubic-bezier(.2,.9,.2,1)}
-.p5-star-core{fill:#eff7ff;stroke:#93bbdd;stroke-width:2.4;opacity:1;pointer-events:none}
-.social-radar-dot{fill:#ffffff;stroke:#679dcd;stroke-width:2.3}
+.p5-star-rings polygon{fill:none;stroke:rgba(255,255,255,.075);stroke-width:2;stroke-linejoin:round}
+.p5-star-rings polygon:nth-child(odd){stroke:rgba(var(--accent-rgb),.13);opacity:1}
+.p5-star-rings polygon:last-child{stroke:rgba(255,255,255,.20);stroke-width:2.4;opacity:1}
+.p5-star-rings polygon:nth-last-child(2){stroke:rgba(var(--accent-rgb),.28);stroke-width:2;opacity:1}
+.social-radar-glow{fill:var(--accent);stroke:none;opacity:.13;filter:blur(12px)}
+.social-radar-area{fill:rgba(var(--accent-rgb),.50);stroke:var(--accent);stroke-width:3.2;stroke-linejoin:round;transition:points .4s cubic-bezier(.2,.9,.2,1);filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.18))}
+.p5-star-core{fill:#0c0d10;stroke:var(--accent2);stroke-width:2.5;opacity:1;pointer-events:none}
+.social-radar-dot{fill:#090a0d;stroke:var(--accent);stroke-width:3}
 .social-radar-label{position:absolute;z-index:7;display:flex;flex-direction:column;align-items:flex-start;line-height:1;text-transform:none;font-weight:1000;text-shadow:none}
 .p5-stat-tag{
-  display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.82);backdrop-filter:blur(4px);
-  border:1px solid rgba(102,145,191,.38);color:#16395f;padding:7px 10px;border-radius:14px;box-shadow:0 8px 16px rgba(28,61,101,.09);transform:none;white-space:nowrap
+  display:grid;grid-template-columns:28px auto auto;align-items:center;gap:8px;
+  background:rgba(9,10,13,.92);border:1px solid rgba(255,255,255,.10);color:#f2f4f7;
+  padding:6px 9px 6px 7px;box-shadow:0 10px 24px rgba(0,0,0,.26);transform:none;white-space:nowrap;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px))
 }
-.p5-stat-tag b{font-size:16px;letter-spacing:-.3px;font-style:normal;text-transform:none;font-weight:1000}
-.p5-stat-tag span{display:grid;place-items:center;min-width:24px;height:24px;padding:0 6px;background:#6da2d8;color:#fff;font-size:13px;font-weight:1000;transform:none;border:0;border-radius:999px}
-.social-radar-label em{display:block;margin:7px 6px 0;color:#5d7896;font-size:13px;font-style:normal;font-weight:800;white-space:nowrap}
+.radar-stat-icon{display:grid;place-items:center;width:28px;height:28px;color:#08090b;background:var(--accent);clip-path:polygon(12% 0,100% 0,100% 88%,88% 100%,0 100%,0 12%)}
+.radar-stat-icon svg{width:17px;height:17px;display:block}
+.p5-stat-tag b{font-size:14px;letter-spacing:-.15px;font-style:normal;text-transform:none;font-weight:1000}
+.p5-stat-tag span:not(.radar-stat-icon){display:grid;place-items:center;min-width:25px;height:25px;padding:0 5px;background:rgba(var(--accent-rgb),.10);color:var(--accent);font-size:12px;font-weight:1000;transform:none;border:1px solid rgba(var(--accent-rgb),.35)}
+.social-radar-label em{display:block;margin:6px 5px 0;color:#8f969f;font-size:11px;font-style:normal;font-weight:900;white-space:nowrap;letter-spacing:.2px}
 .social-radar-label.knowledge{top:5%;left:50%;transform:translateX(-50%);align-items:center}
 .social-radar-label.knowledge .p5-stat-tag{transform:none}
-.social-radar-label.guts{right:3%;top:30%}
-.social-radar-label.guts .p5-stat-tag{transform:none}
-.social-radar-label.proficiency{right:8%;bottom:6%}
-.social-radar-label.proficiency .p5-stat-tag{transform:none}
-.social-radar-label.kindness{left:8%;bottom:6%}
-.social-radar-label.kindness .p5-stat-tag{transform:none}
-.social-radar-label.charm{left:3%;top:30%}
-.social-radar-label.charm .p5-stat-tag{transform:none}
-.social-migration-note{
-  position:absolute;left:20px;right:20px;bottom:14px;z-index:8;padding:10px 12px;background:rgba(255,255,255,.88);
-  border:1px solid #d2dfeb;color:#64809b;font-size:9px;font-weight:850;border-radius:12px;box-shadow:0 8px 18px rgba(23,56,95,.08)
-}
+.social-radar-label.guts{right:3%;top:30%}.social-radar-label.guts .p5-stat-tag{transform:none}
+.social-radar-label.proficiency{right:8%;bottom:6%}.social-radar-label.proficiency .p5-stat-tag{transform:none}
+.social-radar-label.kindness{left:8%;bottom:6%}.social-radar-label.kindness .p5-stat-tag{transform:none}
+.social-radar-label.charm{left:3%;top:30%}.social-radar-label.charm .p5-stat-tag{transform:none}
+.social-migration-note{position:absolute;left:20px;right:20px;bottom:14px;z-index:8;padding:9px 11px;background:#0e1013;border:1px solid rgba(255,255,255,.09);color:#858c95;font-size:9px;font-weight:850;box-shadow:0 8px 18px rgba(0,0,0,.20)}
 .p5-social-detail{
-  position:relative;background:linear-gradient(180deg,#fdfefe,#eff5fb);color:#18365d;border:1px solid #c9d9e8;
-  padding:68px 14px 14px;overflow:hidden;box-shadow:0 16px 30px rgba(19,48,84,.10);transform:none;border-radius:0
+  position:relative;background:linear-gradient(180deg,#0d0f12,#090a0c);color:#f4f5f7;border:1px solid rgba(255,255,255,.10);
+  padding:68px 14px 14px;overflow:hidden;box-shadow:0 18px 38px rgba(0,0,0,.30);transform:none
 }
-.p5-social-detail::before{
-  content:"";position:absolute;left:0;right:0;top:0;height:56px;background:linear-gradient(90deg,#edf6ff 0,#f7fbff 45%,#edf6ff 100%);
-  border-bottom:1px solid #d4e2ee;transform:none;z-index:0
-}
-.p5-detail-heading{position:absolute;left:14px;top:12px;z-index:2;display:flex;gap:6px;align-items:baseline;font-weight:1000;transform:none}
-.p5-detail-heading span{font-size:12px;color:#6a88a6;padding:0;letter-spacing:1.05px;text-transform:uppercase}
-.p5-detail-heading b{font-size:24px;background:transparent;color:#18365d;padding:0;text-shadow:none}
-.social-stats-list{display:grid;gap:10px;margin-top:2px}
+.p5-social-detail::before{content:"";position:absolute;left:0;right:0;top:0;height:55px;background:#0b0c0f;border-bottom:1px solid rgba(255,255,255,.08);transform:none;z-index:0}
+.p5-social-detail::after{content:"";position:absolute;left:0;top:0;width:4px;height:55px;background:var(--accent);z-index:1}
+.p5-detail-heading{position:absolute;left:16px;top:12px;z-index:2;display:flex;gap:7px;align-items:baseline;font-weight:1000;transform:none}
+.p5-detail-heading span{font-size:9px;color:var(--accent);padding:0;letter-spacing:1.7px;text-transform:uppercase}
+.p5-detail-heading b{font-size:23px;background:transparent;color:#f4f5f7;padding:0;text-shadow:none}
+.social-stats-list{display:grid;gap:9px;margin-top:2px}
 .social-stat-row{
-  padding:11px 12px 12px;background:rgba(255,255,255,.88);border:1px solid #d3e0ec;position:relative;overflow:hidden;
-  box-shadow:0 8px 18px rgba(29,61,100,.08);transform:none;border-radius:12px
+  padding:10px 11px 11px;background:#101216;border:1px solid rgba(255,255,255,.075);position:relative;overflow:hidden;
+  box-shadow:none;transform:none;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)
 }
 .social-stat-row:nth-child(even){transform:none}
-.social-stat-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#8ec1ea,#679fd0);opacity:.92}
+.social-stat-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.9}
 .social-stat-head{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center}
-.social-stat-name{display:flex;align-items:center;gap:8px;font-weight:1000;text-transform:none;font-size:14px;color:#18365d;letter-spacing:-.15px}
-.social-stat-icon{display:grid;place-items:center;width:26px;height:26px;background:#6da2d8;color:#fff;border:0;box-shadow:none;font-size:14px;transform:none;border-radius:999px}
-.social-stat-level{font-size:22px;font-weight:1000;color:#355f8a;line-height:.95;text-align:right}
-.social-stat-level small{display:block;font-size:8px;color:#7e97b0;margin:0 0 2px;text-transform:uppercase;letter-spacing:.65px}
-.social-stat-title{display:block;margin:6px 0 0 34px;color:#5e7a95;font-size:12px;font-weight:900;text-transform:none}
-.social-stat-progress{height:8px;background:#dce7f1;border:0;margin-top:8px;overflow:hidden;transform:none;border-radius:999px}
-.social-stat-progress span{display:block;height:100%;background:linear-gradient(90deg,#7cb2e0,#5c97ca);transition:width .35s ease;border-radius:999px}
-.social-stat-foot{display:flex;justify-content:space-between;gap:8px;margin-top:7px;font-size:8px;color:#8098ae;font-weight:900}
-.p5-social-detail .social-explain{margin-top:12px;padding:11px 12px;border:1px solid #d4e2ee;background:rgba(255,255,255,.84);color:#5f7a95;font-size:10px;line-height:1.45;font-weight:800;box-shadow:none;transform:none;border-radius:12px}
-.social-task-chip{display:inline-flex;margin:5px 5px 0 0;padding:3px 7px;border:1px solid rgba(111,158,207,.45);color:#4f7daa;background:rgba(255,255,255,.72);font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.4px;border-radius:999px}
-.social-reward-pill{color:#4777a6!important;border-color:rgba(93,145,197,.55)!important;background:rgba(230,242,252,.8)!important}
+.social-stat-name{display:flex;align-items:center;gap:9px;font-weight:1000;text-transform:none;font-size:13px;color:#f2f4f7;letter-spacing:-.1px}
+.social-stat-icon{display:grid;place-items:center;width:30px;height:30px;background:var(--accent);color:#07080a;border:0;box-shadow:none;transform:none;clip-path:polygon(12% 0,100% 0,100% 88%,88% 100%,0 100%,0 12%)}
+.social-stat-icon-svg{width:18px;height:18px;display:block}
+.social-stat-level{font-size:20px;font-weight:1000;color:var(--accent);line-height:.95;text-align:right}
+.social-stat-level small{display:block;font-size:7px;color:#727a84;margin:0 0 2px;text-transform:uppercase;letter-spacing:.8px}
+.social-stat-title{display:block;margin:5px 0 0 39px;color:#8b929b;font-size:11px;font-weight:900;text-transform:none}
+.social-stat-progress{height:7px;background:#24272c;border:0;margin-top:8px;overflow:hidden;transform:none}
+.social-stat-progress span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
+.social-stat-foot{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:8px;color:#727983;font-weight:900}
+.p5-social-detail .social-explain{margin-top:12px;padding:10px 11px;border:1px solid rgba(255,255,255,.07);background:#0d0f12;color:#7f8790;font-size:10px;line-height:1.45;font-weight:800;box-shadow:none;transform:none}
+.social-task-chip{display:inline-flex;align-items:center;gap:4px;margin:5px 5px 0 0;padding:3px 7px;border:1px solid rgba(var(--accent-rgb),.30);color:var(--accent);background:rgba(var(--accent-rgb),.055);font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.35px}
+.social-task-chip .social-chip-icon{width:12px;height:12px;display:block}
+.social-reward-pill{color:var(--accent)!important;border-color:rgba(var(--accent-rgb),.36)!important;background:rgba(var(--accent-rgb),.05)!important}
 @media(max-width:1050px){.p5-social-shell{grid-template-columns:1fr}.p5-social-panel{min-height:610px}.p5-social-detail{transform:none}}
 @media(max-width:600px){
-  .p5-social-panel{min-height:520px;border-width:1px;box-shadow:0 10px 22px rgba(19,48,84,.10)}
-  .p5-social-heading{left:14px;top:14px;gap:1px}.p5-social-heading span{font-size:10px}.p5-social-heading b{font-size:23px}
+  .p5-social-panel{min-height:520px;border-width:1px;box-shadow:0 12px 28px rgba(0,0,0,.30)}
+  .p5-social-heading{left:15px;top:14px;gap:2px}.p5-social-heading span{font-size:9px}.p5-social-heading b{font-size:22px}
   .p5-social-subhead{display:none}
   .p5-social-radar{height:485px;margin-top:10px}
   .social-radar-svg{top:53%;width:95%;height:95%}
-  .p5-stat-tag{padding:5px 7px;border-radius:12px;gap:5px}
-  .p5-stat-tag b{font-size:11px;letter-spacing:-.2px}.p5-stat-tag span{min-width:19px;height:19px;font-size:11px;padding:0 3px}
-  .social-radar-label em{font-size:10px;margin-top:4px}
-  .social-radar-label.knowledge{top:9%}
-  .social-radar-label.guts{right:1%;top:31%}
-  .social-radar-label.charm{left:1%;top:31%}
-  .social-radar-label.proficiency{right:3%;bottom:8%}
-  .social-radar-label.kindness{left:3%;bottom:8%}
+  .p5-stat-tag{grid-template-columns:22px auto auto;padding:4px 6px 4px 5px;gap:5px}
+  .radar-stat-icon{width:22px;height:22px}.radar-stat-icon svg{width:14px;height:14px}
+  .p5-stat-tag b{font-size:10px}.p5-stat-tag span:not(.radar-stat-icon){min-width:19px;height:19px;font-size:10px;padding:0 3px}
+  .social-radar-label em{font-size:9px;margin-top:4px}
+  .social-radar-label.knowledge{top:9%}.social-radar-label.guts{right:1%;top:31%}.social-radar-label.charm{left:1%;top:31%}.social-radar-label.proficiency{right:3%;bottom:8%}.social-radar-label.kindness{left:3%;bottom:8%}
   .social-migration-note{left:10px;right:10px;bottom:8px;font-size:8px;padding:8px 9px}
-  .p5-social-detail{padding:60px 10px 10px}
-  .p5-detail-heading b{font-size:20px}.p5-detail-heading span{font-size:11px}
+  .p5-social-detail{padding:60px 10px 10px}.p5-detail-heading b{font-size:20px}.p5-detail-heading span{font-size:9px}
 }
 
 </style>
@@ -2465,8 +2449,8 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
         <div class="p5-social-panel">
           <div class="p5-paper-shard shard-a"></div>
           <div class="p5-paper-shard shard-b"></div>
-          <div class="p5-social-heading"><span>PERSONAL</span><b>SOCIAL STATS</b></div>
-          <div class="p5-social-subhead">STEADY GROWTH • DAY BY DAY</div>
+          <div class="p5-social-heading"><span>PERSONAL DATA</span><b>SOCIAL STATS</b></div>
+          <div class="p5-social-subhead">FIVE TRAITS • TEN LEVELS</div>
 
           <div class="social-radar-wrap p5-social-radar">
             <svg class="social-radar-svg" viewBox="0 0 500 500" aria-label="Social Stats star">
@@ -2478,23 +2462,23 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
             </svg>
 
             <div class="social-radar-label knowledge">
-              <div class="p5-stat-tag"><b>Knowledge</b><span id="socialRadarKnowledge">1</span></div>
+              <div class="p5-stat-tag"><span class="radar-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5c3.1-.7 5.5-.1 8 1.6v11.2c-2.5-1.7-4.9-2.2-8-1.5V5.5Zm16 0c-3.1-.7-5.5-.1-8 1.6v11.2c2.5-1.7 4.9-2.2 8-1.5V5.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.1v11.2" stroke="currentColor" stroke-width="1.8"/></svg></span><b>Knowledge</b><span id="socialRadarKnowledge">1</span></div>
               <em id="socialTitleKnowledge">Oblivious</em>
             </div>
             <div class="social-radar-label guts">
-              <div class="p5-stat-tag"><b>Guts</b><span id="socialRadarGuts">1</span></div>
+              <div class="p5-stat-tag"><span class="radar-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 2.8 5.7 13h5.1l-1 8.2 8.5-11.3h-5.2l.1-7.1Z" fill="currentColor"/></svg></span><b>Guts</b><span id="socialRadarGuts">1</span></div>
               <em id="socialTitleGuts">Milquetoast</em>
             </div>
             <div class="social-radar-label proficiency">
-              <div class="p5-stat-tag"><b>Proficiency</b><span id="socialRadarProficiency">1</span></div>
+              <div class="p5-stat-tag"><span class="radar-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 4.2a5 5 0 0 0 6.5 6.5l5 5-3.9 3.9-5-5a5 5 0 0 0-6.5-6.5l3.1 3.1 3.3-.6.6-3.3-3.1-3.1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Proficiency</b><span id="socialRadarProficiency">1</span></div>
               <em id="socialTitleProficiency">Bumbling</em>
             </div>
             <div class="social-radar-label kindness">
-              <div class="p5-stat-tag"><b>Kindness</b><span id="socialRadarKindness">1</span></div>
+              <div class="p5-stat-tag"><span class="radar-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.1S4.1 15.5 4.1 9.4A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.9 2.1c0 6.1-7.9 10.7-7.9 10.7Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span><b>Kindness</b><span id="socialRadarKindness">1</span></div>
               <em id="socialTitleKindness">Inoffensive</em>
             </div>
             <div class="social-radar-label charm">
-              <div class="p5-stat-tag"><b>Charm</b><span id="socialRadarCharm">1</span></div>
+              <div class="p5-stat-tag"><span class="radar-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.7 1.5 5.1 5.1 1.5-5.1 1.5-1.5 5.1-1.5-5.1-5.1-1.5 5.1-1.5L12 2.7Z" fill="currentColor"/><path d="m18.8 15.4.7 2.2 2.1.7-2.1.7-.7 2.2-.7-2.2-2.2-.7 2.2-.7.7-2.2Z" fill="currentColor" opacity=".72"/></svg></span><b>Charm</b><span id="socialRadarCharm">1</span></div>
               <em id="socialTitleCharm">Existent</em>
             </div>
           </div>
@@ -3044,6 +3028,18 @@ function socialStatTitle(key,level){
   return titles[lv-1]||`Level ${lv}`
 }
 
+function socialStatIconSVG(key,cls=""){
+  const icons={
+    knowledge:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5c3.1-.7 5.5-.1 8 1.6v11.2c-2.5-1.7-4.9-2.2-8-1.5V5.5Zm16 0c-3.1-.7-5.5-.1-8 1.6v11.2c2.5-1.7 4.9-2.2 8-1.5V5.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.1v11.2" stroke="currentColor" stroke-width="1.8"/></svg>`,
+    guts:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 2.8 5.7 13h5.1l-1 8.2 8.5-11.3h-5.2l.1-7.1Z" fill="currentColor"/></svg>`,
+    proficiency:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 4.2a5 5 0 0 0 6.5 6.5l5 5-3.9 3.9-5-5a5 5 0 0 0-6.5-6.5l3.1 3.1 3.3-.6.6-3.3-3.1-3.1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    kindness:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.1S4.1 15.5 4.1 9.4A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.9 2.1c0 6.1-7.9 10.7-7.9 10.7Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>`,
+    charm:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.7 1.5 5.1 5.1 1.5-5.1 1.5-1.5 5.1-1.5-5.1-5.1-1.5 5.1-1.5L12 2.7Z" fill="currentColor"/><path d="m18.8 15.4.7 2.2 2.1.7-2.1.7-.7 2.2-.7-2.2-2.2-.7 2.2-.7.7-2.2Z" fill="currentColor" opacity=".72"/></svg>`
+  };
+  const raw=icons[key]||icons.knowledge;
+  return cls?raw.replace("<svg ",`<svg class="${cls}" `):raw
+}
+
 function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack",cloudMedia:{avatar:false,introImage:false,introBackground:false,soundtrack:false}},days:{},reminders:[],recurringTasks:[],rankLedger:{},socialStats:{knowledge:0,guts:0,proficiency:0,kindness:0,charm:0},socialStatLedger:{},socialStatsVersion:0,legacyRankPointsMigrated:0,permanentTasks:[],projects:[],focusSessions:[],achievements:{}}}
 function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
 function load(){
@@ -3398,7 +3394,7 @@ function renderSocialStats(d){
     const into=info.next===null?info.xp-SOCIAL_LEVEL_THRESHOLDS[9]:info.xp-info.base;
     const needed=info.next===null?0:info.span;
     return `<div class="social-stat-row">
-      <div class="social-stat-head"><div class="social-stat-name"><span class="social-stat-icon">${meta.icon}</span>${meta.name}</div><div class="social-stat-level"><small>${info.level>=10?"MAX":"LV."}</small>${info.level}</div></div>
+      <div class="social-stat-head"><div class="social-stat-name"><span class="social-stat-icon">${socialStatIconSVG(key,"social-stat-icon-svg")}</span>${meta.name}</div><div class="social-stat-level"><small>${info.level>=10?"MAX":"LV."}</small>${info.level}</div></div>
       <span class="social-stat-title">${socialStatTitle(key,info.level)}</span>
       <div class="social-stat-progress"><span style="width:${(info.progress*100).toFixed(1)}%"></span></div>
       <div class="social-stat-foot"><span>${info.xp.toLocaleString()} total XP</span><span>${info.next===null?"MAX LEVEL":`${into} / ${needed} XP to Lv. ${info.level+1}`}</span></div>
@@ -4074,7 +4070,7 @@ function taskCardHTML(t,i){
   return `<div class="task ${t.done?"done":""}">
     <input class="check" type="checkbox" data-check="${i}" ${t.done?"checked":""}>
     <div class="task-name">${esc(t.name)}${t.recurringId?`<span class="repeat-mini">↻ ${t.repeatType}</span>`:""}
-      <span class="social-task-chip">${SOCIAL_STAT_META[t.socialStat]?.icon||"◆"} ${esc(socialStatName(t.socialStat))} +${Number(t.socialXP)||0} XP</span>
+      <span class="social-task-chip">${socialStatIconSVG(t.socialStat,"social-chip-icon")} ${esc(socialStatName(t.socialStat))} +${Number(t.socialXP)||0} XP</span>
       ${counter?`<div class="task-progress"><span class="task-progress-label">${taskProgressText(t)}</span><span class="task-progress-track"><span class="task-progress-fill" style="width:${pct}%"></span></span></div>`:""}
     </div>
     <div class="tag">${t.category==="school"?"School":t.category==="home"?"Home":"Health"}</div>
