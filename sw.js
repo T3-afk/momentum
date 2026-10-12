@@ -1,4 +1,4 @@
-const CACHE="momentum-pwa-v19-dark-social-stats";
+const CACHE="momentum-pwa-v20-notebook";
 const APP_SHELL=[
   "./",
   "./index.html",

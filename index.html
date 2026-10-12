@@ -2204,6 +2204,57 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   .p5-social-detail{padding:60px 10px 10px}.p5-detail-heading b{font-size:20px}.p5-detail-heading span{font-size:9px}
 }
 
+
+/* ==================== MOMENTUM 20 — NOTEBOOK ==================== */
+.notes-page-shell{display:grid;gap:14px}
+.notes-library-card{padding:12px 14px 16px!important;min-width:0}
+.notes-toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:4px 0 12px}
+.notes-toolbar-left{display:flex;align-items:center;gap:9px;min-width:0}
+.notes-count{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:27px;padding:0 9px;border:1px solid rgba(var(--accent-rgb),.48);color:var(--accent);background:rgba(var(--accent-rgb),.08);font-size:10px;font-weight:1000;border-radius:999px}
+.notes-search-wrap{position:relative;flex:1 1 280px;max-width:480px}
+.notes-search-wrap::before{content:"⌕";position:absolute;left:11px;top:50%;transform:translateY(-52%);font-size:18px;color:var(--accent);font-weight:1000;pointer-events:none}
+#notesSearch{width:100%;min-height:42px;padding:9px 12px 9px 37px;background:#090a0c;color:#fff;border:1px solid #34373d;border-radius:11px;font-size:13px}
+#notesSearch:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.11)}
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:11px;align-items:stretch}
+.note-card{position:relative;display:flex;flex-direction:column;min-height:164px;padding:14px 14px 12px;background:linear-gradient(145deg,#0d0f12,#08090b);border:1px solid #2f3339;overflow:hidden;cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;border-radius:13px;text-align:left;color:#fff}
+.note-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--accent),var(--accent2));opacity:.9}
+.note-card::after{content:"";position:absolute;right:-34px;top:-46px;width:100px;height:100px;border:1px solid rgba(var(--accent-rgb),.22);transform:rotate(32deg);pointer-events:none}
+.note-card:hover,.note-card:focus-visible{transform:translateY(-3px);border-color:rgba(var(--accent-rgb),.72);box-shadow:0 10px 24px rgba(0,0,0,.28)}
+.note-card:focus-visible{outline:none}
+.note-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.note-card-title{font-size:16px;font-weight:1000;line-height:1.1;overflow-wrap:anywhere;color:#f5f7fa;padding-right:4px}
+.note-card-open{display:grid;place-items:center;flex:0 0 auto;width:28px;height:28px;border:1px solid #363a40;border-radius:8px;color:var(--accent);font-size:17px;font-weight:1000;background:#0a0b0d}
+.note-card-preview{position:relative;z-index:1;color:#aeb4bd;font-size:11px;line-height:1.5;white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow-wrap:anywhere;flex:1}
+.note-card-bottom{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;align-items:end;margin-top:12px;color:#717984;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.55px}
+.note-card-bottom b{color:#8d96a2;font-weight:1000}
+.notes-empty{padding:44px 18px;text-align:center;border:1px dashed #34383e;border-radius:13px;background:#090a0c;color:#707781}
+.notes-empty strong{display:block;color:#d9dde2;font-size:18px;margin-bottom:6px}
+.notes-empty span{font-size:11px}
+.note-editor-modal{width:min(760px,calc(100vw - 28px));max-width:760px;padding:0!important;background:#090a0c!important;color:#fff!important;border:1px solid #393d43!important;border-radius:16px!important;box-shadow:0 24px 70px rgba(0,0,0,.65)!important;overflow:hidden!important}
+.note-editor-modal::backdrop{background:rgba(0,0,0,.76);backdrop-filter:blur(3px)}
+.note-editor-shell{padding:0;margin:0;display:flex;flex-direction:column;max-height:min(86svh,820px)}
+.note-editor-topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid #2d3035;background:#0d0f12}
+.note-editor-label{display:flex;align-items:center;gap:8px;color:#aab0b8;font-size:9px;font-weight:1000;text-transform:uppercase;letter-spacing:1px}
+.note-editor-label::before{content:"";width:9px;height:9px;background:var(--accent);border-radius:999px;box-shadow:0 0 0 4px rgba(var(--accent-rgb),.10)}
+.note-close-btn{width:36px;height:36px;padding:0!important;display:grid!important;place-items:center!important;border-radius:10px!important;font-size:20px!important;line-height:1!important}
+.note-editor-body{padding:14px;overflow:auto}
+#noteTitleInput{width:100%;background:transparent!important;border:0!important;border-bottom:1px solid #34383e!important;border-radius:0!important;padding:8px 2px 11px!important;color:#fff!important;font-size:24px!important;font-weight:1000!important;letter-spacing:-.5px}
+#noteTitleInput:focus{outline:none!important;border-color:var(--accent)!important;box-shadow:none!important}
+#noteBodyInput{width:100%;min-height:390px;margin-top:10px;padding:13px;background:#08090b;color:#e9ebee;border:1px solid #30343a;border-radius:12px;resize:vertical;font:inherit;font-size:14px;line-height:1.6}
+#noteBodyInput:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.10)}
+.note-editor-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;color:#6f7782;font-size:9px;font-weight:850}
+.note-editor-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 14px calc(11px + var(--safe-bottom));border-top:1px solid #2d3035;background:#0d0f12}
+.note-editor-actions-right{display:flex;gap:8px;align-items:center}
+.note-danger{border-color:#6c3037!important;color:#ff7f8d!important}
+.note-danger:hover{background:#2a0d11!important}
+@media(max-width:760px){
+  .notes-toolbar{align-items:stretch}.notes-toolbar-left{width:100%;justify-content:space-between}.notes-search-wrap{max-width:none;flex-basis:100%}
+  .notes-grid{grid-template-columns:1fr 1fr;gap:8px}.note-card{min-height:145px;padding:11px 11px 10px}.note-card-title{font-size:14px}.note-card-preview{font-size:10px;-webkit-line-clamp:3}
+  .note-editor-modal{width:calc(100vw - 12px)!important;max-width:calc(100vw - 12px)!important;max-height:calc(100svh - 12px)!important}
+  .note-editor-shell{max-height:calc(100svh - 12px)}#noteTitleInput{font-size:21px!important}#noteBodyInput{min-height:48svh;font-size:16px!important}
+}
+@media(max-width:430px){.notes-grid{grid-template-columns:1fr}.note-card{min-height:132px}}
+
 </style>
 </head>
 <body>
@@ -2406,15 +2457,27 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   </section>
 
   <section id="notesPage" class="page">
-    <div class="notes-layout">
-      <div class="card notes-card">
-        <div class="card-title">Daily Notes</div>
-        <textarea id="notesInput" placeholder="Reflection, plans, ideas..."></textarea>
-        <button class="btn" id="saveNoteBtn" style="margin-top:10px">Save Note</button>
-      </div>
-      <div class="card notes-card">
-        <div class="card-title">Recent Days</div>
-        <div id="noteHistory" class="history"></div>
+    <div class="notes-page-shell">
+      <div class="card notes-library-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Notes</div>
+            <div style="color:#777;font-size:10px;font-weight:850;margin-top:2px">A personal notebook inside Momentum.</div>
+          </div>
+          <button class="btn" id="newNoteBtn">+ New Note</button>
+        </div>
+
+        <div class="notes-toolbar">
+          <div class="notes-toolbar-left">
+            <span id="notesCount" class="notes-count">0</span>
+            <span style="color:#777;font-size:10px;font-weight:900">saved notes</span>
+          </div>
+          <div class="notes-search-wrap">
+            <input id="notesSearch" type="search" placeholder="Search notes..." autocomplete="off">
+          </div>
+        </div>
+
+        <div id="noteHistory" class="notes-grid"></div>
       </div>
     </div>
   </section>
@@ -2864,6 +2927,32 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
   </form>
 </dialog>
 
+
+<dialog id="noteDialog" class="note-editor-modal">
+  <form id="noteForm" class="note-editor-shell" method="dialog">
+    <div class="note-editor-topbar">
+      <div class="note-editor-label">Momentum Note</div>
+      <button type="button" class="ghost note-close-btn" id="closeNoteBtn" aria-label="Close note">×</button>
+    </div>
+    <div class="note-editor-body">
+      <input id="noteIdInput" type="hidden">
+      <input id="noteTitleInput" maxlength="140" placeholder="Untitled Note" autocomplete="off">
+      <textarea id="noteBodyInput" placeholder="Write anything... ideas, plans, reflections, study notes..."></textarea>
+      <div class="note-editor-meta">
+        <span id="noteCreatedMeta">New note</span>
+        <span id="noteUpdatedMeta"></span>
+      </div>
+    </div>
+    <div class="note-editor-actions">
+      <button type="button" class="ghost note-danger hidden" id="deleteNoteBtn">Delete</button>
+      <div class="note-editor-actions-right">
+        <button type="button" class="ghost" id="cancelNoteBtn">Close</button>
+        <button type="submit" class="btn" id="saveNotebookNoteBtn">Save Note</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
 <audio id="soundtrackAudio" preload="metadata"></audio>
 
 <dialog id="permanentTaskDialog">
@@ -3040,7 +3129,7 @@ function socialStatIconSVG(key,cls=""){
   return cls?raw.replace("<svg ",`<svg class="${cls}" `):raw
 }
 
-function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack",cloudMedia:{avatar:false,introImage:false,introBackground:false,soundtrack:false}},days:{},reminders:[],recurringTasks:[],rankLedger:{},socialStats:{knowledge:0,guts:0,proficiency:0,kindness:0,charm:0},socialStatLedger:{},socialStatsVersion:0,legacyRankPointsMigrated:0,permanentTasks:[],projects:[],focusSessions:[],achievements:{}}}
+function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack",cloudMedia:{avatar:false,introImage:false,introBackground:false,soundtrack:false}},days:{},reminders:[],recurringTasks:[],rankLedger:{},socialStats:{knowledge:0,guts:0,proficiency:0,kindness:0,charm:0},socialStatLedger:{},socialStatsVersion:0,legacyRankPointsMigrated:0,permanentTasks:[],projects:[],focusSessions:[],notebookNotes:[],notebookNotesVersion:0,achievements:{}}}
 function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
 function load(){
   try{const d=JSON.parse(localStorage.getItem(KEY));if(d)return normalize(d)}catch{}
@@ -3051,6 +3140,28 @@ function normalize(d){
   d.profile={...defaults().profile,...(d.profile||{})};
   d.profile.cloudMedia={...defaults().profile.cloudMedia,...(d.profile.cloudMedia||{})};
   d.days=d.days||{};
+  d.notebookNotes=Array.isArray(d.notebookNotes)?d.notebookNotes:[];
+  d.notebookNotes=d.notebookNotes.filter(n=>n&&typeof n==="object").map(n=>({
+    id:String(n.id||crypto.randomUUID?.()||Date.now()+Math.random()),
+    title:String(n.title||"Untitled Note").slice(0,140),
+    body:String(n.body||""),
+    createdAt:n.createdAt||new Date().toISOString(),
+    updatedAt:n.updatedAt||n.createdAt||new Date().toISOString(),
+    legacyDayKey:n.legacyDayKey||undefined
+  }));
+  if(!Number(d.notebookNotesVersion||0)){
+    Object.keys(d.days).sort().forEach(key=>{
+      const body=String(d.days[key]?.notes||"").trim();
+      if(!body)return;
+      d.notebookNotes.push({
+        id:crypto.randomUUID?.()||`legacy-note-${key}-${Date.now()}-${Math.random()}`,
+        title:`Daily Note — ${pretty(key)}`,
+        body:String(d.days[key].notes||""),
+        createdAt:`${key}T12:00:00`,updatedAt:`${key}T12:00:00`,legacyDayKey:key
+      })
+    });
+    d.notebookNotesVersion=1
+  }
   const normalizeProgressTask=t=>{
     if(!t||typeof t!=="object")return;
     t.taskType=t.taskType==="counter"?"counter":"check";
@@ -4113,7 +4224,6 @@ function renderMain(){
     </div>`
   }).join(""):`<div class="empty" style="padding:10px">No repeating tasks.</div>`;
 
-  $("notesInput").value=day.notes||"";
   renderNotesHistory();
   renderInbox();
   renderPermanentTasks(data);
@@ -4220,10 +4330,70 @@ function markRead(id){
   const d=load(),r=d.reminders.find(x=>x.id===id);if(r){r.read=true;save(d)}if(activePop===id)closePop();renderInbox()
 }
 function removeReminder(id){const d=load();d.reminders=d.reminders.filter(r=>r.id!==id);save(d);if(activePop===id)closePop();renderInbox()}
-function renderNotesHistory(){
-  const d=load(),keys=Object.keys(d.days).filter(k=>d.days[k].notes?.trim()).sort().reverse().slice(0,14);
-  $("noteHistory").innerHTML=keys.length?keys.map(k=>`<div class="history-row"><span>${pretty(k)}</span><b>${esc(d.days[k].notes.slice(0,60))}${d.days[k].notes.length>60?"…":""}</b></div>`).join(""):`<div class="empty">No saved notes yet.</div>`
+
+function notebookNoteTimestampLabel(value){
+  const dt=new Date(value);
+  if(Number.isNaN(dt.getTime()))return"";
+  return dt.toLocaleString([], {year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})
 }
+function renderNotebookNotes(){
+  const d=load(),search=($('notesSearch')?.value||"").trim().toLowerCase();
+  const all=[...(d.notebookNotes||[])].sort((a,b)=>new Date(b.updatedAt||b.createdAt||0)-new Date(a.updatedAt||a.createdAt||0));
+  const notes=search?all.filter(n=>`${n.title||""}\n${n.body||""}`.toLowerCase().includes(search)):all;
+  if($('notesCount'))$('notesCount').textContent=String(all.length);
+  const host=$('noteHistory');if(!host)return;
+  host.innerHTML=notes.length?notes.map(n=>{
+    const title=String(n.title||"").trim()||"Untitled Note";
+    const body=String(n.body||"").trim();
+    const preview=body||"Empty note";
+    return `<button type="button" class="note-card" data-note-open="${esc(n.id)}">
+      <div class="note-card-top"><div class="note-card-title">${esc(title)}</div><span class="note-card-open">↗</span></div>
+      <div class="note-card-preview">${esc(preview)}</div>
+      <div class="note-card-bottom"><span>${n.legacyDayKey?`Imported • ${pretty(n.legacyDayKey)}`:"Note"}</span><b>${esc(notebookNoteTimestampLabel(n.updatedAt||n.createdAt))}</b></div>
+    </button>`
+  }).join(""):`<div class="notes-empty" style="grid-column:1/-1"><strong>${search?"No matching notes":"No notes yet"}</strong><span>${search?"Try another search.":"Press + New Note and make as many notes as you want."}</span></div>`
+}
+function renderNotesHistory(){renderNotebookNotes()}
+function openNotebookNote(id=null){
+  const d=load(),note=id?(d.notebookNotes||[]).find(n=>n.id===id):null;
+  $('noteIdInput').value=note?.id||"";
+  $('noteTitleInput').value=note?.title||"";
+  $('noteBodyInput').value=note?.body||"";
+  $('noteCreatedMeta').textContent=note?.createdAt?`Created ${notebookNoteTimestampLabel(note.createdAt)}`:"New note";
+  $('noteUpdatedMeta').textContent=note?.updatedAt?`Updated ${notebookNoteTimestampLabel(note.updatedAt)}`:"";
+  $('deleteNoteBtn').classList.toggle('hidden',!note);
+  $('noteDialog').showModal();
+  setTimeout(()=>{(note?$('noteBodyInput'):$('noteTitleInput'))?.focus()},40)
+}
+function saveNotebookNoteFromEditor(){
+  const d=load(),id=$('noteIdInput').value,title=$('noteTitleInput').value.trim(),body=$('noteBodyInput').value;
+  if(!title&&!body.trim()){
+    $('noteTitleInput').setCustomValidity('Add a title or some note text.');
+    $('noteTitleInput').reportValidity();
+    setTimeout(()=>$('noteTitleInput').setCustomValidity(''),800);
+    return false
+  }
+  const now=new Date().toISOString();
+  if(id){
+    const note=(d.notebookNotes||[]).find(n=>n.id===id);
+    if(note){note.title=title||'Untitled Note';note.body=body;note.updatedAt=now}
+  }else{
+    d.notebookNotes=d.notebookNotes||[];
+    d.notebookNotes.push({id:crypto.randomUUID?.()||String(Date.now()+Math.random()),title:title||'Untitled Note',body,createdAt:now,updatedAt:now})
+  }
+  save(d);renderNotebookNotes();
+  showPersonaToast('inbox',id?'Note Updated':'Note Created',title||'Untitled Note');
+  return true
+}
+function deleteNotebookNote(id){
+  if(!id)return;
+  const d=load(),note=(d.notebookNotes||[]).find(n=>n.id===id);
+  if(!note)return;
+  if(!confirm(`Delete “${note.title||'Untitled Note'}”?`))return;
+  d.notebookNotes=d.notebookNotes.filter(n=>n.id!==id);save(d);$('noteDialog').close();renderNotebookNotes();
+  showPersonaToast('inbox','Note Deleted',note.title||'Untitled Note')
+}
+
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.go===id));
@@ -5813,7 +5983,13 @@ $("recurringRuleList").addEventListener("click",e=>{
   if(id)stopRecurringTask(id)
 });
 $("datePicker").addEventListener("change",renderMain);
-$("saveNoteBtn").onclick=()=>{const {data,day}=getDay($("datePicker").value);day.notes=$("notesInput").value;save(data);renderMain()};
+$("newNoteBtn")?.addEventListener("click",()=>openNotebookNote());
+$("notesSearch")?.addEventListener("input",renderNotebookNotes);
+$("noteHistory")?.addEventListener("click",e=>{const card=e.target.closest("[data-note-open]");if(card)openNotebookNote(card.dataset.noteOpen)});
+$("noteForm")?.addEventListener("submit",e=>{e.preventDefault();if(saveNotebookNoteFromEditor())$("noteDialog").close()});
+$("closeNoteBtn")?.addEventListener("click",()=>$("noteDialog").close());
+$("cancelNoteBtn")?.addEventListener("click",()=>$("noteDialog").close());
+$("deleteNoteBtn")?.addEventListener("click",()=>deleteNotebookNote($("noteIdInput").value));
 $("addReminderBtn").onclick=addReminder;
 $("reminderList").addEventListener("click",e=>{if(e.target.dataset.read)markRead(e.target.dataset.read);if(e.target.dataset.remdelete)removeReminder(e.target.dataset.remdelete)});
 $("clearReadBtn").onclick=()=>{const d=load();d.reminders=d.reminders.filter(r=>!r.read);save(d);renderInbox()};
