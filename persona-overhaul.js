@@ -1,117 +1,38 @@
-/* Momentum Persona Overhaul v21
-   Loaded after the original single-file app. Existing save + Supabase structure stays intact. */
-(()=>{
-  "use strict";
-  const VERSION="21.0.0";
-  const FLOOR_META=[
-    null,
-    {name:"Minor",max:.5,color:"#6f6f6f"},
-    {name:"Low",max:1,color:"#b9a233"},
-    {name:"Moderate",max:2,color:"#dd7f22"},
-    {name:"Important",max:3,color:"#f05232"},
-    {name:"Severe",max:4.5,color:"#e60022"},
-    {name:"Critical",max:Infinity,color:"#ff1747"}
-  ];
-  const q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
-  const escHTML=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
-  const uid=()=>crypto.randomUUID?.()||`m-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  const core={};
-  let projectObserver=null;
-  let transitionTimer=null;
-
-  function ready(fn){
-    if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",fn,{once:true});
-    else fn();
-  }
-  function floorForPenalty(value){
-    const n=Math.max(0,Number(value)||0);
-    if(n<=.5)return 1;if(n<=1)return 2;if(n<=2)return 3;if(n<=3)return 4;if(n<=4.5)return 5;return 6;
-  }
-  function categoryLabel(c){return c==="school"?"School":c==="home"?"Home":"Health"}
-  function fmtNumber(n){return Number((Number(n)||0).toFixed(1)).toLocaleString()}
-  function ensurePersonaData(d){
-    d.mementosRequests=Array.isArray(d.mementosRequests)?d.mementosRequests:[];
-    d.mementosRequests=d.mementosRequests.filter(Boolean).map(r=>({
-      id:String(r.id||uid()),name:String(r.name||"Untitled Request").slice(0,120),
-      category:["school","home","health"].includes(r.category)?r.category:"school",
-      deadline:r.deadline||null,missPenalty:Math.max(0,Number(r.missPenalty)||0),
-      rewardPoints:Math.max(0,Number(r.rewardPoints??r.missPenalty)||0),
-      rewardStat:(typeof SOCIAL_STAT_KEYS!=="undefined"&&SOCIAL_STAT_KEYS.includes(r.rewardStat))?r.rewardStat:(typeof defaultSocialStatForCategory==="function"?defaultSocialStatForCategory(r.category):"knowledge"),
-      statReward:Math.max(0,Math.round(Number(r.statReward??2)||0)),
-      status:["active","completed","failed","completed-late"].includes(r.status)?r.status:"active",
-      createdAt:r.createdAt||new Date().toISOString(),completedAt:r.completedAt||null,failureDate:r.failureDate||null,
-      penaltyApplied:!!r.penaltyApplied,completionTaskId:r.completionTaskId||null
-    }));
-    d.projects=Array.isArray(d.projects)?d.projects:[];
-    d.projects.forEach(p=>{if(typeof p.routeSecured!=="boolean")p.routeSecured=false});
-    d.personaOverhaulVersion=Math.max(Number(d.personaOverhaulVersion)||0,21);
-    return d;
-  }
-  function loadPersona(){const d=ensurePersonaData(load());return d}
-  function savePersona(d){save(ensurePersonaData(d))}
-
-  function installIdentity(){
-    document.documentElement.classList.add("persona-v21");
-    document.documentElement.dataset.personaVersion=VERSION;
-    const brand=q(".brand");
-    if(brand&&!q(".meta-brand-icon",brand)){
-      const img=document.createElement("img");img.className="meta-brand-icon";img.src="./metanav-momentum.svg";img.alt="Momentum Navigator";brand.prepend(img)
-    }
-    const brandSmall=q(".brand small");if(brandSmall)brandSmall.textContent="Meta Progress Navigator";
-    const introRight=q(".intro-right");
-    if(introRight&&!q(".meta-intro-logo",introRight)){
-      const img=document.createElement("img");img.className="meta-intro-logo";img.src="./metanav-momentum.svg";img.alt="";introRight.append(img);
-      const lab=document.createElement("div");lab.className="meta-intro-label";lab.textContent="Navigator Online";introRight.append(lab)
-    }
-    renameProjectLabels();
-  }
-  function installLaunch(){
-    if(q("#metaLaunch"))return;
-    const el=document.createElement("div");el.id="metaLaunch";el.className="meta-launch";
-    el.innerHTML=`<div class="meta-launch-core"><img src="./metanav-momentum.svg" alt=""><b>MOMENTUM</b><small>Meta Progress Navigator</small></div>`;
-    document.body.append(el);setTimeout(()=>el.remove(),2200)
-  }
-  function installTransition(){
-    if(q("#metaTransition"))return;
-    const el=document.createElement("div");el.id="metaTransition";el.className="meta-transition";el.innerHTML=`<div class="blade"></div><div class="word">MOMENTUM</div>`;document.body.append(el)
-  }
-  function playTransition(label="MOMENTUM"){
-    const el=q("#metaTransition");if(!el)return;
-    q(".word",el).textContent=String(label).toUpperCase();clearTimeout(transitionTimer);el.classList.remove("run");void el.offsetWidth;el.classList.add("run");transitionTimer=setTimeout(()=>el.classList.remove("run"),620)
-  }
-
-  function insertNavigatorButtons(){
-    const desktop=q(".nav");
-    if(desktop&&!q('[data-go="mementosPage"]',desktop)){
-      const b=document.createElement("button");b.className="nav-btn";b.dataset.go="mementosPage";b.innerHTML="<span>Mementos</span>";
-      const projects=q('[data-go="projectsPage"]',desktop);desktop.insertBefore(b,projects||q('[data-go="statsPage"]',desktop))
-    }
-    const intro=q("#intro .intro-menu");
-    if(intro&&!q('[data-go="mementosPage"]',intro)){
-      const b=document.createElement("button");b.dataset.go="mementosPage";b.textContent="Mementos";
-      const projects=q('[data-go="projectsPage"]',intro);intro.insertBefore(b,projects||null)
-    }
-    const more=q("#mobileMoreSheet .mobile-more-grid");
-    if(more&&!q('[data-mobile-go="mementosPage"]',more)){
-      const b=document.createElement("button");b.dataset.mobileGo="mementosPage";b.textContent="Mementos";more.prepend(b)
-    }
-    qa('[data-go="projectsPage"],[data-mobile-go="projectsPage"]').forEach(b=>{
-      const target=b.querySelector("span")||b; if(target&&/Projects/i.test(target.textContent))target.textContent=target.textContent.replace(/Projects/i,"Palaces")
-    });
-  }
-
-  function installMementosPage(){
-    if(q("#mementosPage"))return;
-    const page=document.createElement("section");page.id="mementosPage";page.className="page";
-    page.innerHTML=`<div class="mementos-shell">
-      <div class="mementos-hero">
-        <div class="mementos-title-card">
-          <div class="mementos-kicker">Deadline Request Network</div><div class="mementos-title">Mementos</div>
-          <div class="mementos-sub">Requests descend deeper according to how many daily points you lose if you miss them. Time controls urgency; consequence controls depth.</div>
-          <button class="btn mementos-add" id="addMementosRequest">+ New Request</button>
-        </div>
-        <div class="mementos-summary">
-          <div class="mementos-stat"><small>Active Requests</small><b id="mementoActive">0</b></div>
-          <div class="mementos-stat loss"><small>Potential Loss</small><b id="mementoLoss">−0</b></div>
-          <div class="mementos-stat"><small>Deepest Target</small><b id="mementoDeepest">F0</b></div>
-          <div class="mementos-stat"><small>Due ≤ 48h</small><b id="mementoUrgent">0</b></div>
+/* Momentum Persona Overhaul v21 */
+(()=>{"use strict";
+const V="21.0.0",F=[null,["Minor","#6f6f6f"],["Low","#b9a233"],["Moderate","#dd7f22"],["Important","#f05232"],["Severe","#e60022"],["Critical","#ff1747"]];
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],uid=()=>crypto.randomUUID?.()||String(Date.now()+Math.random());
+const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])),fmt=n=>Number((Number(n)||0).toFixed(1)).toLocaleString();
+const cat=c=>c==="school"?"School":c==="home"?"Home":"Health",floor=n=>(n=+n||0,n<=.5?1:n<=1?2:n<=2?3:n<=3?4:n<=4.5?5:6);
+const core={};let obs,timer;
+function norm(d){d.mementosRequests=Array.isArray(d.mementosRequests)?d.mementosRequests:[];d.projects=Array.isArray(d.projects)?d.projects:[];d.projects.forEach(p=>{if(typeof p.routeSecured!=="boolean")p.routeSecured=false});d.mementosRequests=d.mementosRequests.map(r=>({id:String(r.id||uid()),name:String(r.name||"Untitled Request"),category:["school","home","health"].includes(r.category)?r.category:"school",deadline:r.deadline||null,missPenalty:Math.max(0,+r.missPenalty||0),rewardPoints:Math.max(0,+(r.rewardPoints??r.missPenalty)||0),rewardStat:r.rewardStat||"knowledge",statReward:Math.max(0,Math.round(+(r.statReward??2)||0)),status:["active","failed","completed","completed-late"].includes(r.status)?r.status:"active",createdAt:r.createdAt||new Date().toISOString(),completedAt:r.completedAt||null,failureDate:r.failureDate||null,completionTaskId:r.completionTaskId||null}));d.personaOverhaulVersion=21;return d}
+function ld(){return norm(load())}function sv(d){save(norm(d))}
+function trans(label){const e=$("#metaTransition");if(!e)return;$(".word",e).textContent=String(label||"Momentum").toUpperCase();clearTimeout(timer);e.classList.remove("run");void e.offsetWidth;e.classList.add("run");timer=setTimeout(()=>e.classList.remove("run"),620)}
+function identity(){document.documentElement.classList.add("persona-v21");document.documentElement.dataset.personaVersion=V;const b=$(".brand");if(b&&!$(".meta-brand-icon",b)){const i=document.createElement("img");i.className="meta-brand-icon";i.src="./metanav-momentum.svg";i.alt="Momentum Navigator";b.prepend(i)}if($(".brand small"))$(".brand small").textContent="Meta Progress Navigator";const ir=$(".intro-right");if(ir&&!$(".meta-intro-logo",ir)){ir.insertAdjacentHTML("beforeend",'<img class="meta-intro-logo" src="./metanav-momentum.svg" alt=""><div class="meta-intro-label">Navigator Online</div>')}}
+function overlays(){if(!$("#metaLaunch")){const e=document.createElement("div");e.id="metaLaunch";e.className="meta-launch";e.innerHTML='<div class="meta-launch-core"><img src="./metanav-momentum.svg" alt=""><b>MOMENTUM</b><small>Meta Progress Navigator</small></div>';document.body.append(e);setTimeout(()=>e.remove(),2100)}if(!$("#metaTransition")){const e=document.createElement("div");e.id="metaTransition";e.className="meta-transition";e.innerHTML='<div class="blade"></div><div class="word">MOMENTUM</div>';document.body.append(e)}if(!$("#requestCutin")){const e=document.createElement("div");e.id="requestCutin";e.className="request-cutin";e.innerHTML='<div class="request-cutin-copy"><small>Mementos</small><b>REQUEST COMPLETE</b><span></span></div>';document.body.append(e)}if(!$("#callingCardOverlay")){const e=document.createElement("div");e.id="callingCardOverlay";e.className="calling-card-overlay";e.innerHTML='<div class="calling-card-sheet"><small>To the ruler of procrastination</small><h2>Calling Card</h2><p>Your distorted deadline has been located. The route is secured. We\'re taking the treasure called <strong id="callingCardName"></strong>.</p><b>THE MOMENTUM THIEVES</b></div>';document.body.append(e)}}
+function nav(){const n=$(".nav");if(n&&!$('[data-go="mementosPage"]',n)){const b=document.createElement("button");b.className="nav-btn";b.dataset.go="mementosPage";b.innerHTML="<span>Mementos</span>";n.insertBefore(b,$('[data-go="projectsPage"]',n)||null)}const im=$("#intro .intro-menu");if(im&&!$('[data-go="mementosPage"]',im)){const b=document.createElement("button");b.dataset.go="mementosPage";b.textContent="Mementos";im.insertBefore(b,$('[data-go="projectsPage"]',im)||null)}const mm=$("#mobileMoreSheet .mobile-more-grid");if(mm&&!$('[data-mobile-go="mementosPage"]',mm)){const b=document.createElement("button");b.dataset.mobileGo="mementosPage";b.textContent="Mementos";mm.prepend(b)}$$('[data-go="projectsPage"],[data-mobile-go="projectsPage"]').forEach(b=>{const t=b.querySelector("span")||b;t.textContent=t.textContent.replace(/Projects/i,"Palaces")})}
+function installPage(){if($("#mementosPage"))return;const p=document.createElement("section");p.id="mementosPage";p.className="page";p.innerHTML='<div class="mementos-shell"><div class="mementos-hero"><div class="mementos-title-card"><div class="mementos-kicker">Deadline Request Network</div><div class="mementos-title">Mementos</div><div class="mementos-sub">Requests descend deeper according to the points lost if you miss them. Consequence controls depth; time controls urgency.</div><button class="btn mementos-add" id="addMementosRequest">+ New Request</button></div><div class="mementos-summary"><div class="mementos-stat"><small>Active Requests</small><b id="mementoActive">0</b></div><div class="mementos-stat loss"><small>Potential Loss</small><b id="mementoLoss">−0</b></div><div class="mementos-stat"><small>Deepest Target</small><b id="mementoDeepest">F0</b></div><div class="mementos-stat"><small>Due ≤ 48h</small><b id="mementoUrgent">0</b></div></div></div><div id="mementosDepths" class="mementos-depths"></div><div class="mementos-cleared"><h3>Request Archive</h3><div id="mementosCleared" class="cleared-strip"></div></div></div>';const s=$("#settingsPage");s?.parentNode?.insertBefore(p,s);
+const d=document.createElement("dialog");d.id="mementosRequestDialog";d.innerHTML='<form id="mementosRequestForm" class="mementos-form" method="dialog"><h2>New Request</h2><div class="field"><label>Request / deadline task</label><input id="mementoName" maxlength="120" required placeholder="e.g. Submit chemistry report"></div><div class="mementos-two"><div class="field"><label>Category</label><select id="mementoCategory"><option value="school">Productivity (School)</option><option value="home">Productivity (Home)</option><option value="health">Health</option></select></div><div class="field"><label>Deadline</label><input id="mementoDeadline" type="datetime-local" required></div></div><div class="mementos-two"><div class="field"><label>Miss penalty</label><input id="mementoPenalty" type="number" min="0" step="0.1" value="1" required></div><div class="field"><label>Completion points</label><input id="mementoRewardPoints" type="number" min="0" step="0.1" value="1" required></div></div><div id="mementoFloorPreview" class="floor-preview"><b>Floor 2 • Low</b><span>−1 if missed</span></div><div class="mementos-two"><div class="field"><label>Social Stat</label><select id="mementoStat"><option value="knowledge">Knowledge</option><option value="guts">Guts</option><option value="proficiency">Proficiency</option><option value="kindness">Kindness</option><option value="charm">Charm</option></select></div><div class="field"><label>Social Stat XP</label><input id="mementoXP" type="number" min="0" step="1" value="2"></div></div><div class="modal-actions"><button type="button" class="ghost" id="cancelMemento">Cancel</button><button class="btn" type="submit">Locate Target</button></div></form>';document.body.append(d)}
+function urgency(r){if(r.status==="failed")return["failed","MISSED"];if(r.status!=="active")return["","CLEARED"];const h=(new Date(r.deadline)-Date.now())/36e5;if(h<=0)return["failed","OVERDUE"];if(h<=24)return["today","DUE TODAY"];if(h<=48)return["danger",Math.ceil(h)+"H LEFT"];if(h<=144)return["warn",Math.ceil(h/24)+"D LEFT"];return["",Math.ceil(h/24)+"D LEFT"]}
+function card(r){const f=floor(r.missPenalty),u=urgency(r);return '<article class="request-card '+u[0]+' '+r.status+'"><div class="request-top"><div class="request-title">'+esc(r.name)+'</div><span class="floor-chip">F'+f+'</span></div><div class="request-meta"><span class="request-pill">'+cat(r.category)+'</span><span class="request-pill urgent">'+u[1]+'</span><span class="request-pill">'+(r.deadline?new Date(r.deadline).toLocaleString():"No deadline")+'</span><span class="request-pill penalty">MISS −'+fmt(r.missPenalty)+'</span><span class="request-pill">CLEAR +'+fmt(r.rewardPoints)+' pts</span><span class="request-pill">'+esc(typeof socialStatName==="function"?socialStatName(r.rewardStat):r.rewardStat)+' +'+(+r.statReward||0)+' XP</span></div><div class="request-actions">'+(r.status==="active"?'<button class="clear" data-request-clear="'+r.id+'">Clear Request</button>':"")+(r.status==="failed"?'<button class="clear" data-request-late="'+r.id+'">Resolve Late</button>':"")+'<button data-request-delete="'+r.id+'">Remove</button></div></article>'}
+function deadlines(d=ld(),notify=true){let ch=false;for(const r of d.mementosRequests){if(r.status==="active"&&r.deadline&&new Date(r.deadline)<=new Date()){r.status="failed";r.failureDate=r.deadline.slice(0,10);ch=true;if(notify&&typeof showPersonaToast==="function")showPersonaToast("inbox","Mementos Request Missed",r.name+" • −"+fmt(r.missPenalty)+" "+cat(r.category)+" points","!")}}if(ch){sv(d);try{renderMain()}catch{}try{renderStats()}catch{}}return ch}
+function renderM(){const d=ld();deadlines(d,false);const active=d.mementosRequests.filter(r=>r.status==="active");$("#mementoActive").textContent=active.length;$("#mementoLoss").textContent="−"+fmt(active.reduce((s,r)=>s+r.missPenalty,0));$("#mementoDeepest").textContent=active.length?"F"+Math.max(...active.map(r=>floor(r.missPenalty))):"F0";$("#mementoUrgent").textContent=active.filter(r=>new Date(r.deadline)-Date.now()<=48*36e5).length;$("#mementosDepths").innerHTML=[1,2,3,4,5,6].map(f=>{const it=d.mementosRequests.filter(r=>["active","failed"].includes(r.status)&&floor(r.missPenalty)===f);return '<section class="mementos-floor" style="--fi:'+f+';--fc:'+F[f][1]+'"><div class="floor-marker"><small>Mementos</small><b>F'+f+'</b><span>'+F[f][0]+'</span></div><div class="floor-body">'+(it.length?'<div class="request-grid">'+it.map(card).join("")+'</div>':'<div class="mementos-empty">No targets on this floor.</div>')+'</div></section>'}).join("");const ar=d.mementosRequests.filter(r=>["completed","completed-late"].includes(r.status)).slice(-20).reverse();$("#mementosCleared").innerHTML=ar.length?ar.map(r=>'<div class="cleared-request"><b>'+esc(r.name)+'</b><small>'+(r.status==="completed-late"?"Resolved late":"Cleared")+' • F'+floor(r.missPenalty)+'</small></div>').join(""):'<div class="mementos-empty">No cleared Requests yet.</div>'}
+function preview(){const n=+$("#mementoPenalty").value||0,f=floor(n);$("#mementoFloorPreview").innerHTML="<b>Floor "+f+" • "+F[f][0]+"</b><span>−"+fmt(n)+" if missed</span>"}
+function addR(){const d=ld(),c=$("#mementoCategory").value,p=Math.max(0,+$("#mementoPenalty").value||0);d.mementosRequests.push({id:uid(),name:$("#mementoName").value.trim(),category:c,deadline:$("#mementoDeadline").value,missPenalty:p,rewardPoints:Math.max(0,+$("#mementoRewardPoints").value||0),rewardStat:$("#mementoStat").value,statReward:Math.max(0,Math.round(+$("#mementoXP").value||0)),status:"active",createdAt:new Date().toISOString()});sv(d);$("#mementosRequestDialog").close();renderM();showPersonaToast?.("inbox","Request Located","Mementos Floor "+floor(p)+" • "+$("#mementoName").value,"◆")}
+function cut(name,late){const e=$("#requestCutin");$(".request-cutin-copy b",e).textContent=late?"TARGET RESOLVED":"REQUEST COMPLETE";$(".request-cutin-copy span",e).textContent=name;e.classList.remove("show");void e.offsetWidth;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),950)}
+function clearR(id,late=false){const d=ld(),r=d.mementosRequests.find(x=>x.id===id);if(!r)return;const failed=r.status==="failed";r.status=failed||late?"completed-late":"completed";r.completedAt=new Date().toISOString();const k=typeof localKey==="function"?localKey():new Date().toISOString().slice(0,10);d.days=d.days||{};d.days[k]=d.days[k]||{tasks:[],notes:"",skippedRecurringIds:[]};if(!r.completionTaskId){r.completionTaskId=uid();d.days[k].tasks.push({id:r.completionTaskId,name:"Request: "+r.name,category:r.category,points:+r.rewardPoints||0,socialStat:r.rewardStat,socialXP:0,taskType:"check",done:true,mementosRequestId:r.id})}let a={};if(typeof awardSocialStat==="function")a=awardSocialStat(d,"mementos:"+r.id,r.rewardStat,r.statReward,"mementos",k);sv(d);renderM();try{renderMain();renderStats()}catch{}if(typeof notifySocialAward==="function")notifySocialAward(a,r.name);cut(r.name,failed||late)}
+function delR(id){const d=ld(),r=d.mementosRequests.find(x=>x.id===id);if(!r||!confirm("Remove Mementos Request “"+r.name+"”?"))return;d.mementosRequests=d.mementosRequests.filter(x=>x.id!==id);sv(d);renderM();try{renderMain();renderStats()}catch{}}
+function scoring(){if(typeof scores!=="function"||scores.__memento)return;core.scores=scores;const w=(day,key,data)=>{const r=core.scores(day,key,data);if(key){const d=norm(data||load());for(const m of d.mementosRequests)if(["failed","completed-late"].includes(m.status)&&m.failureDate===key&&r[m.category]!=null)r[m.category]-=+m.missPenalty||0;for(const k of ["school","home","health"])r[k]=Math.max(0,Math.min(6,+r[k]||0))}return r};w.__memento=true;try{window.scores=w;scores=w}catch{}}
+function labels(){const p=$("#projectsPage");if(!p)return;$$(".project-stat small",p).forEach((e,i)=>e.textContent=["Active Palaces","Treasures Stolen","Palace Stat XP"][i]||e.textContent);const t=$$(".card-title",p).find(e=>/Boss Projects|Projects/i.test(e.textContent));if(t)t.textContent="Palaces";const note=$$(".settings-note",p).find(e=>/Projects are larger goals/i.test(e.textContent));if(note)note.textContent="Palaces are major multi-step goals. Complete infiltration objectives to secure the route, then send the Calling Card.";if($("#addProjectBtn"))$("#addProjectBtn").textContent="+ New Palace";if($("#projectDialog h2"))$("#projectDialog h2").textContent="New Palace"}
+function projectsSorted(d){return [...d.projects].sort((a,b)=>{if(a.status!==b.status)return a.status==="active"?-1:1;if(!a.deadline&&!b.deadline)return(b.createdAt||"").localeCompare(a.createdAt||"");if(!a.deadline)return 1;if(!b.deadline)return-1;return new Date(a.deadline)-new Date(b.deadline)})}
+function decorate(){labels();const l=$("#projectList");if(!l)return;const d=ld(),ps=projectsSorted(d),cs=$$(".project-card",l);cs.forEach((c,i)=>{const p=ps[i];if(!p)return;c.classList.add("palace-card");const done=(p.subtasks||[]).filter(s=>s.done).length,total=(p.subtasks||[]).length,pct=total?done/total*100:(p.routeSecured||p.status==="completed"?100:0);const pt=$(".project-progress-text",c);if(pt)pt.textContent=p.status==="completed"?"TREASURE STOLEN":p.routeSecured?"ROUTE SECURED — Calling Card ready":"INFILTRATION "+Math.round(pct)+"%";let st=$(".palace-state",c);if(!st){st=document.createElement("div");st.className="palace-state";$(".project-meta",c)?.after(st)}st.className="palace-state "+(p.status==="completed"?"stolen":p.routeSecured?"secured":"");st.textContent=p.status==="completed"?"✓ Treasure secured":p.routeSecured?"⚠ Route secured":"Infiltration in progress";const a=$(".project-actions",c);if(a){$('[data-project-complete]',a)?.remove();$("[data-calling-card]",a)?.remove();$("[data-secure-route]",a)?.remove();if(p.status==="active"&&p.routeSecured){const b=document.createElement("button");b.className="calling-card-btn";b.dataset.callingCard=p.id;b.textContent="SEND CALLING CARD";a.prepend(b)}else if(p.status==="active"&&!total){const b=document.createElement("button");b.dataset.secureRoute=p.id;b.textContent="Secure Route";a.prepend(b)}}})}
+function secure(id){const d=ld(),p=d.projects.find(x=>x.id===id);if(!p)return;p.routeSecured=true;sv(d);core.renderProjects?.();decorate();showPersonaToast?.("achievement","ROUTE SECURED",p.name+" • Calling Card ready.","!")}
+function call(id){const d=ld(),p=d.projects.find(x=>x.id===id);if(!p?.routeSecured)return;$("#callingCardName").textContent=p.name;const e=$("#callingCardOverlay");e.classList.add("show");setTimeout(()=>{e.classList.remove("show");core.completeProject?.(id);decorate()},2050)}
+function patchProjects(){core.renderProjects=typeof renderProjects==="function"?renderProjects:null;core.completeProject=typeof completeProject==="function"?completeProject:null;if(typeof addProjectStep==="function"){core.addProjectStep=addProjectStep;const w=(id,n)=>{const d=ld(),p=d.projects.find(x=>x.id===id);if(p?.routeSecured){p.routeSecured=false;sv(d)}const z=core.addProjectStep(id,n);setTimeout(decorate,0);return z};try{window.addProjectStep=w;addProjectStep=w}catch{}}const l=$("#projectList");if(!l)return;l.addEventListener("change",e=>{const x=e.target.closest?.("[data-project-step]");if(!x)return;e.stopImmediatePropagation();const d=ld(),p=d.projects.find(z=>z.id===x.dataset.projectStep),i=+x.dataset.projectStepIndex;if(!p?.subtasks?.[i])return;p.subtasks[i].done=x.checked;p.routeSecured=p.subtasks.length>0&&p.subtasks.every(s=>s.done);sv(d);core.renderProjects?.();decorate();if(p.routeSecured)showPersonaToast?.("achievement","ROUTE SECURED",p.name+" • Send the Calling Card.","!")},true);l.addEventListener("click",e=>{const c=e.target.closest?.("[data-calling-card]");if(c){e.preventDefault();e.stopImmediatePropagation();return call(c.dataset.callingCard)}const s=e.target.closest?.("[data-secure-route]");if(s){e.preventDefault();e.stopImmediatePropagation();return secure(s.dataset.secureRoute)}},true);obs=new MutationObserver(()=>requestAnimationFrame(decorate));obs.observe(l,{childList:true,subtree:true});decorate()}
+function pagePatch(){core.showPage=typeof showPage==="function"?showPage:null;if(core.showPage){const w=id=>{core.showPage(id);if(id==="mementosPage")renderM();if(id==="projectsPage")setTimeout(decorate)};try{window.showPage=w;showPage=w}catch{}}document.addEventListener("click",e=>{const b=e.target.closest?.("[data-go],[data-mobile-go]");if(!b)return;const id=b.dataset.go||b.dataset.mobileGo;if(id==="mementosPage"){e.preventDefault();showPage(id);$("#mobileMoreSheet")?.classList.remove("show")}if(id)trans(id==="projectsPage"?"Palaces":id==="mementosPage"?"Mementos":(b.textContent||"Momentum").trim())},true)}
+function dailyPatch(){if(typeof showDailyOverlay!=="function")return;core.showDailyOverlay=showDailyOverlay;const w=(mode="briefing")=>{core.showDailyOverlay(mode);const k=$("#datePicker")?.value||localKey(),d=ld(),due=d.mementosRequests.filter(r=>r.status==="active"&&r.deadline?.slice(0,10)===k),cleared=d.mementosRequests.filter(r=>["completed","completed-late"].includes(r.status)&&r.completedAt?.slice(0,10)===k),miss=d.mementosRequests.filter(r=>["failed","completed-late"].includes(r.status)&&r.failureDate===k),ready=d.projects.filter(p=>p.status==="active"&&p.routeSecured),box=$("#dailyOverlayContent");if(box&&!$(".daily-extra-strip",box)){const x=document.createElement("div");x.className="daily-extra-strip";x.innerHTML=mode==="results"?'<div class="daily-extra"><small>Requests Cleared</small><b>'+cleared.length+'</b></div><div class="daily-extra"><small>Mementos Misses</small><b>'+miss.length+'</b></div><div class="daily-extra"><small>Routes Secured</small><b>'+ready.length+'</b></div>':'<div class="daily-extra"><small>Requests Due</small><b>'+due.length+'</b></div><div class="daily-extra"><small>Potential Loss</small><b>−'+fmt(due.reduce((s,r)=>s+r.missPenalty,0))+'</b></div><div class="daily-extra"><small>Calling Cards Ready</small><b>'+ready.length+'</b></div>';box.append(x)}};try{window.showDailyOverlay=w;showDailyOverlay=w}catch{}}
+function pushPatch(){if(typeof desiredNotificationJobs!=="function")return;core.desiredNotificationJobs=desiredNotificationJobs;const w=data=>{const jobs=core.desiredNotificationJobs(data)||[];try{const d=norm(data||load()),u=typeof cloudState!=="undefined"?cloudState.user?.id:null;if(u)for(const r of d.mementosRequests)if(r.status==="active"&&r.deadline)jobs.push({user_id:u,id:"mementos:"+r.id,title:"Mementos Request Deadline",body:r.name+" • −"+fmt(r.missPenalty)+" "+cat(r.category)+" points if missed",fire_at:new Date(r.deadline).toISOString(),kind:"mementos",url:"./#mementos",sent:false,source_updated_at:new Date().toISOString()})}catch(e){console.warn(e)}return jobs};try{window.desiredNotificationJobs=w;desiredNotificationJobs=w}catch{}}
+function events(){$("#addMementosRequest")?.addEventListener("click",()=>{const dt=new Date(Date.now()+864e5);dt.setMinutes(dt.getMinutes()-dt.getTimezoneOffset());$("#mementoDeadline").value=dt.toISOString().slice(0,16);$("#mementoName").value="";$("#mementoPenalty").value=$("#mementoRewardPoints").value="1";$("#mementoXP").value="2";preview();$("#mementosRequestDialog").showModal()});$("#cancelMemento")?.addEventListener("click",()=>$("#mementosRequestDialog").close());$("#mementoPenalty")?.addEventListener("input",preview);$("#mementoCategory")?.addEventListener("change",e=>{if(typeof defaultSocialStatForCategory==="function")$("#mementoStat").value=defaultSocialStatForCategory(e.target.value)});$("#mementosRequestForm")?.addEventListener("submit",e=>{e.preventDefault();addR()});$("#mementosDepths")?.addEventListener("click",e=>{const c=e.target.closest("[data-request-clear]");if(c)return clearR(c.dataset.requestClear);const l=e.target.closest("[data-request-late]");if(l)return clearR(l.dataset.requestLate,true);const d=e.target.closest("[data-request-delete]");if(d)delR(d.dataset.requestDelete)})}
+function boot(){try{identity();overlays();nav();installPage();scoring();pagePatch();patchProjects();dailyPatch();pushPatch();events();const d=ld();sv(d);deadlines(d,true);labels();decorate();setInterval(()=>deadlines(ld(),true),15000);window.addEventListener("focus",()=>deadlines(ld(),true));console.info("[Momentum] Persona Overhaul "+V)}catch(e){console.error("[Momentum Persona]",e)}}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
+})();
