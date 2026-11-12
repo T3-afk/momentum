@@ -1,4 +1,4 @@
-const CACHE="momentum-pwa-v23-persona-overhaul";
+const CACHE="momentum-pwa-v24-persona-overhaul";
 const APP_SHELL=[
   "./",
   "./index.html",

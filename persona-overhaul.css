@@ -298,3 +298,48 @@ html.persona-v21 .meta-intro-label{border-width:1px;box-shadow:3px 3px 0 var(--p
   html.persona-v21 .intro-menu button:nth-child(even){transform:translateX(7px) skewX(-7deg)}
   .mementos-title-card{min-height:150px}
 }
+
+/* v24: controlled Persona 5 composition, with the user's profile art as the hero. */
+html.persona-v21 .intro.show{grid-template-columns:minmax(440px,1fr) minmax(300px,42vw)}
+html.persona-v21 .intro-right{order:1;border:0;background-image:linear-gradient(90deg,rgba(4,4,4,.97) 0%,rgba(4,4,4,.9) 54%,rgba(4,4,4,.42) 100%),radial-gradient(circle at 16% 92%,rgba(230,0,34,.34),transparent 35%),repeating-linear-gradient(135deg,transparent 0 42px,rgba(255,255,255,.028) 43px 45px),var(--intro-bg-image,linear-gradient(transparent,transparent)),linear-gradient(125deg,#050505,#190006)}
+html.persona-v21 .intro-right::before{opacity:.14;transform:perspective(700px) rotateX(58deg) translateY(47%)}
+html.persona-v21 .intro-left{order:2;border:0;background:linear-gradient(145deg,#e60022 0 24%,#050505 24% 67%,#f7f7f2 67% 71%,#e60022 71%);isolation:isolate}
+html.persona-v21 .intro-left::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,transparent 0 56%,rgba(0,0,0,.92) 56% 60%,transparent 60%),linear-gradient(155deg,transparent 0 68%,rgba(255,255,255,.95) 68% 70%,transparent 70%);pointer-events:none}
+html.persona-v21 .intro-left::after{content:"MOMENTUM";position:absolute;left:-6%;right:-10%;bottom:7%;z-index:4;color:#fff;font:1000 clamp(36px,6vw,86px)/.78 Arial Black,Impact,sans-serif;font-style:italic;letter-spacing:-.07em;text-shadow:5px 5px 0 #050505,9px 9px 0 var(--p5-red);transform:rotate(-10deg);pointer-events:none}
+html.persona-v21 .intro-word{display:none}
+html.persona-v21 .intro-avatar{inset:0;z-index:2;clip-path:polygon(12% 0,100% 0,100% 94%,0 100%);animation:portraitin .62s var(--motion-impact) both}
+html.persona-v21 .intro-avatar img{width:100%;height:100%;object-fit:cover;object-position:center 28%;filter:grayscale(100%) contrast(1.18);mix-blend-mode:screen}
+html.persona-v21 .intro-menu{left:7%;top:15%;width:min(700px,83%);z-index:4;gap:1px}
+html.persona-v21 .intro-menu::before{content:"METANAV  /  SELECT A SECTION";left:17px;top:-24px;font-size:9px;color:#d8d8d8}
+html.persona-v21 .intro-menu button,html.persona-v21 .intro-menu button:nth-child(even){width:max-content;max-width:100%;padding:4px 18px 4px 16px;font-size:clamp(39px,5.7vw,76px);line-height:.84;letter-spacing:-.065em;color:#fff;transform:skewX(-8deg);text-shadow:3px 3px 0 #050505}
+html.persona-v21 .intro-menu button:nth-child(even){transform:translateX(22px) skewX(-8deg)}
+html.persona-v21 .intro-menu button::before{left:0;right:0;top:6%;bottom:6%;width:auto;height:auto;z-index:-1;background:var(--p5-red);clip-path:polygon(4% 0,100% 0,95% 100%,0 100%);box-shadow:4px 4px 0 #050505;transform:scaleX(0) skewX(-6deg);transform-origin:left center}
+html.persona-v21 .intro-menu button:first-child::before{transform:scaleX(1) skewX(-6deg)}
+html.persona-v21 .intro-menu button:nth-child(even):hover,html.persona-v21 .intro-menu button:nth-child(even):focus-visible{transform:translateX(30px) skewX(-8deg)}
+html.persona-v21 .intro-menu button:hover,html.persona-v21 .intro-menu button:focus-visible{color:#fff;background:transparent;text-shadow:4px 4px 0 #050505;transform:translateX(8px) skewX(-8deg)}
+html.persona-v21 .intro-menu button:hover::before,html.persona-v21 .intro-menu button:focus-visible::before{transform:scaleX(1) skewX(-6deg)}
+html.persona-v21 .intro-meta{left:25px;right:auto;top:auto;bottom:22px;text-align:left;z-index:5;padding:8px 13px;background:#f7f7f2;color:#050505;clip-path:polygon(0 0,100% 0,97% 100%,3% 100%)}
+html.persona-v21 .intro-meta small{color:#333}
+html.persona-v21 .intro-hint{right:24px;bottom:24px;z-index:5;padding:5px 9px;background:#050505;color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:.12em;transform:rotate(-3deg)}
+html.persona-v21 #intro>.music-player{display:none}
+html.persona-v21 #intro>#datePicker{position:absolute;left:25px;bottom:85px;z-index:5;width:170px;border:0!important;border-left:5px solid var(--p5-red)!important;background:#111!important;font-size:12px}
+html.persona-v21 .card{border:2px solid rgba(255,255,255,.8);box-shadow:4px 4px 0 rgba(230,0,34,.72);background:linear-gradient(145deg,rgba(18,18,18,.98),rgba(7,7,7,.96))}
+html.persona-v21 .card-title{display:table;max-width:92%;padding:7px 14px;background:#f7f7f2;color:#050505;transform:skewX(-5deg) translateX(-3px);border:0;font-weight:1000;text-transform:uppercase;letter-spacing:.03em}
+html.persona-v21 .task{border:1px solid #454545;border-left:4px solid var(--p5-red);background:rgba(6,6,6,.92);clip-path:polygon(0 0,98% 0,100% 100%,0 100%)}
+html.persona-v21 .task:hover{transform:translateX(4px);box-shadow:-4px 0 0 #fff}
+html.persona-v21 .nav-btn.active{color:#fff;text-shadow:2px 2px 0 var(--p5-red)}
+html.persona-v21 .nav-btn.active::before{height:4px;transform:scaleX(1) skewX(-12deg)}
+html.persona-v21 .daily-panel{box-shadow:8px 8px 0 var(--p5-red);border-width:3px}
+html.persona-v21 .daily-heading,.mementos-title{letter-spacing:-.04em}
+@media(max-width:760px){
+  html.persona-v21 .intro.show{grid-template-columns:1fr}
+  html.persona-v21 .intro-right{position:absolute;inset:0;z-index:2;background-image:linear-gradient(90deg,rgba(4,4,4,.96),rgba(4,4,4,.7) 62%,rgba(4,4,4,.36)),radial-gradient(circle at 15% 100%,rgba(230,0,34,.32),transparent 42%),var(--intro-bg-image,linear-gradient(#050505,#050505)),linear-gradient(125deg,#050505,#190006)}
+  html.persona-v21 .intro-left{display:block;position:absolute;right:0;top:0;bottom:0;width:54%;z-index:1;opacity:.58}
+  html.persona-v21 .intro-left::after{font-size:clamp(34px,10vw,58px);bottom:9%}
+  html.persona-v21 .intro-menu{left:5%;top:16%;width:90%}
+  html.persona-v21 .intro-menu button,html.persona-v21 .intro-menu button:nth-child(even){font-size:clamp(36px,9vw,62px);padding:5px 14px}
+  html.persona-v21 .intro-menu button:nth-child(even){transform:translateX(12px) skewX(-8deg)}
+  html.persona-v21 .intro-meta{left:14px;bottom:17px}
+  html.persona-v21 #intro>#datePicker{left:14px;bottom:72px}
+  html.persona-v21 .intro-hint{right:12px;bottom:18px}
+}

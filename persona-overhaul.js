@@ -1,8 +1,8 @@
-/* Momentum Persona Overhaul v23
+/* Momentum Persona Overhaul v24
    Loaded after the original single-file app. Existing save + Supabase structure stays intact. */
 (()=>{
   "use strict";
-  const VERSION="23.0.0";
+  const VERSION="24.0.0";
   const FLOOR_META=[
     null,
     {name:"Minor",max:.5,color:"#6f6f6f"},
@@ -44,7 +44,7 @@
     }));
     d.projects=Array.isArray(d.projects)?d.projects:[];
     d.projects.forEach(p=>{if(typeof p.routeSecured!=="boolean")p.routeSecured=false});
-    d.personaOverhaulVersion=Math.max(Number(d.personaOverhaulVersion)||0,23);
+    d.personaOverhaulVersion=Math.max(Number(d.personaOverhaulVersion)||0,24);
     return d;
   }
   function loadPersona(){const d=ensurePersonaData(load());return d}
