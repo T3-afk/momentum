@@ -389,7 +389,7 @@ html.persona-v21 #intro>#datePicker{position:absolute;left:22px;bottom:75px;z-in
 }
 
 /* v26: Persona 3 Reload inspired navigator and balanced desktop proportions. */
-html.persona-v21 .intro.show{position:relative;isolation:isolate;grid-template-columns:minmax(280px,.82fr) minmax(0,1.48fr);background:var(--bg);overflow:hidden}
+html.persona-v21 .intro.show{position:fixed;inset:0;z-index:1000;isolation:isolate;grid-template-columns:minmax(280px,.82fr) minmax(0,1.48fr);background:var(--bg);overflow:hidden}
 html.persona-v21 .intro-right{order:2;position:relative;min-width:0;overflow:hidden;background-image:radial-gradient(ellipse at 72% 14%,rgba(var(--accent-rgb),.48),transparent 39%),linear-gradient(115deg,rgba(var(--accent-rgb),.84),rgba(var(--accent2-rgb),.88) 66%,rgba(var(--accent2-rgb),.96)),var(--intro-bg-image,linear-gradient(135deg,var(--accent),var(--accent2)));isolation:isolate}
 html.persona-v21 .intro-right::before{opacity:.42;transform:none;background:radial-gradient(circle,rgba(var(--accent-rgb),.65) 0 1px,transparent 1.45px);background-size:7px 7px;mask-image:linear-gradient(145deg,#000 0 28%,transparent 77%)}
 html.persona-v21 .intro-right::after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(160deg,transparent 0 63%,rgba(var(--accent2-rgb),.32) 63% 100%),linear-gradient(116deg,transparent 0 66%,rgba(var(--accent-rgb),.18) 66% 67%,transparent 67%);pointer-events:none}
