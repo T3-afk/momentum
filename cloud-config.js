@@ -9,10 +9,10 @@ window.MOMENTUM_CLOUD_CONFIG = {
   vapidPublicKey: "BEsvlzrudDN9eptzeY3BEGI2kDyZPvGIeH5rnmoRxc7GiCfArb42XVA5BwZPL0xPvRgDqyUSl7nBO2L3Ng8S_WA"
 };
 
-/* Momentum Persona Overhaul v22 loader.
+/* Momentum Persona Overhaul v23 loader.
    Kept outside the monolithic index.html so the visual/system layer can evolve safely. */
 (()=>{
-  const VERSION="22.0.0";
+  const VERSION="23.0.0";
   if(!document.querySelector('link[data-momentum-persona]')){
     const css=document.createElement("link");
     css.rel="stylesheet";

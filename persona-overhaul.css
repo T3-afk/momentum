@@ -1,4 +1,4 @@
-/* Momentum Persona Overhaul v21 — presentation/system layer. */
+/* Momentum Persona Overhaul v23 — presentation/system layer. */
 :root{
   --p5-red:#e60022;
   --p5-red-rgb:230,0,34;
@@ -245,4 +245,56 @@ html.persona-v21 .intro-menu button:hover::after,html.persona-v21 .intro-menu bu
   html.persona-v21{scroll-behavior:auto}
   html.persona-v21 *,html.persona-v21 *::before,html.persona-v21 *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .social-rank-cutin.show{visibility:hidden;opacity:0}
+}
+
+/* v23 visual reset: keep Persona's typography and slashes, remove competing panels. */
+html.persona-v21 body{background:radial-gradient(ellipse at 82% 0,rgba(230,0,34,.12),transparent 34%),#080808}
+html.persona-v21 body::after{opacity:.04}
+html.persona-v21 .app::before{opacity:.24;box-shadow:0 40vh 0 rgba(230,0,34,.12)}
+html.persona-v21 .topbar{box-shadow:0 3px 0 rgba(230,0,34,.28);border-bottom-color:rgba(255,255,255,.7)}
+html.persona-v21 .brand-mark{box-shadow:3px 3px 0 var(--p5-red);transform:skewX(-5deg);clip-path:none}
+html.persona-v21 .nav{gap:2px;margin-top:10px;border-bottom:1px solid rgba(255,255,255,.14)}
+html.persona-v21 .nav-btn{padding:9px 13px;background:transparent;clip-path:none;transform:none;box-shadow:none;color:#c9c9c9}
+html.persona-v21 .nav-btn:nth-child(even){--nav-tilt:0deg}
+html.persona-v21 .nav-btn::before{left:8px;right:8px;top:auto;bottom:0;height:3px;background:var(--p5-red);transform:scaleX(0);box-shadow:none}
+html.persona-v21 .nav-btn:hover,html.persona-v21 .nav-btn.active{color:#fff;transform:translateY(-1px);background:transparent}
+html.persona-v21 .nav-btn:hover::before,html.persona-v21 .nav-btn.active::before{transform:scaleX(1);box-shadow:none}
+html.persona-v21 .nav-btn span::after{display:none}
+html.persona-v21 .card{border:1px solid rgba(255,255,255,.2);box-shadow:0 5px 16px rgba(0,0,0,.22);background:rgba(12,12,12,.9)}
+html.persona-v21 .card::before{display:none}
+html.persona-v21 .card-title{background:transparent;color:#fff;box-shadow:none;transform:none;border-bottom:1px solid rgba(255,255,255,.16);padding:10px 12px}
+html.persona-v21 .btn{box-shadow:2px 2px 0 #050505;border-width:1px}
+html.persona-v21 .btn:hover{box-shadow:3px 3px 0 var(--p5-red)}
+html.persona-v21 .task{clip-path:none;border:1px solid #353535;overflow:hidden}
+html.persona-v21 .task:hover{transform:translateX(3px);box-shadow:-3px 0 0 var(--p5-red)}
+html.persona-v21 .intro-menu{left:8%;top:15%;width:min(700px,78%);display:flex;flex-direction:column;gap:0;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none}
+html.persona-v21 .intro-menu::before{content:"MOMENTUM  /  MENU";position:absolute;left:8px;top:-26px;color:rgba(255,255,255,.72);font:900 10px/1 Arial,sans-serif;letter-spacing:.22em}
+html.persona-v21 .intro-menu button,html.persona-v21 .intro-menu button:nth-child(even){position:relative;min-height:0;padding:3px 14px;color:#f8f8f8;background:transparent;border:0;box-shadow:none;text-align:left;font:1000 clamp(38px,6vw,78px)/.88 Arial Black,Impact,sans-serif;font-style:italic;letter-spacing:-.055em;text-shadow:3px 3px 0 rgba(0,0,0,.55);transform:skewX(-7deg);transition:color var(--motion-fast) ease,transform var(--motion-base) var(--motion-ease),text-shadow var(--motion-base) ease}
+html.persona-v21 .intro-menu button:nth-child(even){transform:translateX(10px) skewX(-7deg)}
+html.persona-v21 .intro-menu button::before{left:0;right:auto;top:12%;bottom:12%;width:8px;height:auto;background:var(--p5-red);box-shadow:none;transform:skewX(-10deg) scaleY(0);transform-origin:center;transition:transform var(--motion-base) var(--motion-impact)}
+html.persona-v21 .intro-menu button::after{content:none}
+html.persona-v21 .intro-menu button:first-child::before,html.persona-v21 .intro-menu button:hover::before,html.persona-v21 .intro-menu button:focus-visible::before{transform:skewX(-10deg) scaleY(1)}
+html.persona-v21 .intro-menu button:hover,html.persona-v21 .intro-menu button:focus-visible{color:#fff;transform:translateX(10px) skewX(-7deg);background:transparent;box-shadow:none;text-shadow:4px 4px 0 var(--p5-red)}
+html.persona-v21 .intro-menu button:nth-child(even):hover,html.persona-v21 .intro-menu button:nth-child(even):focus-visible{transform:translateX(18px) skewX(-7deg)}
+html.persona-v21 .meta-intro-logo{animation:none;filter:drop-shadow(3px 3px 0 #000);width:min(12vw,126px)}
+html.persona-v21 .meta-intro-label{border-width:1px;box-shadow:3px 3px 0 var(--p5-red);transform:rotate(2deg)}
+.mementos-title-card{border-width:2px;box-shadow:5px 5px 0 var(--p5-red);clip-path:polygon(0 2%,98% 0,100% 96%,2% 100%)}
+.mementos-title-card::after{font-size:64px;color:rgba(255,255,255,.035)}
+.mementos-title{text-shadow:3px 3px 0 var(--p5-red);letter-spacing:-2px}
+.mementos-stat,.mementos-stat:nth-child(even){transform:none;box-shadow:2px 2px 0 rgba(230,0,34,.25);border-width:1px}
+.mementos-depths{gap:12px}
+.floor-marker{border-width:2px;box-shadow:3px 3px 0 var(--floor-color,var(--p5-red));transform:rotate(-2deg)}
+.floor-body{border-color:rgba(255,255,255,.16);background:rgba(8,8,8,.78)}
+.request-card{clip-path:none;border-width:1px;transition:transform var(--motion-base) var(--motion-ease),border-color var(--motion-base) ease,box-shadow var(--motion-base) ease}
+.request-card:hover{transform:translateY(-2px);box-shadow:3px 3px 0 rgba(230,0,34,.35)}
+.floor-nav-stop{clip-path:none;border-width:1px;box-shadow:none;background:#0c0c0c}
+.floor-nav-stop:hover,.floor-nav-stop.active{box-shadow:2px 2px 0 var(--p5-red);transform:translateY(-1px)}
+.palace-card{box-shadow:4px 4px 0 rgba(230,0,34,.25)!important;clip-path:none!important;border-width:2px!important}
+.palace-card::after{top:-12px!important;font-size:10px!important;box-shadow:2px 2px 0 var(--p5-red)!important}
+.palace-identity{letter-spacing:.1em}
+@media(max-width:680px){
+  html.persona-v21 .intro-menu{left:7%;top:15%;width:86%;display:flex;gap:0;padding:0;background:none;border:0;box-shadow:none}
+  html.persona-v21 .intro-menu button,html.persona-v21 .intro-menu button:nth-child(even){min-height:0;padding:5px 12px;font-size:clamp(34px,10vw,58px)}
+  html.persona-v21 .intro-menu button:nth-child(even){transform:translateX(7px) skewX(-7deg)}
+  .mementos-title-card{min-height:150px}
 }
