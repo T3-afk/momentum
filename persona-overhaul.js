@@ -1,15 +1,15 @@
-/* Momentum Persona Overhaul v25
+/* Momentum Persona Overhaul v26
    Loaded after the original single-file app. Existing save + Supabase structure stays intact. */
 (()=>{
   "use strict";
-  const VERSION="25.0.0";
+  const VERSION="26.0.0";
   const FLOOR_META=[
     null,
     {name:"Minor",max:.5,color:"#6f6f6f"},
     {name:"Low",max:1,color:"#b9a233"},
     {name:"Moderate",max:2,color:"#dd7f22"},
     {name:"Important",max:3,color:"#f05232"},
-    {name:"Severe",max:4.5,color:"#e60022"},
+    {name:"Severe",max:4.5,color:"var(--accent2)"},
     {name:"Critical",max:Infinity,color:"#ff1747"}
   ];
   const q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -44,7 +44,7 @@
     }));
     d.projects=Array.isArray(d.projects)?d.projects:[];
     d.projects.forEach(p=>{if(typeof p.routeSecured!=="boolean")p.routeSecured=false});
-    d.personaOverhaulVersion=Math.max(Number(d.personaOverhaulVersion)||0,25);
+    d.personaOverhaulVersion=Math.max(Number(d.personaOverhaulVersion)||0,26);
     return d;
   }
   function loadPersona(){const d=ensurePersonaData(load());return d}
@@ -59,10 +59,7 @@
     }
     const brandSmall=q(".brand small");if(brandSmall)brandSmall.textContent="Meta Progress Navigator";
     const introRight=q(".intro-right");
-    if(introRight&&!q(".meta-intro-logo",introRight)){
-      const img=document.createElement("img");img.className="meta-intro-logo";img.src="./metanav-momentum.svg";img.alt="";introRight.append(img);
-      const lab=document.createElement("div");lab.className="meta-intro-label";lab.textContent="Navigator Online";introRight.append(lab)
-    }
+    introRight?.querySelectorAll(".meta-intro-logo,.meta-intro-label").forEach(el=>el.remove());
     renameProjectLabels();
   }
   function installLaunch(){
@@ -97,6 +94,27 @@
     }
     qa('[data-go="projectsPage"],[data-mobile-go="projectsPage"]').forEach(b=>{
       const target=b.querySelector("span")||b; if(target&&/Projects/i.test(target.textContent))target.textContent=target.textContent.replace(/Projects/i,"Palaces")
+    });
+    installTabIcons();
+  }
+  function installTabIcons(){
+    const shapes={
+      today:'<path d="M4 5h16v15H4zM8 3v4m8-4v4M4 10h16"/><path d="m9 15 2 2 4-4"/>',
+      tasks:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1.2 1.2L7 5m-3.5 7 1.2 1.2L7 11m-3.5 7 1.2 1.2L7 17"/>',
+      inbox:'<path d="M4 5h16v14H4z"/><path d="M4 13h4l2 3h4l2-3h4"/>',
+      notes:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7m-7 4h7"/>',
+      stats:'<path d="M4 20V11h4v9m4 0V5h4v15m4 0V9h2v11"/>',
+      projects:'<path d="M3 20V8l9-5 9 5v12z"/><path d="M8 20v-7h8v7M3 8l9 5 9-5"/>',
+      mementos:'<path d="M4 4h16v4H4zm2 6h12v4H6zm2 6h8v4h-8z"/><path d="M12 8v2m0 4v2"/>',
+      settings:'<path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="4"/>',
+      home:'<path d="m3 11 9-8 9 8v9h-6v-6H9v6H3z"/>'
+    };
+    qa(".nav [data-go],#mobileMoreSheet [data-mobile-go],.mobile-nav [data-mobile-go],.bottom-nav [data-mobile-go]").forEach(b=>{
+      if(b.querySelector(".m-tab-icon"))return;
+      const id=b.dataset.go||b.dataset.mobileGo||"",label=(b.textContent||"").trim().toLowerCase();
+      let key=/today|home/i.test(id+" "+label)?"today":/task/i.test(id+" "+label)?"tasks":/inbox/i.test(id+" "+label)?"inbox":/note/i.test(id+" "+label)?"notes":/stat/i.test(id+" "+label)?"stats":/project|palace/i.test(id+" "+label)?"projects":/memento|request/i.test(id+" "+label)?"mementos":/setting/i.test(id+" "+label)?"settings":"home";
+      const icon=document.createElement("span");icon.className="m-tab-icon";icon.setAttribute("aria-hidden","true");icon.innerHTML=`<svg viewBox="0 0 24 24" focusable="false">${shapes[key]}</svg>`;
+      const labelNode=b.querySelector("span")||b;labelNode.prepend(icon);b.classList.add("has-tab-icon");
     });
   }
   function installMenuFeedback(){
@@ -252,7 +270,7 @@
     renameProjectLabels();const list=q("#projectList");if(!list)return;const d=loadPersona(),projects=sortedProjects(d),cards=qa(".project-card",list);
     cards.forEach((card,i)=>{
       const p=projects[i];if(!p)return;card.dataset.palaceId=p.id;card.classList.add("palace-card");
-      const statKey=String(p.socialStat||p.stat||"knowledge").toLowerCase();const palaceThemes={knowledge:"#31b7e8",guts:"#e60022",proficiency:"#ffd21f",kindness:"#55c878",charm:"#df66bb"};card.dataset.palaceStat=statKey;card.style.setProperty("--palace-accent",palaceThemes[statKey]||"#e60022");
+      const statKey=String(p.socialStat||p.stat||"knowledge").toLowerCase();const palaceThemes={knowledge:"var(--accent)",guts:"var(--accent2)",proficiency:"var(--accent2)",kindness:"var(--accent)",charm:"var(--accent2)"};card.dataset.palaceStat=statKey;card.style.setProperty("--palace-accent",palaceThemes[statKey]||"var(--accent2)");
       let identity=q(".palace-identity",card);if(!identity){identity=document.createElement("div");identity.className="palace-identity";q(".project-title",card)?.before(identity)}
       const statName=typeof socialStatName==="function"?socialStatName(statKey):statKey;identity.innerHTML=`<span class="palace-sigil" aria-hidden="true">${escHTML(statKey.slice(0,1).toUpperCase())}</span><span>${escHTML(statName)} DOMAIN</span>`;
       const progress=(p.subtasks||[]).length?((p.subtasks||[]).filter(s=>s.done).length/(p.subtasks||[]).length*100):(p.routeSecured||p.status==="completed"?100:0);
