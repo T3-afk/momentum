@@ -1,4 +1,4 @@
-/* Momentum Persona Overhaul v23 — presentation/system layer. */
+/* Momentum Persona Overhaul v25 — presentation/system layer. */
 :root{
   --p5-red:#e60022;
   --p5-red-rgb:230,0,34;
@@ -342,4 +342,48 @@ html.persona-v21 .daily-heading,.mementos-title{letter-spacing:-.04em}
   html.persona-v21 .intro-meta{left:14px;bottom:17px}
   html.persona-v21 #intro>#datePicker{left:14px;bottom:72px}
   html.persona-v21 .intro-hint{right:12px;bottom:18px}
+}
+
+/* v25 Persona command screen: one portrait, one selected command, supporting texture. */
+html.persona-v21 .intro.show{grid-template-columns:minmax(480px,1.05fr) minmax(300px,.95fr);background:#050505}
+html.persona-v21 .intro-right{order:1;overflow:hidden;background:#080808;isolation:isolate}
+html.persona-v21 .intro-right::before{content:"";position:absolute;inset:0;z-index:0;opacity:1;transform:none;background:radial-gradient(circle at 0 100%,rgba(230,0,34,.33),transparent 45%),linear-gradient(135deg,transparent 0 76%,rgba(230,0,34,.95) 76% 79%,transparent 79%),repeating-linear-gradient(135deg,transparent 0 36px,rgba(255,255,255,.025) 37px 39px);pointer-events:none}
+html.persona-v21 .intro-right::after{content:"NAVIGATOR";position:absolute;left:-4%;bottom:2%;z-index:1;color:rgba(255,255,255,.055);font:1000 clamp(55px,10vw,128px)/.8 Arial Black,Impact,sans-serif;font-style:italic;letter-spacing:-.08em;transform:rotate(-8deg);pointer-events:none}
+html.persona-v21 .intro-left{order:2;position:relative;overflow:hidden;border:0;background:linear-gradient(145deg,#e60022 0 26%,#090909 26% 71%,#f7f7f2 71% 73%,#e60022 73%);isolation:isolate}
+html.persona-v21 .intro-left::before{content:"";position:absolute;inset:0;z-index:3;background:radial-gradient(circle,#fff 0 1.1px,transparent 1.5px);background-size:8px 8px;opacity:.34;mask-image:linear-gradient(130deg,#000 0 35%,transparent 71%);pointer-events:none}
+html.persona-v21 .intro-left::after{content:"COMMAND";position:absolute;left:-14%;right:-14%;bottom:7%;z-index:4;color:#fff;font:1000 clamp(48px,7vw,96px)/.8 Georgia,"Times New Roman",serif;font-style:italic;letter-spacing:-.08em;text-shadow:5px 5px 0 #050505,10px 10px 0 var(--p5-red);transform:rotate(-11deg);pointer-events:none}
+html.persona-v21 .intro-avatar{inset:0;z-index:2;clip-path:polygon(17% 0,100% 0,100% 90%,4% 100%);filter:drop-shadow(-8px 8px 0 #050505);animation:portraitin .7s var(--motion-impact) both}
+html.persona-v21 .intro-avatar img{width:100%;height:100%;object-fit:cover;object-position:center 22%;filter:grayscale(100%) contrast(1.32) brightness(1.06);mix-blend-mode:screen}
+html.persona-v21 .intro-word{display:none}
+html.persona-v21 .intro-menu{left:5%;top:13%;width:min(610px,84%);gap:0;z-index:5}
+html.persona-v21 .intro-menu::before{content:"MOMENTUM  •  COMMAND";left:12px;top:-23px;color:#ddd;font:1000 9px/1 Arial Black,Impact,sans-serif;letter-spacing:.2em}
+html.persona-v21 .intro-menu button,html.persona-v21 .intro-menu button:nth-child(even){position:relative;width:max-content;max-width:100%;padding:4px 20px 5px 14px;color:#f7f7f2;background:transparent;border:0;box-shadow:none;text-align:left;font:1000 clamp(38px,5.2vw,68px)/.82 Arial Black,Impact,sans-serif;font-style:italic;letter-spacing:-.07em;text-shadow:3px 3px 0 #050505;transform:skewX(-8deg);clip-path:none}
+html.persona-v21 .intro-menu button:nth-child(even){transform:translateX(18px) skewX(-8deg)}
+html.persona-v21 .intro-menu button::before{content:"";position:absolute;left:0;right:0;top:7%;bottom:7%;z-index:-1;width:auto;height:auto;background:var(--p5-red);clip-path:polygon(4% 0,100% 0,96% 100%,0 100%);box-shadow:5px 5px 0 #050505;transform:scaleX(0) skewX(-5deg);transform-origin:left center;transition:transform var(--motion-base) var(--motion-impact)}
+html.persona-v21 .intro-menu button:first-child::before{transform:scaleX(1) skewX(-5deg)}
+html.persona-v21 .intro-menu button:hover,html.persona-v21 .intro-menu button:focus-visible{color:#fff;text-shadow:3px 3px 0 #050505;transform:translateX(8px) skewX(-8deg);background:transparent}
+html.persona-v21 .intro-menu button:nth-child(even):hover,html.persona-v21 .intro-menu button:nth-child(even):focus-visible{transform:translateX(25px) skewX(-8deg)}
+html.persona-v21 .intro-menu button:hover::before,html.persona-v21 .intro-menu button:focus-visible::before{transform:scaleX(1) skewX(-5deg)}
+html.persona-v21 .intro-menu button::after{content:none}
+html.persona-v21 .meta-intro-logo{right:5%;top:5%;width:58px;z-index:6;filter:drop-shadow(3px 3px 0 #000);animation:none}
+html.persona-v21 .meta-intro-label{right:5%;top:18%;z-index:6;padding:5px 8px;border:2px solid #050505;background:#f7f7f2;color:#050505;box-shadow:4px 4px 0 var(--p5-red);font-size:9px;transform:rotate(3deg)}
+html.persona-v21 .intro-meta{left:22px;right:auto;top:auto;bottom:20px;z-index:6;padding:7px 12px;background:#f7f7f2;color:#050505;text-align:left;clip-path:polygon(0 0,100% 0,97% 100%,3% 100%)}
+html.persona-v21 .intro-meta small{color:#333}
+html.persona-v21 .intro-hint{left:24px;right:auto;bottom:92px;z-index:6;padding:5px 10px;background:#050505;border-left:4px solid var(--p5-red);color:#fff;font:1000 10px/1 Arial Black,Impact,sans-serif;letter-spacing:.13em;text-transform:uppercase;transform:skewX(-7deg)}
+html.persona-v21 #intro>.music-player{display:none}
+html.persona-v21 #intro>#datePicker{position:absolute;left:22px;bottom:75px;z-index:7;width:166px;border:0!important;border-left:4px solid var(--p5-red)!important;background:#111!important;color:#fff!important;font-size:11px}
+@media(max-width:760px){
+  html.persona-v21 .intro.show{grid-template-columns:1fr}
+  html.persona-v21 .intro-right{position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(5,5,5,.96),rgba(5,5,5,.78) 57%,rgba(5,5,5,.38)),radial-gradient(circle at 0 100%,rgba(230,0,34,.35),transparent 48%),#080808}
+  html.persona-v21 .intro-left{display:block;position:absolute;right:0;top:0;bottom:0;width:58%;z-index:1;opacity:.8}
+  html.persona-v21 .intro-left::after{font-size:clamp(43px,11vw,72px);bottom:8%}
+  html.persona-v21 .intro-menu{left:4%;top:14%;width:94%}
+  html.persona-v21 .intro-menu button,html.persona-v21 .intro-menu button:nth-child(even){font-size:clamp(34px,8.7vw,57px);padding:5px 14px}
+  html.persona-v21 .intro-menu button:nth-child(even){transform:translateX(10px) skewX(-8deg)}
+  html.persona-v21 .intro-menu button:nth-child(even):hover,html.persona-v21 .intro-menu button:nth-child(even):focus-visible{transform:translateX(16px) skewX(-8deg)}
+  html.persona-v21 .meta-intro-logo{width:44px;right:4%;top:4%}
+  html.persona-v21 .meta-intro-label{display:none}
+  html.persona-v21 .intro-meta{left:13px;bottom:14px}
+  html.persona-v21 .intro-hint{left:14px;bottom:81px}
+  html.persona-v21 #intro>#datePicker{left:13px;bottom:68px}
 }

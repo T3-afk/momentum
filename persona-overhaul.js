@@ -1,8 +1,8 @@
-/* Momentum Persona Overhaul v24
+/* Momentum Persona Overhaul v25
    Loaded after the original single-file app. Existing save + Supabase structure stays intact. */
 (()=>{
   "use strict";
-  const VERSION="24.0.0";
+  const VERSION="25.0.0";
   const FLOOR_META=[
     null,
     {name:"Minor",max:.5,color:"#6f6f6f"},
@@ -44,7 +44,7 @@
     }));
     d.projects=Array.isArray(d.projects)?d.projects:[];
     d.projects.forEach(p=>{if(typeof p.routeSecured!=="boolean")p.routeSecured=false});
-    d.personaOverhaulVersion=Math.max(Number(d.personaOverhaulVersion)||0,24);
+    d.personaOverhaulVersion=Math.max(Number(d.personaOverhaulVersion)||0,25);
     return d;
   }
   function loadPersona(){const d=ensurePersonaData(load());return d}
@@ -98,6 +98,14 @@
     qa('[data-go="projectsPage"],[data-mobile-go="projectsPage"]').forEach(b=>{
       const target=b.querySelector("span")||b; if(target&&/Projects/i.test(target.textContent))target.textContent=target.textContent.replace(/Projects/i,"Palaces")
     });
+  }
+  function installMenuFeedback(){
+    const menu=q("#intro .intro-menu"),hint=q("#intro .intro-hint");if(!menu||!hint)return;const initial=hint.textContent.trim()||"Choose a section";
+    const show=b=>{const label=(b?.textContent||"").trim();if(label)hint.textContent=`OPEN ${label.toUpperCase()}`};
+    menu.addEventListener("pointerover",e=>show(e.target.closest("button")));
+    menu.addEventListener("focusin",e=>show(e.target.closest("button")));
+    menu.addEventListener("pointerleave",()=>{if(!menu.contains(document.activeElement))hint.textContent=initial});
+    menu.addEventListener("focusout",e=>{if(!menu.contains(e.relatedTarget))hint.textContent=initial})
   }
 
   function installMementosPage(){
@@ -396,7 +404,7 @@
 
   function boot(){
     try{
-      installIdentity();installLaunch();installTransition();insertNavigatorButtons();installMementosPage();installCallingCard();installSocialRankCutin();patchSocialAwardFeedback();patchScoring();patchNavigation();patchProjects();patchDailyOverlay();installEvents();patchNotificationJobs();
+      installIdentity();installLaunch();installTransition();insertNavigatorButtons();installMementosPage();installCallingCard();installSocialRankCutin();installMenuFeedback();patchSocialAwardFeedback();patchScoring();patchNavigation();patchProjects();patchDailyOverlay();installEvents();patchNotificationJobs();
       const d=loadPersona();savePersona(d);processMementosDeadlines(d,true);renameProjectLabels();decoratePalaces();
       setInterval(()=>processMementosDeadlines(null,true),15000);
       window.addEventListener("focus",()=>processMementosDeadlines(null,true));
