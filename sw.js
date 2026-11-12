@@ -1,7 +1,113 @@
-const CACHE="momentum-pwa-v21-persona";
-const SHELL=["./","./index.html","./manifest.webmanifest","./cloud-config.js","./persona-overhaul.css","./persona-overhaul.js","./metanav-momentum.svg","./icon-192.png","./icon-512.png"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(async c=>{for(const u of SHELL)try{const r=await fetch(u,{cache:"reload"});if(r.ok)await c.put(u,r.clone())}catch{}}));self.skipWaiting()});
-self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
-self.addEventListener("fetch",e=>{const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;const fresh=/cloud-config\.js$|persona-overhaul\.(js|css)$/.test(u.pathname);if(fresh){e.respondWith(fetch(e.request,{cache:"no-store"}).then(r=>{const x=r.clone();caches.open(CACHE).then(c=>c.put(e.request,x));return r}).catch(()=>caches.match(e.request)));return}if(e.request.mode==="navigate"){e.respondWith(fetch(e.request,{cache:"no-store"}).then(r=>{const x=r.clone();caches.open(CACHE).then(c=>c.put("./index.html",x));return r}).catch(()=>caches.match("./index.html")));return}e.respondWith(caches.match(e.request).then(x=>x||fetch(e.request).then(r=>{if(e.request.method==="GET"&&r.ok){const z=r.clone();caches.open(CACHE).then(c=>c.put(e.request,z))}return r})))});
-self.addEventListener("push",e=>{let p={};try{p=e.data?.json()||{}}catch{p={body:e.data?.text()||"Momentum notification"}}const o={body:p.body||"",icon:p.icon||"./icon-192.png",badge:p.badge||"./icon-192.png",tag:p.tag||"momentum",renotify:true,data:{url:p.url||"./"}};e.waitUntil(Promise.all([self.registration.showNotification(p.title||"Momentum",o),self.registration.setAppBadge?self.registration.setAppBadge(1):Promise.resolve()]))});
-self.addEventListener("notificationclick",e=>{e.notification.close();const t=new URL(e.notification.data?.url||"./",self.location.origin).href;e.waitUntil(clients.matchAll({type:"window",includeUncontrolled:true}).then(ws=>{for(const c of ws)if(c.url.startsWith(self.location.origin))return c.focus();return clients.openWindow(t)}))});
+const CACHE="momentum-pwa-v22-persona-overhaul";
+const APP_SHELL=[
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./cloud-config.js",
+  "./persona-overhaul.css",
+  "./persona-overhaul.js",
+  "./metanav-momentum.svg",
+  "./icon-180.png",
+  "./icon-192.png",
+  "./icon-512.png"
+];
+
+self.addEventListener("install",event=>{
+  event.waitUntil(
+    caches.open(CACHE).then(async cache=>{
+      for(const url of APP_SHELL){
+        try{
+          const response=await fetch(url,{cache:"reload"});
+          if(response.ok)await cache.put(url,response.clone())
+        }catch{}
+      }
+    })
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate",event=>{
+  event.waitUntil(
+    caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
+  );
+  self.clients.claim();
+});
+
+self.addEventListener("fetch",event=>{
+  const url=new URL(event.request.url);
+  if(url.origin!==self.location.origin)return;
+
+  if(url.pathname.endsWith("/cloud-config.js")||url.pathname.endsWith("/persona-overhaul.js")||url.pathname.endsWith("/persona-overhaul.css")){
+    event.respondWith(
+      fetch(event.request,{cache:"no-store"})
+        .then(response=>{
+          const clone=response.clone();
+          caches.open(CACHE).then(cache=>cache.put(event.request,clone));
+          return response
+        })
+        .catch(()=>caches.match(event.request))
+    );
+    return
+  }
+
+  if(event.request.mode==="navigate"){
+    event.respondWith(
+      fetch(event.request,{cache:"no-store"})
+        .then(response=>{
+          const clone=response.clone();
+          caches.open(CACHE).then(cache=>cache.put("./index.html",clone));
+          return response
+        })
+        .catch(()=>caches.match("./index.html"))
+    );
+    return
+  }
+
+  event.respondWith(
+    caches.match(event.request).then(cached=>{
+      if(cached)return cached;
+      return fetch(event.request).then(response=>{
+        if(event.request.method==="GET"&&response.ok){
+          const clone=response.clone();
+          caches.open(CACHE).then(cache=>cache.put(event.request,clone))
+        }
+        return response
+      })
+    })
+  );
+});
+
+self.addEventListener("push",event=>{
+  let payload={};
+  try{payload=event.data?.json()||{}}catch{
+    payload={body:event.data?.text()||"Momentum notification"}
+  }
+  const title=payload.title||"Momentum";
+  const options={
+    body:payload.body||"",
+    icon:payload.icon||"./icon-192.png",
+    badge:payload.badge||"./icon-192.png",
+    tag:payload.tag||"momentum",
+    renotify:true,
+    data:{url:payload.url||"./"}
+  };
+  event.waitUntil(
+    Promise.all([
+      self.registration.showNotification(title,options),
+      self.registration.setAppBadge ? self.registration.setAppBadge(1) : Promise.resolve()
+    ])
+  )
+});
+
+self.addEventListener("notificationclick",event=>{
+  event.notification.close();
+  const target=new URL(event.notification.data?.url||"./",self.location.origin).href;
+  event.waitUntil(
+    clients.matchAll({type:"window",includeUncontrolled:true}).then(windows=>{
+      for(const client of windows){
+        if(client.url.startsWith(self.location.origin))return client.focus()
+      }
+      return clients.openWindow(target)
+    })
+  )
+});

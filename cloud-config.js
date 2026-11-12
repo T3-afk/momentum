@@ -8,12 +8,23 @@ window.MOMENTUM_CLOUD_CONFIG = {
   supabasePublishableKey: "sb_publishable_fXBW5cXeTBsjXBlkmvru9A_gQVFr6a4",
   vapidPublicKey: "BEsvlzrudDN9eptzeY3BEGI2kDyZPvGIeH5rnmoRxc7GiCfArb42XVA5BwZPL0xPvRgDqyUSl7nBO2L3Ng8S_WA"
 };
+
+/* Momentum Persona Overhaul v22 loader.
+   Kept outside the monolithic index.html so the visual/system layer can evolve safely. */
 (()=>{
-  const v="21.0.0";
-  if(!document.querySelector("link[data-momentum-persona]")){
-    const l=document.createElement("link");l.rel="stylesheet";l.href="./persona-overhaul.css?v="+v;l.dataset.momentumPersona=v;document.head.append(l)
+  const VERSION="22.0.0";
+  if(!document.querySelector('link[data-momentum-persona]')){
+    const css=document.createElement("link");
+    css.rel="stylesheet";
+    css.href=`./persona-overhaul.css?v=${VERSION}`;
+    css.dataset.momentumPersona=VERSION;
+    document.head.appendChild(css);
   }
-  if(!document.querySelector("script[data-momentum-persona]")){
-    const s=document.createElement("script");s.src="./persona-overhaul.js?v="+v;s.async=false;s.dataset.momentumPersona=v;document.head.append(s)
+  if(!document.querySelector('script[data-momentum-persona]')){
+    const js=document.createElement("script");
+    js.src=`./persona-overhaul.js?v=${VERSION}`;
+    js.async=false;
+    js.dataset.momentumPersona=VERSION;
+    document.head.appendChild(js);
   }
 })();
