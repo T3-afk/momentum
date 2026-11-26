@@ -1,4 +1,4 @@
-const CACHE="momentum-pwa-v27-1";
+const CACHE="momentum-pwa-v27-2";
 const APP_SHELL=[
   "./",
   "./index.html",
@@ -12,6 +12,7 @@ const APP_SHELL=[
   "./fonts/mm-alfa-slab.woff2",
   "./fonts/mm-anton.woff2",
   "./metanav-momentum.svg",
+  "./app-icon.svg",
   "./icon-180.png",
   "./icon-192.png",
   "./icon-512.png"

@@ -4,7 +4,7 @@
    functions (the only one it calls is completeProject, after you hold to send a Calling Card). */
 (()=>{
   "use strict";
-  const VERSION="27.1.0";
+  const VERSION="27.2.0";
   const q=(s,r=document)=>r.querySelector(s),qa=(s,r=document)=>[...r.querySelectorAll(s)];
   const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   const reducedQuery=matchMedia("(prefers-reduced-motion: reduce)");
@@ -68,6 +68,7 @@
   }
   function pageCut(label="Momentum"){
     const el=ensureCut(),word=titleCase(label);
+    if(word==="Mementos"&&descent())return;
     cutAnims.forEach(a=>a.cancel());cutAnims=[];
     const holder=q(".mm-cut-word",el);cutout(q("span",holder),word);el.dataset.word=word;
     if(still()){el.classList.remove("run");return}
@@ -445,6 +446,58 @@
     reducedQuery.addEventListener?.("change",backdropKick);backdropKick()
   }
 
+  /* ---------- 11. Mementos descent ----------
+     Opening Mementos rides down the shaft and stops at the deepest floor that still has a
+     Request on it, then the page opens already scrolled to that floor. Penalty sets the floor,
+     exactly like the page itself. Tap to skip. With reduced motion it only scrolls. */
+  const FLOORS=[null,["Minor","#8b8690"],["Low","#d8c04a"],["Moderate","#dd7f22"],["Important","#f05232"],["Severe","var(--accent2)"],["Critical","#ff1747"]];
+  function floorOf(p){const n=Math.max(0,Number(p)||0);return n<=.5?1:n<=1?2:n<=2?3:n<=3?4:n<=4.5?5:6}
+  function floorCounts(){
+    const out=[null,0,0,0,0,0,0],loss=[null,0,0,0,0,0,0],late=[null,0,0,0,0,0,0];
+    for(const r of data()?.mementosRequests||[]){if(!r||!(r.status==="active"||r.status==="failed"))continue;const f=floorOf(r.missPenalty);out[f]++;loss[f]+=Math.max(0,Number(r.missPenalty)||0);if(r.status==="failed")late[f]++}
+    return{out,loss,late}
+  }
+  let descentRun=null;
+  function scrollToFloor(n){
+    const sec=q(`#mementosFloor${n}`);if(!sec)return;
+    /* layout position, not the on-screen box: the floors are still sliding in when we land */
+    let top=0;for(let e=sec;e;e=e.offsetParent)top+=e.offsetTop;
+    /* the app sets smooth scrolling in CSS; landing should be instant, so switch it off for this one jump */
+    const root=document.documentElement,prev=root.style.scrollBehavior;root.style.scrollBehavior="auto";
+    scrollTo(0,Math.max(0,top-(innerWidth<=760?74:96)));root.style.scrollBehavior=prev
+  }
+  function descent(){
+    const {out,loss,late}=floorCounts();let target=0;for(let f=6;f>=1;f--)if(out[f]){target=f;break}
+    if(!target)return false;
+    if(still()){setTimeout(()=>scrollToFloor(target),60);return true}
+    descentRun?.finish();
+    let el=q("#mmDescent");
+    if(!el){el=document.createElement("div");el.id="mmDescent";el.className="mm-descent";el.setAttribute("aria-hidden","true");document.body.append(el)}
+    const n=x=>Number((x||0).toFixed(1)).toLocaleString();
+    el.innerHTML=`<div class="mm-d-rail"></div><div class="mm-d-shaft"><div class="mm-d-fl mm-d-gate"><b>${esc(typeof load==="function"?(load().profile?.appName||"Momentum"):"Momentum")}</b><span>Entrance</span></div>${[1,2,3,4,5,6].map(f=>`<div class="mm-d-fl${f===target?" mm-d-target":""}${out[f]?"":" mm-d-clear"}" style="--fc:${FLOORS[f][1]}"><b>F${f}</b><span>${FLOORS[f][0]}</span><em>${out[f]?`${out[f]} Request${out[f]===1?"":"s"} · −${n(loss[f])}${late[f]?` · ${late[f]} missed`:""}`:"Clear"}</em></div>`).join("")}</div><div class="mm-d-car"><i></i></div><div class="mm-d-word"><span></span></div>`;
+    cutout(q(".mm-d-word span",el),"Mementos");
+    el.classList.add("run");/* visible first, so the floor height can be measured */
+    const shaft=q(".mm-d-shaft",el),fl=q(".mm-d-fl",el),h=fl.offsetHeight,H=innerHeight;
+    const at=i=>`0 ${H/2-h*(i+.5)}px`;
+    const travel=430+target*120,anims=[];
+    anims.push(shaft.animate([{translate:at(0)},{translate:at(target)}],{duration:travel,easing:"cubic-bezier(.62,0,.22,1)",fill:"both"}));
+    anims.push(q(".mm-d-rail",el).animate([{backgroundPositionY:"0px"},{backgroundPositionY:`${-h*target}px`}],{duration:travel,easing:"cubic-bezier(.62,0,.22,1)",fill:"both"}));
+    anims.push(q(".mm-d-car",el).animate([{translate:"0 0"},{translate:"0 -6px",offset:.15},{translate:"0 4px",scale:"1 1.06",offset:.85},{translate:"0 -3px",scale:"1 1",offset:.93},{translate:"0 0"}],{duration:travel+160,easing:"ease-out",fill:"both"}));
+    anims.push(q(".mm-d-word",el).animate([{opacity:0,translate:"0 -30px",rotate:"-6deg"},{opacity:1,translate:"0 0",rotate:"-4deg",offset:.2},{opacity:1,translate:"0 0",rotate:"-4deg",offset:.8},{opacity:0,translate:"0 -20px",rotate:"-4deg"}],{duration:travel+200,fill:"both"}));
+    const stamp=q(".mm-d-target",el);
+    anims.push(stamp.animate([{boxShadow:"inset 0 0 0 0 transparent"},{boxShadow:"inset 0 0 0 4px var(--fc)"}],{duration:160,delay:travel-60,fill:"both"}));
+    const leave=el.animate([{clipPath:"inset(0 0 0 0)"},{clipPath:"inset(0 0 0 0)",offset:.5},{clipPath:"inset(0 0 100% 0)"}],{duration:520,delay:travel,easing:"cubic-bezier(.7,0,.3,1)",fill:"both"});
+    anims.push(leave);
+    let landed=false;const land=()=>{if(landed)return;landed=true;scrollToFloor(target)};
+    const landTimer=setTimeout(land,travel+120);
+    const end=()=>{clearTimeout(landTimer);land();el.classList.remove("run");el.innerHTML="";anims.forEach(a=>a.cancel());el.removeEventListener("pointerdown",skip);if(descentRun===run)descentRun=null};
+    const skip=e=>{e.preventDefault();end()};
+    el.addEventListener("pointerdown",skip);
+    const run={finish:end};descentRun=run;
+    leave.finished.then(end,()=>{});
+    return true
+  }
+
   /* ---------- Hooks into the app ---------- */
   function decorateStatic(){
     const mem=q(".mementos-title");if(mem)cutout(mem,mem.textContent);
@@ -460,7 +513,7 @@
     wrapGlobal("showPage",orig=>function(){const r=orig.apply(this,arguments);safe("page",()=>{revealPage();backdropKick()});return r})
   }
 
-  window.MomentumMotion={version:VERSION,pageCut,cutout,callingCard,levelUp,intel};
+  window.MomentumMotion={version:VERSION,pageCut,cutout,callingCard,levelUp,intel,descent};
 
   function boot(){
     try{

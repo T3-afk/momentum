@@ -160,3 +160,63 @@ html.mm27 .mm-toast-open:focus-visible{outline:3px solid var(--accent);outline-o
   html.mm27 .mm-slab{transition:none}
   .mm-backdrop{transition:none}
 }
+
+/* ---------- 11. Mementos descent (27.2) ---------- */
+.mm-descent{position:fixed;inset:0;z-index:2650;display:none;overflow:hidden;background:#050406;cursor:pointer;touch-action:none}
+.mm-descent.run{display:block}
+.mm-d-rail{position:absolute;left:clamp(64px,17vw,190px);top:0;bottom:0;width:26px;border-inline:4px solid #3d3843;background:repeating-linear-gradient(0deg,#3d3843 0 4px,transparent 4px 22px)}
+.mm-d-shaft{position:absolute;left:0;right:0;top:0;will-change:translate}
+.mm-d-fl{position:relative;height:34vh;display:flex;align-items:center;gap:clamp(12px,2vw,24px);padding:0 6% 0 calc(clamp(64px,17vw,190px) + 70px);border-bottom:3px solid #221f26;color:var(--mm-paper);font-weight:900}
+.mm-d-fl b{font:400 clamp(44px,7vw,84px)/1 "MM Bowlby","Arial Black",Impact,sans-serif;color:var(--fc,#fff);min-width:2.2ch}
+.mm-d-fl span{font:400 clamp(16px,2vw,24px)/1 "MM Anton",Impact,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--fc,#fff)}
+.mm-d-fl em{font-style:normal;margin-left:auto;padding:8px 12px;border:2px solid var(--fc,#fff);background:#120f15;font-size:clamp(13px,1.5vw,17px);white-space:nowrap}
+.mm-d-fl.mm-d-clear{opacity:.42}.mm-d-fl.mm-d-clear em{border-color:#3d3843;color:#8f8a96}
+.mm-d-fl.mm-d-target em{background:var(--fc);color:#050406;border-color:var(--fc)}
+.mm-d-gate b{color:var(--mm-paper);font-size:clamp(28px,4.4vw,56px)}
+.mm-d-car{position:absolute;left:calc(clamp(64px,17vw,190px) - 14px);top:calc(50% - 34px);width:54px;height:68px;background:var(--mm-paper);clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);z-index:2}
+.mm-d-car i{position:absolute;left:10px;right:10px;top:11px;height:20px;background:var(--accent2,#ef2d2d)}
+.mm-d-word{position:absolute;left:5%;top:max(18px,env(safe-area-inset-top,0px));z-index:3;font-size:clamp(28px,5vw,54px)}
+@media(max-width:760px){
+  .mm-d-fl{height:26vh;padding-left:calc(clamp(64px,17vw,190px) + 52px);flex-wrap:wrap;align-content:center;gap:4px 12px}
+  .mm-d-fl em{margin-left:0;flex-basis:100%;width:max-content;max-width:100%;white-space:normal;flex-basis:auto}
+  .mm-d-rail{left:30px}.mm-d-car{left:16px;width:46px;height:58px;top:calc(50% - 29px)}
+  .mm-d-fl{padding-left:96px}
+}
+
+/* Empty floors shrink to a thin row; the page shows where the targets are. */
+html.mm27 .mementos-floor.is-empty{align-items:center}
+html.mm27 .mementos-floor.is-empty .floor-marker{position:relative;top:0;padding:4px 6px;box-shadow:2px 2px 0 var(--floor-color,var(--p5-red));opacity:.75}
+html.mm27 .mementos-floor.is-empty .floor-marker small{display:none}
+html.mm27 .mementos-floor.is-empty .floor-marker b{font-size:20px}
+html.mm27 .mementos-floor.is-empty .floor-marker span{font-size:7px;margin-top:2px;letter-spacing:0}
+html.mm27 .mementos-floor.is-empty .floor-body{min-height:0;padding:6px 10px 6px 16px;opacity:.6}
+html.mm27 .mementos-floor.is-empty .mementos-empty{padding:6px 10px;border:0;background:none;text-align:left;font-size:13px}
+
+/* Missed Requests glitch now and then. */
+html.mm27 .request-card.failed{animation:mmGlitch 2.6s steps(1) infinite}
+@keyframes mmGlitch{0%,86%{translate:0 0;clip-path:none}88%{translate:-5px 0;clip-path:inset(0 0 52% 0)}90%{translate:6px 0;clip-path:inset(38% 0 18% 0)}92%{translate:-3px 0;clip-path:none}94%{translate:0 0}}
+
+/* ---------- Phone fixes (27.2) ---------- */
+/* An older phone rule stretched every input to full width, checkboxes and colour pickers included. */
+html.mm27 input[type="checkbox"],html.mm27 input[type="radio"]{width:22px!important;min-width:22px!important;max-width:22px!important;height:22px!important;flex:0 0 22px!important;padding:0!important;margin:0}
+html.mm27 input[type="color"]{height:46px!important;min-height:46px!important;padding:4px!important;cursor:pointer}
+@media(max-width:760px){
+  /* Tasks: name on the first line, everything else on one compact line under it. */
+  html.mm27 #taskList>.task{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:6px 8px!important;padding:10px!important}
+  html.mm27 #taskList>.task>.check{width:30px!important;min-width:30px!important;max-width:30px!important;height:30px!important;flex:0 0 30px!important}
+  html.mm27 #taskList>.task>.task-name{flex:1 1 calc(100% - 40px)!important;min-width:0!important;font-size:14px!important}
+  html.mm27 #taskList>.task>.tag{margin-left:38px!important;padding:3px 7px!important;font-size:11px!important}
+  html.mm27 #taskList>.task>.pts{font-size:13px!important}
+  html.mm27 #taskList>.task>.task-actions{margin-left:auto!important;flex-wrap:wrap!important;justify-content:flex-end!important;gap:5px!important}
+  html.mm27 #taskList>.task>.task-actions>.focus-task,html.mm27 #taskList>.task>.task-actions>.delete{min-height:34px!important;min-width:40px!important;padding:4px 10px!important}
+  html.mm27 #taskList>.task .counter-entry{width:100%!important;flex-wrap:nowrap!important;gap:5px!important;order:-1}
+  html.mm27 #taskList>.task .counter-amount-input{width:86px!important;min-width:0!important;flex:0 1 86px!important}
+  html.mm27 #taskList>.task .counter-btn{min-height:36px!important;padding:4px 9px!important;white-space:nowrap}
+  html.mm27 #taskList>.task.done::after{top:24px!important}
+  /* Mementos: the cut-out title fits small phones */
+  html.mm27 .mementos-title.mm-cutout{font-size:min(44px,10.6vw)!important}
+  html.mm27 .mementos-title-card{overflow:hidden}
+}
+@media(prefers-reduced-motion:reduce){html.mm27 .request-card.failed{animation:none}}
+/* The intro's "SELECT / COMMAND" label sits under a decorative red line; give it a dark backing. */
+html.mm27.persona-v21 #intro.mm-command .intro-menu::before{z-index:6;background:var(--mm-dark);padding:3px 6px;color:var(--mm-paper);text-shadow:none}

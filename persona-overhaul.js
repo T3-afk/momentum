@@ -2,7 +2,7 @@
    Loaded after the original single-file app. Existing save + Supabase structure stays intact. */
 (()=>{
   "use strict";
-  const VERSION="27.1.0";
+  const VERSION="27.2.0";
   const FLOOR_META=[
     null,
     {name:"Minor",max:.5,color:"#6f6f6f"},
@@ -204,7 +204,7 @@
     const depths=q("#mementosDepths");
     depths.innerHTML=[1,2,3,4,5,6].map(floor=>{
       const meta=FLOOR_META[floor],items=requests.filter(r=>["active","failed"].includes(r.status)&&floorForPenalty(r.missPenalty)===floor);
-      return `<section class="mementos-floor" id="mementosFloor${floor}" data-floor="${floor}" style="--floor-index:${floor};--floor-color:${meta.color}"><div class="floor-marker"><small>Mementos</small><b>F${floor}</b><span>${meta.name}</span></div><div class="floor-body">${items.length?`<div class="request-grid">${items.map(requestCard).join("")}</div>`:`<div class="mementos-empty">No targets on this floor.</div>`}</div></section>`
+      return `<section class="mementos-floor${items.length?"":" is-empty"}" id="mementosFloor${floor}" data-floor="${floor}" style="--floor-index:${floor};--floor-color:${meta.color}"><div class="floor-marker"><small>Mementos</small><b>F${floor}</b><span>${meta.name}</span></div><div class="floor-body">${items.length?`<div class="request-grid">${items.map(requestCard).join("")}</div>`:`<div class="mementos-empty">No targets on this floor.</div>`}</div></section>`
     }).join("");
     const floorNav=q("#mementosFloorNav");
     if(floorNav)floorNav.innerHTML=[1,2,3,4,5,6].map(floor=>{const count=requests.filter(r=>["active","failed"].includes(r.status)&&floorForPenalty(r.missPenalty)===floor).length;return `<button type="button" class="floor-nav-stop" data-floor-jump="${floor}" aria-label="Jump to Mementos Floor ${floor}, ${count} ${count===1?"request":"requests"}"><span>F${floor}</span><small>${count||"—"}</small></button>`}).join("");
