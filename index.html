@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="./icon-180.png">
 <script src="./cloud-config.js"></script>
 
-<title>Momentum 19</title>
+<title>Momentum</title>
 <style>
 :root{
   --accent:#ffd21f;
@@ -792,6 +792,7 @@ dialog::backdrop{background:rgba(0,0,0,.78)}
   margin-top:10px;color:#858585;font-size:11px;line-height:1.45
 }
 .deadline-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.permanent-deadline-hint{display:grid;gap:8px;justify-items:start}
 .permanent-delta{
   margin-top:9px;color:#aaa;font-size:12px;font-weight:850
 }
@@ -2429,7 +2430,7 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
           <div class="permanent-note">
             Permanent tasks are high-stakes goals. Completing one grants Social Stat XP to the stat you choose.
             Failing one applies the chosen daily penalty to that day, but Social Stats never lose earned XP.
-            Deadline tasks fail automatically after the deadline; tasks without a deadline can only fail when you mark them failed.
+            Permanent tasks have no deadline and only fail when you mark them failed. Anything with a deadline lives in Mementos as a Request.
           </div>
         </div>
       </div>
@@ -2974,14 +2975,9 @@ button,[role="button"],label[for]{touch-action:manipulation;-webkit-tap-highligh
       <small class="settings-note">If the task fails, the daily penalty is deducted from this axis.</small>
     </div>
 
-    <div class="deadline-row">
-      <div class="field" style="margin-bottom:0">
-        <label>Deadline</label>
-        <input id="permanentDeadline" type="datetime-local">
-      </div>
-      <label style="display:flex;gap:7px;align-items:center;font-weight:900;padding-bottom:10px">
-        <input id="permanentNoDeadline" type="checkbox"> No deadline
-      </label>
+    <div class="field permanent-deadline-hint">
+      <small class="settings-note">Permanent Tasks have no deadline. Has a deadline? It belongs in Mementos.</small>
+      <button type="button" class="ghost" id="permanentToMementos">Make it a Mementos Request</button>
     </div>
 
     <div class="field">
@@ -3131,6 +3127,10 @@ function socialStatIconSVG(key,cls=""){
 
 function defaults(){return{profile:{name:"Player",bio:"Keep moving.",appName:"Momentum",avatar:DEFAULT_AVATAR,introImage:DEFAULT_AVATAR,showIntro:true,accent:"#ffd21f",accent2:"#ef2d2d",musicVolume:.65,musicLoop:true,musicFirstClick:false,musicName:"",musicSource:"local",youtubeUrl:"",youtubeKind:"",youtubeVideoId:"",youtubeListId:"",youtubeTitle:"YouTube Soundtrack",cloudMedia:{avatar:false,introImage:false,introBackground:false,soundtrack:false}},days:{},reminders:[],recurringTasks:[],rankLedger:{},socialStats:{knowledge:0,guts:0,proficiency:0,kindness:0,charm:0},socialStatLedger:{},socialStatsVersion:0,legacyRankPointsMigrated:0,permanentTasks:[],projects:[],focusSessions:[],notebookNotes:[],notebookNotesVersion:0,achievements:{}}}
 function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
+/* Automatic/derived writes (recurring tasks, ranks, achievements, missed deadlines...).
+   They are stored locally but never stamp this device as newer than the cloud, so
+   simply opening a stale device can no longer overwrite another device's changes. */
+function saveQuiet(d){localStorage.setItem(KEY,JSON.stringify(d))}
 function load(){
   try{const d=JSON.parse(localStorage.getItem(KEY));if(d)return normalize(d)}catch{}
   for(const k of OLD_KEYS){try{const old=JSON.parse(localStorage.getItem(k));if(old){const d=defaults();d.days=old.days||{};d.profile={...d.profile,...(old.profile||{})};if(old.profile?.splash)d.profile.introImage=old.profile.splash;save(d);return normalize(d)}}catch{}}
@@ -3236,7 +3236,38 @@ function normalize(d){
       p.statReward=Math.max(0,Math.round(Number(p.statReward ?? 3)||0))
     }
   }
+  migratePermanentDeadlines(d);
   return d
+}
+/* v27.1: Permanent Tasks that have a deadline now live in Mementos as Requests.
+   The Request keeps the task's id, so this runs once per task and stays idempotent
+   even if a device that has not updated yet syncs the old list back. Penalty, failure
+   day, Social Stat reward and status carry over, so past day scores do not change. */
+function migratePermanentDeadlines(d){
+  if(!Array.isArray(d.permanentTasks)||!d.permanentTasks.some(p=>p&&p.deadline))return;
+  d.mementosRequests=Array.isArray(d.mementosRequests)?d.mementosRequests:[];
+  const have=new Set(d.mementosRequests.filter(Boolean).map(r=>String(r.id)));
+  d.permanentTasks=d.permanentTasks.filter(p=>{
+    if(!p||!p.deadline)return true;
+    const id=String(p.id||crypto.randomUUID?.()||Date.now()+Math.random());
+    if(!have.has(id)){
+      const status=p.status==="completed"||p.status==="failed"?p.status:"active";
+      const penalty=Math.max(0,Number(p.dailyPenalty)||0);
+      d.mementosRequests.push({
+        id,name:String(p.name||"Untitled Request").slice(0,120),
+        category:["school","home","health"].includes(p.category)?p.category:"school",
+        deadline:p.deadline,missPenalty:penalty,rewardPoints:penalty,
+        rewardStat:p.rewardStat,statReward:Math.max(0,Math.round(Number(p.statReward)||0)),
+        status,createdAt:p.createdAt||new Date().toISOString(),
+        completedAt:status==="completed"?(p.resolvedAt||new Date().toISOString()):null,
+        failureDate:status==="failed"?(p.failureDate||String(p.deadline).slice(0,10)):null,
+        penaltyApplied:status==="failed",completionTaskId:null,
+        migratedFrom:"permanent"
+      });
+      have.add(id)
+    }
+    return false
+  })
 }
 function localKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function ruleMatchesDate(rule,key){
@@ -3285,7 +3316,7 @@ function ensureRecurringTasksForDay(d,key){
 function getDay(key){
   const d=load();
   if(!d.days[key])d.days[key]={tasks:[],notes:"",skippedRecurringIds:[]};
-  if(ensureRecurringTasksForDay(d,key))save(d);
+  if(ensureRecurringTasksForDay(d,key))saveQuiet(d);
   return{data:d,day:d.days[key]}
 }
 function scores(day,key=null,data=null){
@@ -3638,7 +3669,7 @@ const ACHIEVEMENTS=[
   {id:"tasks100",icon:"100",title:"Century",desc:"Complete 100 tasks."},
   {id:"s10",icon:"S+",title:"S-Class",desc:"Earn S on 10 different days."},
   {id:"permanent_win",icon:"!",title:"High Stakes",desc:"Complete a Permanent Task."},
-  {id:"project_win",icon:"★",title:"Boss Down",desc:"Complete a Boss Project."},
+  {id:"project_win",icon:"★",title:"Boss Down",desc:"Complete a Palace."},
   {id:"focus60",icon:"◎",title:"Deep Focus",desc:"Save at least 60 minutes of Focus Mode."},
   {id:"comeback",icon:"↗",title:"Comeback",desc:"Follow a C-or-lower day with an A or S day."}
 ];
@@ -3663,7 +3694,7 @@ function achievementFacts(d){
     days30:completedDays>=30,
     tasks100:doneTasks>=100,
     s10:sDays>=10,
-    permanent_win:(d.permanentTasks||[]).some(p=>p.status==="completed"),
+    permanent_win:(d.permanentTasks||[]).some(p=>p.status==="completed")||(d.mementosRequests||[]).some(r=>r&&r.migratedFrom==="permanent"&&r.status==="completed"),
     project_win:(d.projects||[]).some(p=>p.status==="completed"),
     focus60:focusMinutes>=60,
     comeback
@@ -3679,7 +3710,7 @@ function evaluateAchievements(d,notify=false){
     }
   }
   if(unlocked.length){
-    save(d);
+    saveQuiet(d);
     if(notify){
       unlocked.forEach((a,i)=>setTimeout(()=>showPersonaToast("achievement","Achievement Unlocked!",a.title,"★"),i*320))
     }
@@ -3792,7 +3823,7 @@ function renderProjects(){
           </label>`).join(""):`<div class="empty" style="padding:9px">No steps yet.</div>`}
       </div>
     </div>`
-  }).join(""):`<div class="empty">No boss projects yet.</div>`
+  }).join(""):`<div class="empty">No Palaces yet.</div>`
 }
 function addProject(name,category,deadline,rewardStat,statReward,stepNames){
   const d=load();
@@ -3803,7 +3834,7 @@ function addProject(name,category,deadline,rewardStat,statReward,stepNames){
     subtasks:(stepNames||[]).filter(Boolean).map(name=>({id:crypto.randomUUID?.()||String(Math.random()),name,done:false}))
   });
   save(d);renderProjects();renderStats();
-  showPersonaToast("inbox","Boss Project Added",name)
+  showPersonaToast("inbox","Palace Located",name)
 }
 function completeProject(id){
   const d=load(),p=(d.projects||[]).find(x=>x.id===id);
@@ -3814,7 +3845,7 @@ function completeProject(id){
   p.socialAwarded=true;
   save(d);renderProjects();renderStats();
   notifySocialAward(award,p.name);
-  showPersonaToast("achievement","Boss Defeated!",p.name,"★");
+  showPersonaToast("achievement","Treasure Stolen!",p.name,"★");
   checkAchievementsNow()
 }
 function toggleProjectStep(projectId,index,checked){
@@ -3968,7 +3999,7 @@ function showDailyOverlay(mode="briefing"){
     if(pending.length)lines.push(`${pending.length} unfinished task${pending.length===1?"":"s"} scheduled.`);
     if(reminders.length)lines.push(`${reminders.length} inbox reminder${reminders.length===1?"":"s"} due today.`);
     if(permanentDue.length)lines.push(`${permanentDue.length} Permanent Task deadline${permanentDue.length===1?"":"s"} today.`);
-    if(projectDue.length)lines.push(`${projectDue.length} Boss Project deadline${projectDue.length===1?"":"s"} today.`);
+    if(projectDue.length)lines.push(`${projectDue.length} Palace deadline${projectDue.length===1?"":"s"} today.`);
     if(!lines.length)lines.push("Nothing urgent is scheduled. You have room to build the day.");
 
     $("dailyOverlayContent").innerHTML=`
@@ -3991,7 +4022,7 @@ function maybeShowBriefing(){
 function renderStats(){
   const d=load();
   const ledgerChanged=syncRankLedger(d);
-  if(ledgerChanged)save(d);
+  if(ledgerChanged)saveQuiet(d);
 
   const entries=statDayEntries(d);
   renderSocialStats(d);
@@ -4061,7 +4092,7 @@ function processPermanentDeadlines(){
     }
   }
   if(changed){
-    save(d);renderPermanentTasks(d);renderStats();renderMainCoreOnly();
+    saveQuiet(d);renderPermanentTasks(d);renderStats();renderMainCoreOnly();
     showPersonaToast("inbox","Permanent Task Failed","A deadline was missed. The daily penalty was applied.","!")
   }
 }
@@ -4320,7 +4351,7 @@ function checkReminders(){
   const d=load(),now=Date.now();
   const due=d.reminders.filter(r=>!r.read&&!r.popped&&new Date(r.when).getTime()<=now).sort((a,b)=>new Date(a.when)-new Date(b.when))[0];
   if(!due)return;
-  due.popped=true;save(d);activePop=due.id;
+  due.popped=true;saveQuiet(d);activePop=due.id;
   $("popTitle").textContent=due.title;$("popMessage").textContent=due.message||"You scheduled this reminder.";$("popWhen").textContent=new Date(due.when).toLocaleString();
   showPersonaToast("inbox","Inbox Message Received!",due.title);
   $("reminderPop").classList.add("show");renderInbox()
@@ -4635,7 +4666,7 @@ function updateYouTubeTrackTitle(){
       $("trackName").textContent=title;
       $("settingsTrackName").textContent=title
     }
-    save(d)
+    saveQuiet(d)
   }
 }
 function onYouTubePlayerStateChange(event){
@@ -4827,12 +4858,12 @@ async function hydrateSoundtrack(){
     p.musicSource="local";
     $("trackName").textContent=p.musicName||blob.name||"Soundtrack";
     $("settingsTrackName").textContent=p.musicName||blob.name||"Soundtrack";
-    save(d)
+    saveQuiet(d)
   }else if(hasYouTube){
     p.musicSource="youtube";
     $("trackName").textContent=p.youtubeTitle||"YouTube Soundtrack";
     $("settingsTrackName").textContent=p.youtubeTitle||"YouTube Soundtrack";
-    save(d);
+    saveQuiet(d);
     ensureYouTubePlayer().catch(()=>{})
   }else{
     $("trackName").textContent="No track selected";
@@ -5002,28 +5033,28 @@ $("addPermanentTaskBtn").onclick=()=>{
   $("permanentDailyPenalty").value="1";
   $("permanentRewardStat").value=defaultSocialStatForCategory($("permanentCategory").value);
   $("permanentStatReward").value="3";
-  $("permanentNoDeadline").checked=false;
-  const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);tomorrow.setHours(23,59,0,0);
-  const localIso=new Date(tomorrow.getTime()-tomorrow.getTimezoneOffset()*60000).toISOString().slice(0,16);
-  $("permanentDeadline").value=localIso;
-  $("permanentDeadline").disabled=false;
   $("permanentTaskDialog").showModal()
 };
 $("cancelPermanentTask").onclick=()=>$("permanentTaskDialog").close();
 $("permanentCategory").addEventListener("change",()=>$("permanentRewardStat").value=defaultSocialStatForCategory($("permanentCategory").value));
-$("permanentNoDeadline").addEventListener("change",e=>{
-  $("permanentDeadline").disabled=e.target.checked;
-  if(e.target.checked)$("permanentDeadline").value=""
-});
+/* Deadline tasks are Mementos Requests: carry what was typed over to that form. */
+$("permanentToMementos").onclick=()=>{
+  const addBtn=document.getElementById("addMementosRequest");
+  if(!addBtn)return;
+  const carry={name:$("permanentName").value.trim(),category:$("permanentCategory").value,penalty:$("permanentDailyPenalty").value,stat:$("permanentRewardStat").value,xp:$("permanentStatReward").value};
+  $("permanentTaskDialog").close();
+  addBtn.click();
+  const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!=="")el.value=v};
+  set("mementoName",carry.name);set("mementoCategory",carry.category);set("mementoPenalty",carry.penalty);
+  set("mementoRewardPoints",carry.penalty);set("mementoStat",carry.stat);set("mementoXP",carry.xp);
+  document.getElementById("mementoPenalty")?.dispatchEvent(new Event("input"))
+};
 $("permanentTaskForm").addEventListener("submit",e=>{
   e.preventDefault();
-  const noDeadline=$("permanentNoDeadline").checked;
-  const deadline=noDeadline?null:$("permanentDeadline").value;
-  if(!noDeadline&&!deadline)return;
   addPermanentTask(
     $("permanentName").value.trim(),
     $("permanentCategory").value,
-    deadline,
+    null,
     $("permanentDailyPenalty").value,
     $("permanentRewardStat").value,
     $("permanentStatReward").value
@@ -5261,6 +5292,7 @@ async function importMomentumBackup(file){
     if(!data||typeof data!=="object")throw new Error("Invalid Momentum backup");
 
     localStorage.setItem(KEY,JSON.stringify(normalize(data)));
+    localStorage.setItem(CLOUD_LOCAL_TS_KEY,String(Date.now()));
 
     if(parsed?.media?.soundtrack?.data){
       const b=dataURLToBlob(parsed.media.soundtrack.data);
@@ -5437,16 +5469,18 @@ async function uploadAllCloudMedia(){
 async function downloadAllCloudMedia(){
   if(!cloudState.client||!cloudState.user)return;
   const d=load(),flags={...defaults().profile.cloudMedia,...(d.profile.cloudMedia||{})};
-  cloudState.applyingRemote=true;
-  try{
+  {
     if(flags.avatar){const b=await downloadCloudMediaBlob("avatar");if(b)d.profile.avatar=await blobToProfileDataURL(b)}else d.profile.avatar=DEFAULT_AVATAR;
     if(flags.introImage){const b=await downloadCloudMediaBlob("introImage");if(b)d.profile.introImage=await blobToProfileDataURL(b)}else d.profile.introImage=DEFAULT_AVATAR;
     if(flags.introBackground){const b=await downloadCloudMediaBlob("introBackground");if(b)await storeIntroBackground(b)}else await deleteIntroBackgroundBlob().catch(()=>{});
     if(flags.soundtrack){const b=await downloadCloudMediaBlob("soundtrack");if(b)await storeSoundtrack(new File([b],d.profile.musicName||"soundtrack",{type:b.type||"application/octet-stream"}))}else await deleteSoundtrackBlob().catch(()=>{});
-    momentumLocalSave(d);
+    /* Re-read: the user may have checked off tasks while media was downloading. */
+    const fresh=load();
+    fresh.profile.avatar=d.profile.avatar;fresh.profile.introImage=d.profile.introImage;
+    momentumLocalSave(fresh);
     await hydrateIntroBackground().catch(()=>{});await hydrateSoundtrack().catch(()=>{});
     renderAfterCloudChange();setCloudStatus("Cloud data and media downloaded.","online")
-  }finally{cloudState.applyingRemote=false}
+  }
 }
 async function loadSupabaseSDK(){
   if(cloudState.sdk)return cloudState.sdk;
@@ -5462,6 +5496,7 @@ async function disconnectCloud(){
   cloudState.channel=null;
   cloudState.client=null;
   cloudState.user=null;
+  cloudState.connectedUserId=null;
   refreshCloudAuthUI()
 }
 async function initCloud(){
@@ -5490,8 +5525,9 @@ async function initCloud(){
       cloudState.user=session?.user||null;
       refreshCloudAuthUI();
       setTimeout(()=>{
-        if(cloudState.user)connectCloudUser().catch(err=>setCloudStatus(err.message||"Cloud sync failed.","error"));
-        else unsubscribeCloudRealtime()
+        if(cloudState.user&&cloudState.connectedUserId===cloudState.user.id)resumeCloudSync();
+        else if(cloudState.user)connectCloudUser().catch(err=>setCloudStatus(err.message||"Cloud sync failed.","error"));
+        else{cloudState.connectedUserId=null;unsubscribeCloudRealtime()}
       },0)
     });
 
@@ -5513,6 +5549,8 @@ async function unsubscribeCloudRealtime(){
 }
 async function connectCloudUser(){
   if(!cloudState.client||!cloudState.user)return;
+  cloudState.connectedUserId=cloudState.user.id;
+  cloudLastResume=Date.now();
   await unsubscribeCloudRealtime();
   await smartCloudSync();
   await downloadAllCloudMedia().catch(err=>console.error("[Momentum Cloud] media download failed",err));
@@ -5591,7 +5629,28 @@ async function downloadCloudNow(){
   if(!row)throw new Error("There is no cloud save yet.");
   await applyCloudRow(row);await downloadAllCloudMedia()
 }
-async function smartCloudSync(){
+/* True when a save holds nothing the user would miss. */
+function isEmptyMomentumSave(d){
+  return !Object.values(d?.days||{}).some(x=>(x?.tasks||[]).length||String(x?.notes||"").trim())
+    &&!["recurringTasks","permanentTasks","projects","reminders","notebookNotes","focusSessions","mementosRequests"].some(k=>(d?.[k]||[]).length)
+}
+let cloudSyncInFlight=null,cloudLastResume=0;
+function smartCloudSync(){
+  if(!cloudSyncInFlight)cloudSyncInFlight=runSmartCloudSync().finally(()=>{cloudSyncInFlight=null});
+  return cloudSyncInFlight
+}
+/* Pull newer changes whenever Momentum returns to the foreground (installed PWAs stay
+   suspended for hours and miss realtime updates). */
+function resumeCloudSync(){
+  if(!cloudState.client||!cloudState.user||document.visibilityState==="hidden")return;
+  if(Date.now()-cloudLastResume<4000)return;
+  cloudLastResume=Date.now();
+  (cloudState.channel?smartCloudSync():connectCloudUser()).catch(err=>setCloudStatus(`Sync paused: ${err.message||err}`,"error"))
+}
+document.addEventListener("visibilitychange",resumeCloudSync);
+window.addEventListener("pageshow",resumeCloudSync);
+window.addEventListener("online",resumeCloudSync);
+async function runSmartCloudSync(){
   const row=await getCloudRow();
   const localTs=Number(localStorage.getItem(CLOUD_LOCAL_TS_KEY)||0);
 
@@ -5600,7 +5659,7 @@ async function smartCloudSync(){
   const remoteTs=Date.parse(row.updated_at||0)||0;
   cloudState.lastRemoteAt=remoteTs;
 
-  if(!localTs)await applyCloudRow(row);
+  if(!localTs||(isEmptyMomentumSave(load())&&!isEmptyMomentumSave(row.data)&&remoteTs))await applyCloudRow(row);
   else if(remoteTs>localTs+1000)await applyCloudRow(row);
   else if(localTs>remoteTs+1000)await uploadCloudNow();
   else setCloudStatus("Cloud connected. Everything is up to date.","online")
@@ -5739,7 +5798,7 @@ function desiredNotificationJobs(data){
   const jobs=[];
   const add=(id,title,body,when,kind)=>{
     const date=new Date(when);
-    if(!when||Number.isNaN(date.getTime()))return;
+    if(!when||Number.isNaN(date.getTime())||date.getTime()<=Date.now())return;
     jobs.push({
       user_id:cloudState.user.id,
       id,title,body:body||"",
@@ -5756,7 +5815,7 @@ function desiredNotificationJobs(data){
     if(p.status==="active"&&p.deadline)add(`permanent:${p.id}`,"Permanent Task Deadline",p.name,p.deadline,"permanent")
   }
   for(const p of data.projects||[]){
-    if(p.status==="active"&&p.deadline)add(`project:${p.id}`,"Boss Project Deadline",p.name,p.deadline,"project")
+    if(p.status==="active"&&p.deadline)add(`project:${p.id}`,"Palace Deadline",p.name,p.deadline,"project")
   }
   return jobs
 }
@@ -5768,7 +5827,8 @@ async function syncNotificationJobs(){
       .from("momentum_notification_jobs")
       .delete()
       .eq("user_id",uid)
-      .eq("sent",false);
+      .eq("sent",false)
+      .gt("fire_at",new Date().toISOString());
     if(delError)throw delError;
 
     const jobs=desiredNotificationJobs(load());
@@ -6105,7 +6165,7 @@ window.addEventListener("load",()=>{
 <script>
 (function(){
   if(!("serviceWorker" in navigator))return;
-  let reloadedForNewWorker=false;
+  let reloadedForNewWorker=!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{
     if(reloadedForNewWorker)return;
     reloadedForNewWorker=true;

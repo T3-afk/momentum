@@ -437,3 +437,47 @@ html.persona-v21 .mobile-more-grid .m-tab-icon{color:var(--accent)}
   html.persona-v21 .intro-menu{left:27%;width:71%;top:20%}
   html.persona-v21 .intro-menu button,html.persona-v21 .intro-menu button:nth-child(even){font-size:clamp(22px,6.8vw,31px);padding:4px 10px}
 }
+
+/* ==================== v26.1: layout bug fixes (no redesign) ==================== */
+/* clip-path was slicing borders into slivers and hiding the drop shadows. */
+html.persona-v21 .daily-panel{clip-path:none}
+html.persona-v21 .task{clip-path:none}
+html.persona-v21 .btn{border-color:transparent}
+.mementos-title-card,html.persona-v21 #projectsPage .project-stat{border:0;background:rgba(255,255,255,.88);box-shadow:none;isolation:isolate}
+html.persona-v21 #projectsPage .project-stat{position:relative;overflow:hidden;padding:16px 22px 14px 7%}
+.mementos-title-card::before,html.persona-v21 #projectsPage .project-stat::before{content:"";display:block;position:absolute;inset:2px;z-index:-1;width:auto;height:auto;border:0;transform:none;background:#080808;clip-path:inherit}
+/* Day Results / Briefing: date no longer hides under the title; Close stays inside the panel. */
+html.persona-v21 .daily-heading{transform:none;text-shadow:5px 5px 0 var(--p5-red);padding-bottom:6px}
+html.persona-v21 .daily-date{position:relative;margin-top:12px}
+html.persona-v21 .daily-close{padding-bottom:4px}
+/* Desktop nav: space between icon and label. */
+html.persona-v21 .nav-btn .m-tab-icon{margin-right:7px}
+html.persona-v21 .mobile-nav .m-tab-icon{width:21px;height:21px}
+/* Palace tag sat on top of the Remove button. */
+html.persona-v21 .project-card.palace-card{overflow:hidden}
+html.persona-v21 .project-card.palace-card::after{top:auto!important;right:0!important;bottom:0;transform:none;box-shadow:none!important;padding:4px 8px;opacity:.9;pointer-events:none}
+html.persona-v21 .palace-card{padding-bottom:26px}
+/* Counter tasks: keep Add / Remove on one row on desktop. */
+@media(min-width:761px){html.persona-v21 .task:has(.counter-entry) .task-actions{grid-column:2/-1;justify-content:flex-end}html.persona-v21 .counter-entry{flex-wrap:nowrap}html.persona-v21 .counter-btn{white-space:nowrap}}
+/* Intro: clock was covered by the profile plate; label was yellow on yellow. */
+html.persona-v21 .intro-menu::before{color:var(--ink);text-shadow:1px 1px 0 var(--bg)}
+@media(min-width:761px){html.persona-v21 .intro-clock{right:auto;left:28px;bottom:22px;z-index:6}html.persona-v21 .intro-hint{bottom:78px}}
+/* Reduced motion: the Calling Card showed an empty black screen. */
+@media(prefers-reduced-motion:reduce){
+  .calling-card-sheet{opacity:1!important;transform:rotate(-2deg) scale(1)!important}
+  .calling-card-overlay::after{transform:rotate(-8deg) scaleX(1)}
+}
+/* Phone: header took a third of the screen and the soundtrack label sat under the slider. */
+@media(max-width:600px){
+  html.persona-v21 .brand-mark{box-shadow:3px 3px 0 var(--p5-red)!important}
+  html.persona-v21 .top-hud>.hud,html.persona-v21 .top-hud>#datePicker{grid-row:1;min-height:40px}
+  html.persona-v21 .top-hud>#datePicker{grid-column:2;width:100%;min-width:0;padding:5px 8px!important;font-size:13px!important}
+  html.persona-v21 .top-hud>.music-player{grid-row:2;display:grid;grid-template-columns:auto 34px minmax(0,1fr) 84px;align-items:center}
+  html.persona-v21 .music-player .music-meta{overflow:hidden}
+  html.persona-v21 .music-player .track-name{max-width:100%!important}
+  html.persona-v21 .music-player input[type="range"]{width:84px!important;min-width:0!important;padding:0!important}
+  html.persona-v21 .mementos-summary{grid-template-columns:1fr 1fr}
+  html.persona-v21 .mementos-stat{min-height:0;padding:10px 12px}
+  html.persona-v21 .metric{font-size:11px;overflow-wrap:anywhere}
+  .floor-marker small{font-size:7px;letter-spacing:-.02em}
+}

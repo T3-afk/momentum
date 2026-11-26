@@ -1,4 +1,4 @@
-const CACHE="momentum-pwa-v26-persona-overhaul";
+const CACHE="momentum-pwa-v27-1";
 const APP_SHELL=[
   "./",
   "./index.html",
@@ -6,6 +6,11 @@ const APP_SHELL=[
   "./cloud-config.js",
   "./persona-overhaul.css",
   "./persona-overhaul.js",
+  "./persona-motion.css",
+  "./persona-motion.js",
+  "./fonts/mm-bowlby.woff2",
+  "./fonts/mm-alfa-slab.woff2",
+  "./fonts/mm-anton.woff2",
   "./metanav-momentum.svg",
   "./icon-180.png",
   "./icon-192.png",
@@ -37,15 +42,14 @@ self.addEventListener("fetch",event=>{
   const url=new URL(event.request.url);
   if(url.origin!==self.location.origin)return;
 
-  if(url.pathname.endsWith("/cloud-config.js")||url.pathname.endsWith("/persona-overhaul.js")||url.pathname.endsWith("/persona-overhaul.css")){
+  if(/\/(cloud-config\.js|persona-(overhaul|motion)\.(js|css))$/.test(url.pathname)){
     event.respondWith(
       fetch(event.request,{cache:"no-store"})
         .then(response=>{
-          const clone=response.clone();
-          caches.open(CACHE).then(cache=>cache.put(event.request,clone));
+          if(response.ok){const clone=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,clone))}
           return response
         })
-        .catch(()=>caches.match(event.request))
+        .catch(()=>caches.match(event.request,{ignoreSearch:true}))
     );
     return
   }
@@ -54,8 +58,7 @@ self.addEventListener("fetch",event=>{
     event.respondWith(
       fetch(event.request,{cache:"no-store"})
         .then(response=>{
-          const clone=response.clone();
-          caches.open(CACHE).then(cache=>cache.put("./index.html",clone));
+          if(response.ok){const clone=response.clone();caches.open(CACHE).then(cache=>cache.put("./index.html",clone))}
           return response
         })
         .catch(()=>caches.match("./index.html"))
@@ -101,11 +104,14 @@ self.addEventListener("push",event=>{
 
 self.addEventListener("notificationclick",event=>{
   event.notification.close();
-  const target=new URL(event.notification.data?.url||"./",self.location.origin).href;
+  const target=new URL(event.notification.data?.url||"./",self.registration.scope).href;
   event.waitUntil(
     clients.matchAll({type:"window",includeUncontrolled:true}).then(windows=>{
       for(const client of windows){
-        if(client.url.startsWith(self.location.origin))return client.focus()
+        if(client.url.startsWith(self.registration.scope)){
+          client.postMessage({type:"momentum-open",url:target});
+          return client.focus()
+        }
       }
       return clients.openWindow(target)
     })

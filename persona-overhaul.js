@@ -1,8 +1,8 @@
-/* Momentum Persona Overhaul v26
+/* Momentum Persona Overhaul v27 (motion effects live in persona-motion.js)
    Loaded after the original single-file app. Existing save + Supabase structure stays intact. */
 (()=>{
   "use strict";
-  const VERSION="26.0.0";
+  const VERSION="27.1.0";
   const FLOOR_META=[
     null,
     {name:"Minor",max:.5,color:"#6f6f6f"},
@@ -32,7 +32,7 @@
   function ensurePersonaData(d){
     d.mementosRequests=Array.isArray(d.mementosRequests)?d.mementosRequests:[];
     d.mementosRequests=d.mementosRequests.filter(Boolean).map(r=>({
-      id:String(r.id||uid()),name:String(r.name||"Untitled Request").slice(0,120),
+      ...r,id:String(r.id||uid()),name:String(r.name||"Untitled Request").slice(0,120),
       category:["school","home","health"].includes(r.category)?r.category:"school",
       deadline:r.deadline||null,missPenalty:Math.max(0,Number(r.missPenalty)||0),
       rewardPoints:Math.max(0,Number(r.rewardPoints??r.missPenalty)||0),
@@ -43,12 +43,20 @@
       penaltyApplied:!!r.penaltyApplied,completionTaskId:r.completionTaskId||null
     }));
     d.projects=Array.isArray(d.projects)?d.projects:[];
-    d.projects.forEach(p=>{if(typeof p.routeSecured!=="boolean")p.routeSecured=false});
+    d.projects.forEach(p=>{
+      if(typeof p.routeSecured!=="boolean")p.routeSecured=false;
+      const steps=p.subtasks||[];
+      if(p.status==="active"&&steps.length)p.routeSecured=steps.every(s=>s.done);
+      if(!p.routeSecured&&p.status==="active")p.routeSecuredAt=null
+    });
     d.personaOverhaulVersion=Math.max(Number(d.personaOverhaulVersion)||0,26);
     return d;
   }
   function loadPersona(){const d=ensurePersonaData(load());return d}
   function savePersona(d){save(ensurePersonaData(d))}
+  /* Automatic changes: store locally without claiming to be newer than the cloud. */
+  function savePersonaQuiet(d){const x=ensurePersonaData(d);if(typeof saveQuiet==="function")saveQuiet(x);else save(x)}
+  function dayKey(v){const t=v?new Date(v):new Date();return Number.isNaN(t.getTime())?"":typeof localKey==="function"?localKey(t):t.toISOString().slice(0,10)}
 
   function installIdentity(){
     document.documentElement.classList.add("persona-v21");
@@ -73,6 +81,7 @@
     const el=document.createElement("div");el.id="metaTransition";el.className="meta-transition";el.innerHTML=`<div class="blade"></div><div class="word">MOMENTUM</div>`;document.body.append(el)
   }
   function playTransition(label="MOMENTUM"){
+    if(window.MomentumMotion?.pageCut){window.MomentumMotion.pageCut(label);return}
     const el=q("#metaTransition");if(!el)return;
     q(".word",el).textContent=String(label).toUpperCase();clearTimeout(transitionTimer);el.classList.remove("run");void el.offsetWidth;el.classList.add("run");transitionTimer=setTimeout(()=>el.classList.remove("run"),620)
   }
@@ -114,7 +123,7 @@
       const id=b.dataset.go||b.dataset.mobileGo||"",label=(b.textContent||"").trim().toLowerCase();
       let key=/today|home/i.test(id+" "+label)?"today":/task/i.test(id+" "+label)?"tasks":/inbox/i.test(id+" "+label)?"inbox":/note/i.test(id+" "+label)?"notes":/stat/i.test(id+" "+label)?"stats":/project|palace/i.test(id+" "+label)?"projects":/memento|request/i.test(id+" "+label)?"mementos":/setting/i.test(id+" "+label)?"settings":"home";
       const icon=document.createElement("span");icon.className="m-tab-icon";icon.setAttribute("aria-hidden","true");icon.innerHTML=`<svg viewBox="0 0 24 24" focusable="false">${shapes[key]}</svg>`;
-      const labelNode=b.querySelector("span")||b;labelNode.prepend(icon);b.classList.add("has-tab-icon");
+      const labelNode=b.querySelector("span")||b;if(b.closest(".mobile-nav")&&labelNode!==b)labelNode.textContent="";labelNode.prepend(icon);b.classList.add("has-tab-icon");
     });
   }
   function installMenuFeedback(){
@@ -221,7 +230,7 @@
       if(r.status!=="active"||!r.deadline)continue;const t=new Date(r.deadline).getTime();
       if(Number.isFinite(t)&&t<=now){r.status="failed";r.failureDate=r.deadline.slice(0,10);r.penaltyApplied=true;changed=true;if(notify&&typeof showPersonaToast==="function")showPersonaToast("inbox","Mementos Request Missed",`${r.name} • −${fmtNumber(r.missPenalty)} ${categoryLabel(r.category)} points`,"!")}
     }
-    if(changed){savePersona(d);try{renderMain()}catch{}try{renderStats()}catch{};if(q("#mementosPage.active"))renderMementos()}
+    if(changed){savePersonaQuiet(d);try{renderMain()}catch{}try{renderStats()}catch{};if(q("#mementosPage.active"))renderMementos()}
     return changed
   }
   function addRequestFromForm(){
@@ -239,9 +248,9 @@
       d.socialStatLedger=d.socialStatLedger||{};d.socialStatLedger[`task:${date}:${taskId}`]={stat,xp:0,source:"mementos-task",date,at:new Date().toISOString()}
     }
     let award={awarded:false};if(typeof awardSocialStat==="function")award=awardSocialStat(d,`mementos:${r.id}`,r.rewardStat,r.statReward,"mementos",date);
-    savePersona(d);try{renderMain()}catch{}try{renderStats()}catch{};renderMementos();if(typeof notifySocialAward==="function")notifySocialAward(award,r.name);showRequestCutin(r.name,wasFailed||late)
+    savePersona(d);try{renderMain()}catch{}try{renderStats()}catch{};renderMementos();if(typeof notifySocialAward==="function")notifySocialAward(award,r.name);showRequestCutin(r.name,wasFailed||late);if(typeof checkAchievementsNow==="function")checkAchievementsNow()
   }
-  function deleteRequest(id){const d=loadPersona(),r=d.mementosRequests.find(x=>x.id===id);if(!r)return;if(!confirm(`Remove Mementos Request “${r.name}”? Recorded score penalties already caused by a missed deadline will also disappear.`))return;d.mementosRequests=d.mementosRequests.filter(x=>x.id!==id);savePersona(d);try{renderMain()}catch{}try{renderStats()}catch{};renderMementos()}
+  function deleteRequest(id){const d=loadPersona(),r=d.mementosRequests.find(x=>x.id===id);if(!r)return;if(!confirm(`Remove Mementos Request “${r.name}”?${r.failureDate?" Its missed-deadline penalty will also disappear.":""}`))return;d.mementosRequests=d.mementosRequests.filter(x=>x.id!==id);savePersona(d);try{renderMain()}catch{}try{renderStats()}catch{};renderMementos()}
   function showRequestCutin(name,late){const el=q("#requestCutin");if(!el)return;q("#requestCutinName").textContent=name;el.classList.toggle("late",!!late);q(".request-cutin-copy b",el).textContent=late?"TARGET RESOLVED":"REQUEST COMPLETE";el.classList.remove("show");void el.offsetWidth;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),950)}
   function updateFloorPreview(){const p=Math.max(0,Number(q("#mementoPenalty")?.value)||0),f=floorForPenalty(p),meta=FLOOR_META[f],box=q("#mementoFloorPreview");if(box)box.innerHTML=`<b>Floor ${f} • ${meta.name}</b><span>−${fmtNumber(p)} point${p===1?"":"s"} if missed</span>`}
 
@@ -249,9 +258,15 @@
     if(typeof scores!=="function"||scores.__mementosPatched)return;
     core.scores=scores;
     const wrapped=function(day,key=null,data=null){
-      const r=core.scores(day,key,data);if(!key)return r;const d=ensurePersonaData(data||load());
-      for(const m of d.mementosRequests){if(m.status==="failed"||m.status==="completed-late"){if(m.failureDate===key&&r[m.category]!==undefined)r[m.category]-=Number(m.missPenalty)||0}}
-      for(const k of ["school","home","health"])r[k]=Math.max(0,Math.min(6,Number(r[k])||0));
+      if(!key)return core.scores(day,key,data);
+      const d=data||load(),missed=(d.mementosRequests||[]).filter(m=>m&&(m.status==="failed"||m.status==="completed-late")&&m.failureDate===key);
+      if(!missed.length)return core.scores(day,key,data);
+      /* Penalties come off everything earned that day; the 0–6 cap is applied once, at the end. */
+      const r={school:0,home:0,health:0};
+      for(const t of day.tasks||[])if(t.done&&r[t.category]!==undefined)r[t.category]+=Number(t.points)||0;
+      for(const p of d.permanentTasks||[])if(p.status==="failed"&&p.failureDate===key&&r[p.category]!==undefined)r[p.category]-=Number(p.dailyPenalty)||0;
+      for(const m of missed)if(r[m.category]!==undefined)r[m.category]-=Number(m.missPenalty)||0;
+      for(const k of Object.keys(r))r[k]=Math.max(0,Math.min(6,r[k]));
       return r
     };wrapped.__mementosPatched=true;
     try{window.scores=wrapped;scores=wrapped}catch{}
@@ -270,7 +285,8 @@
     renameProjectLabels();const list=q("#projectList");if(!list)return;const d=loadPersona(),projects=sortedProjects(d),cards=qa(".project-card",list);
     cards.forEach((card,i)=>{
       const p=projects[i];if(!p)return;card.dataset.palaceId=p.id;card.classList.add("palace-card");
-      const statKey=String(p.socialStat||p.stat||"knowledge").toLowerCase();const palaceThemes={knowledge:"var(--accent)",guts:"var(--accent2)",proficiency:"var(--accent2)",kindness:"var(--accent)",charm:"var(--accent2)"};card.dataset.palaceStat=statKey;card.style.setProperty("--palace-accent",palaceThemes[statKey]||"var(--accent2)");
+      const statKey=String(p.rewardStat||p.socialStat||p.stat||"knowledge").toLowerCase();
+      const signature=[p.id,p.status,p.routeSecured,statKey,(p.subtasks||[]).map(s=>s.done?1:0).join("")].join("|");if(card.dataset.palaceSignature===signature)return;card.dataset.palaceSignature=signature;const palaceThemes={knowledge:"var(--accent)",guts:"var(--accent2)",proficiency:"var(--accent2)",kindness:"var(--accent)",charm:"var(--accent2)"};card.dataset.palaceStat=statKey;card.style.setProperty("--palace-accent",palaceThemes[statKey]||"var(--accent2)");
       let identity=q(".palace-identity",card);if(!identity){identity=document.createElement("div");identity.className="palace-identity";q(".project-title",card)?.before(identity)}
       const statName=typeof socialStatName==="function"?socialStatName(statKey):statKey;identity.innerHTML=`<span class="palace-sigil" aria-hidden="true">${escHTML(statKey.slice(0,1).toUpperCase())}</span><span>${escHTML(statName)} DOMAIN</span>`;
       const progress=(p.subtasks||[]).length?((p.subtasks||[]).filter(s=>s.done).length/(p.subtasks||[]).length*100):(p.routeSecured||p.status==="completed"?100:0);
@@ -285,14 +301,16 @@
       }
     })
   }
-  function setRouteSecured(projectId,secured=true){const d=loadPersona(),p=d.projects.find(x=>x.id===projectId);if(!p||p.status!=="active")return;p.routeSecured=secured;savePersona(d);if(typeof core.renderProjects==="function")core.renderProjects();decoratePalaces();if(secured&&typeof showPersonaToast==="function")showPersonaToast("achievement","ROUTE SECURED",`${p.name} • Calling Card is ready.`,"!")}
+  function setRouteSecured(projectId,secured=true){const d=loadPersona(),p=d.projects.find(x=>x.id===projectId);if(!p||p.status!=="active")return;p.routeSecured=secured;p.routeSecuredAt=secured?new Date().toISOString():null;savePersona(d);if(typeof core.renderProjects==="function")core.renderProjects();decoratePalaces();if(secured&&typeof showPersonaToast==="function")showPersonaToast("achievement","ROUTE SECURED",`${p.name} • Calling Card is ready.`,"!")}
   function interceptProjectStep(e){
     const input=e.target.closest?.("[data-project-step]");if(!input)return;e.stopImmediatePropagation();
-    const d=loadPersona(),p=d.projects.find(x=>x.id===input.dataset.projectStep),idx=Number(input.dataset.projectStepIndex);if(!p||p.status!=="active"||!p.subtasks?.[idx])return;p.subtasks[idx].done=input.checked;p.routeSecured=p.subtasks.length>0&&p.subtasks.every(s=>s.done);savePersona(d);core.renderProjects?.();decoratePalaces();if(p.routeSecured&&typeof showPersonaToast==="function")showPersonaToast("achievement","ROUTE SECURED",`${p.name} • Send the Calling Card when you’re ready.`,"!")
+    const d=loadPersona(),p=d.projects.find(x=>x.id===input.dataset.projectStep),idx=Number(input.dataset.projectStepIndex);if(!p||p.status!=="active"||!p.subtasks?.[idx])return;p.subtasks[idx].done=input.checked;p.routeSecured=p.subtasks.length>0&&p.subtasks.every(s=>s.done);p.routeSecuredAt=p.routeSecured?(p.routeSecuredAt||new Date().toISOString()):null;savePersona(d);core.renderProjects?.();decoratePalaces();if(p.routeSecured&&typeof showPersonaToast==="function")showPersonaToast("achievement","ROUTE SECURED",`${p.name} • Send the Calling Card when you’re ready.`,"!")
   }
   function showCallingCard(projectId){
     const d=loadPersona(),p=d.projects.find(x=>x.id===projectId);if(!p||p.status!=="active"||!p.routeSecured)return;
-    const el=q("#callingCardOverlay");q("#callingCardName").textContent=p.name;el.classList.remove("show");void el.offsetWidth;el.classList.add("show");
+    /* v27: hold-to-send card; the Palace completes only once the card is sent. */
+    if(window.MomentumMotion?.callingCard){window.MomentumMotion.callingCard({id:p.id,name:p.name,stat:p.rewardStat,xp:Number(p.statReward)||0},()=>{core.completeProject?.(p.id);decoratePalaces()});return}
+    const el=q("#callingCardOverlay");if(el.classList.contains("show"))return;q("#callingCardName").textContent=p.name;el.classList.remove("show");void el.offsetWidth;el.classList.add("show");
     setTimeout(()=>{el.classList.remove("show");core.completeProject?.(p.id);decoratePalaces()},2100)
   }
   function hasLevelUp(award){
@@ -307,7 +325,7 @@
     };return visit(award)
   }
   function showSocialLevelUp(award,source=""){
-    if(!hasLevelUp(award))return;const overlay=q("#socialRankCutin");if(!overlay)return;
+    if(!hasLevelUp(award))return;if(window.MomentumMotion?.levelUp){window.MomentumMotion.levelUp(award,source);return}const overlay=q("#socialRankCutin");if(!overlay)return;
     const stat=String(award?.stat||award?.socialStat||award?.key||"SOCIAL STAT");
     const portrait=q("#profileAvatar")||q("#introAvatar"),portraitWrap=q(".social-rank-portrait",overlay),portraitImg=q(".social-rank-portrait img",overlay);if(portraitImg&&portrait?.getAttribute("src")){portraitImg.src=portrait.currentSrc||portrait.src;portraitImg.hidden=false;portraitWrap.classList.add("has-photo");portraitImg.onerror=()=>{portraitWrap.classList.remove("has-photo");portraitImg.hidden=true}}
     q(".social-rank-stat",overlay).textContent=typeof socialStatName==="function"?socialStatName(stat):stat.replace(/[-_]/g," ").toUpperCase();
@@ -330,9 +348,8 @@
     if(typeof addProjectStep==="function"&&!addProjectStep.__personaPatched){
       core.addProjectStep=addProjectStep;
       const wrapped=function(projectId,name){
-        const d=loadPersona(),p=d.projects.find(x=>x.id===projectId);
-        if(p&&p.status==="active"&&p.routeSecured){p.routeSecured=false;savePersona(d)}
         const result=core.addProjectStep(projectId,name);
+        savePersona(loadPersona()); /* re-derives routeSecured now that an open objective exists */
         setTimeout(decoratePalaces,0);
         return result
       };
@@ -350,16 +367,34 @@
       const sr=e.target.closest?.("[data-secure-route]");if(sr){e.preventDefault();e.stopImmediatePropagation();setRouteSecured(sr.dataset.secureRoute,true);return}
       const old=e.target.closest?.("[data-project-complete]");if(old){e.preventDefault();e.stopImmediatePropagation();setRouteSecured(old.dataset.projectComplete,true)}
     },true);
-    projectObserver=new MutationObserver(()=>requestAnimationFrame(decoratePalaces));projectObserver.observe(list,{childList:true,subtree:true});decoratePalaces()
+    projectObserver=new MutationObserver(()=>requestAnimationFrame(decoratePalaces));projectObserver.observe(list,{childList:true});decoratePalaces()
+  }
+
+  const PAGE_NAMES={mainPage:"MAIN",inboxPage:"INBOX",notesPage:"NOTES",mementosPage:"MEMENTOS",projectsPage:"PALACES",statsPage:"STATS",settingsPage:"SETTINGS"};
+  function openFromLink(url){
+    const hash=String(url||"").split("#")[1];if(hash==="mementos"&&typeof showPage==="function")showPage("mementosPage")
+  }
+  function patchDeepLinks(){
+    if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data?.type==="momentum-open")openFromLink(e.data.url)});
+    window.addEventListener("hashchange",()=>openFromLink(location.href));
+    if(location.hash==="#mementos")setTimeout(()=>{q("#intro")?.classList.remove("show");openFromLink(location.href)},450)
+  }
+  /* Cloud pulls re-rendered every page except the ones this layer owns. */
+  function patchCloudRefresh(){
+    if(typeof renderAfterCloudChange!=="function"||renderAfterCloudChange.__personaPatched)return;core.renderAfterCloudChange=renderAfterCloudChange;
+    const wrapped=function(){core.renderAfterCloudChange();try{processMementosDeadlines(null,false);if(q("#mementosPage.active"))renderMementos();decoratePalaces()}catch(err){console.error("[Momentum Persona] cloud refresh failed",err)}};
+    wrapped.__personaPatched=true;try{window.renderAfterCloudChange=wrapped;renderAfterCloudChange=wrapped}catch{}
   }
 
   function patchNavigation(){
     core.showPage=typeof showPage==="function"?showPage:null;
     if(core.showPage){const wrapped=function(id){core.showPage(id);if(id==="mementosPage")renderMementos();if(id==="projectsPage")setTimeout(decoratePalaces,0)};try{window.showPage=wrapped;showPage=wrapped}catch{}}
-    document.addEventListener("click",e=>{
-      const go=e.target.closest?.("[data-go],[data-mobile-go]");if(!go)return;const id=go.dataset.go||go.dataset.mobileGo;if(!id)return;
+    /* window capture: read the current page before the mobile rescue layer switches it */
+    window.addEventListener("click",e=>{
+      const go=e.target.closest?.("[data-go],[data-mobile-go]");if(!go)return;const id=go.dataset.go||go.dataset.mobileGo;if(!id)return;const current=q(".page.active")?.id;
       if(id==="mementosPage"){e.preventDefault();showPage("mementosPage");q("#mobileMoreSheet")?.classList.remove("show")}
-      const label=id==="mementosPage"?"MEMENTOS":id==="projectsPage"?"PALACES":(go.textContent||"MOMENTUM").trim();playTransition(label)
+      const introOpen=q("#intro")?.classList.contains("show");if(current===id&&!introOpen)return;
+      playTransition(PAGE_NAMES[id]||"MOMENTUM")
     },true)
   }
 
@@ -368,15 +403,15 @@
     const wrapped=function(mode="briefing"){
       core.showDailyOverlay(mode);try{
         const key=q("#datePicker")?.value||(typeof localKey==="function"?localKey():new Date().toISOString().slice(0,10)),d=loadPersona();
-        const due=d.mementosRequests.filter(r=>r.status==="active"&&r.deadline?.slice(0,10)===key);const cleared=d.mementosRequests.filter(r=>(r.status==="completed"||r.status==="completed-late")&&r.completedAt?.slice(0,10)===key);const missed=d.mementosRequests.filter(r=>(r.status==="failed"||r.status==="completed-late")&&r.failureDate===key);const ready=(d.projects||[]).filter(p=>p.status==="active"&&p.routeSecured);
-        const box=q("#dailyOverlayContent");if(box&&!q(".daily-extra-strip",box)){const extra=document.createElement("div");extra.className="daily-extra-strip";extra.innerHTML=mode==="results"?`<div class="daily-extra"><small>Requests Cleared</small><b>${cleared.length}</b></div><div class="daily-extra"><small>Mementos Misses</small><b>${missed.length}</b></div><div class="daily-extra"><small>Routes Secured</small><b>${ready.length}</b></div>`:`<div class="daily-extra"><small>Requests Due</small><b>${due.length}</b></div><div class="daily-extra"><small>Potential Loss</small><b>−${fmtNumber(due.reduce((s,r)=>s+r.missPenalty,0))}</b></div><div class="daily-extra"><small>Calling Cards Ready</small><b>${ready.length}</b></div>`;box.append(extra)}
+        const due=d.mementosRequests.filter(r=>r.status==="active"&&r.deadline?.slice(0,10)===key);const cleared=d.mementosRequests.filter(r=>(r.status==="completed"||r.status==="completed-late")&&dayKey(r.completedAt)===key&&!!r.completedAt);const missed=d.mementosRequests.filter(r=>(r.status==="failed"||r.status==="completed-late")&&r.failureDate===key);const ready=(d.projects||[]).filter(p=>p.status==="active"&&p.routeSecured),securedThatDay=(d.projects||[]).filter(p=>p.routeSecuredAt&&dayKey(p.routeSecuredAt)===key);
+        const box=q("#dailyOverlayContent");if(box&&!q(".daily-extra-strip",box)){const extra=document.createElement("div");extra.className="daily-extra-strip";extra.innerHTML=mode==="results"?`<div class="daily-extra"><small>Requests Cleared</small><b>${cleared.length}</b></div><div class="daily-extra"><small>Mementos Misses</small><b>${missed.length}</b></div><div class="daily-extra"><small>Routes Secured</small><b>${securedThatDay.length}</b></div>`:`<div class="daily-extra"><small>Requests Due</small><b>${due.length}</b></div><div class="daily-extra"><small>Potential Loss</small><b>−${fmtNumber(due.reduce((s,r)=>s+r.missPenalty,0))}</b></div><div class="daily-extra"><small>Calling Cards Ready</small><b>${ready.length}</b></div>`;box.append(extra)}
       }catch(err){console.warn("[Momentum Persona] daily overlay extension failed",err)}
     };try{window.showDailyOverlay=wrapped;showDailyOverlay=wrapped}catch{}
   }
 
   function installEvents(){
     q("#addMementosRequest")?.addEventListener("click",()=>{
-      const dlg=q("#mementosRequestDialog"),deadline=new Date(Date.now()+24*36e5);deadline.setMinutes(deadline.getMinutes()-deadline.getTimezoneOffset());q("#mementoDeadline").value=deadline.toISOString().slice(0,16);q("#mementoName").value="";q("#mementoPenalty").value="1";q("#mementoRewardPoints").value="1";q("#mementoXP").value="2";q("#mementoCategory").value="school";q("#mementoStat").value="knowledge";updateFloorPreview();dlg.showModal()
+      const dlg=q("#mementosRequestDialog"),deadline=new Date(Date.now()+24*36e5);deadline.setMinutes(deadline.getMinutes()-deadline.getTimezoneOffset());q("#mementoDeadline").value=deadline.toISOString().slice(0,16);q("#mementoName").value="";q("#mementoPenalty").value="1";q("#mementoRewardPoints").value="1";delete q("#mementoRewardPoints").dataset.manual;const nowLocal=new Date();nowLocal.setMinutes(nowLocal.getMinutes()-nowLocal.getTimezoneOffset()+1);q("#mementoDeadline").min=nowLocal.toISOString().slice(0,16);q("#mementoXP").value="2";q("#mementoCategory").value="school";q("#mementoStat").value="knowledge";updateFloorPreview();dlg.showModal()
     });
     q("#cancelMemento")?.addEventListener("click",()=>q("#mementosRequestDialog")?.close());
     q("#mementoPenalty")?.addEventListener("input",()=>{updateFloorPreview();const p=q("#mementoPenalty"),r=q("#mementoRewardPoints");if(r?.dataset.manual!=="1")r.value=p.value});
@@ -400,13 +435,16 @@
             for(const r of d.mementosRequests){
               if(r.status!=="active"||!r.deadline)continue;
               const when=new Date(r.deadline);if(Number.isNaN(when.getTime()))continue;
-              jobs.push({
-                user_id:uidValue,id:`mementos:${r.id}`,
-                title:"Mementos Request Deadline",
-                body:`${r.name} • −${fmtNumber(r.missPenalty)} ${categoryLabel(r.category)} points if missed`,
-                fire_at:when.toISOString(),kind:"mementos",url:"./#mementos",
-                sent:false,source_updated_at:new Date().toISOString()
-              })
+              for(const hours of [24,2]){
+                const fire=new Date(when.getTime()-hours*36e5);if(fire.getTime()<=Date.now())continue;
+                jobs.push({
+                  user_id:uidValue,id:`mementos:${r.id}:${hours}h`,
+                  title:`Mementos • ${hours}h left`,
+                  body:`${r.name} • −${fmtNumber(r.missPenalty)} ${categoryLabel(r.category)} points if missed`,
+                  fire_at:fire.toISOString(),kind:"mementos",url:"./#mementos",
+                  sent:false,source_updated_at:new Date().toISOString()
+                })
+              }
             }
           }
         }catch(err){console.warn("[Momentum Persona] request push schedule extension failed",err)}
@@ -422,8 +460,9 @@
 
   function boot(){
     try{
-      installIdentity();installLaunch();installTransition();insertNavigatorButtons();installMementosPage();installCallingCard();installSocialRankCutin();installMenuFeedback();patchSocialAwardFeedback();patchScoring();patchNavigation();patchProjects();patchDailyOverlay();installEvents();patchNotificationJobs();
-      const d=loadPersona();savePersona(d);processMementosDeadlines(d,true);renameProjectLabels();decoratePalaces();
+      installIdentity();installLaunch();installTransition();insertNavigatorButtons();installMementosPage();installCallingCard();installSocialRankCutin();installMenuFeedback();patchSocialAwardFeedback();patchScoring();patchNavigation();patchProjects();patchDailyOverlay();installEvents();patchNotificationJobs();patchCloudRefresh();patchDeepLinks();
+      if(!processMementosDeadlines(null,true)){try{renderMain()}catch(err){console.error("[Momentum Persona] refresh failed",err)}}
+      renameProjectLabels();decoratePalaces();
       setInterval(()=>processMementosDeadlines(null,true),15000);
       window.addEventListener("focus",()=>processMementosDeadlines(null,true));
       console.info(`[Momentum] Persona Overhaul ${VERSION} loaded`)
