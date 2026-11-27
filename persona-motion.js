@@ -4,7 +4,7 @@
    functions (the only one it calls is completeProject, after you hold to send a Calling Card). */
 (()=>{
   "use strict";
-  const VERSION="27.2.0";
+  const VERSION="27.3.0";
   const q=(s,r=document)=>r.querySelector(s),qa=(s,r=document)=>[...r.querySelectorAll(s)];
   const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   const reducedQuery=matchMedia("(prefers-reduced-motion: reduce)");

@@ -2,7 +2,7 @@
    Loaded after the original single-file app. Existing save + Supabase structure stays intact. */
 (()=>{
   "use strict";
-  const VERSION="27.2.0";
+  const VERSION="27.3.0";
   const FLOOR_META=[
     null,
     {name:"Minor",max:.5,color:"#6f6f6f"},

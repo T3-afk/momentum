@@ -220,3 +220,20 @@ html.mm27 input[type="color"]{height:46px!important;min-height:46px!important;pa
 @media(prefers-reduced-motion:reduce){html.mm27 .request-card.failed{animation:none}}
 /* The intro's "SELECT / COMMAND" label sits under a decorative red line; give it a dark backing. */
 html.mm27.persona-v21 #intro.mm-command .intro-menu::before{z-index:6;background:var(--mm-dark);padding:3px 6px;color:var(--mm-paper);text-shadow:none}
+
+/* ---------- 27.3 Phone intro layout ----------
+   Old portrait rules sized the intro with 100svh; installed on an iPhone that is the screen minus the
+   status bar, so the intro stopped short and the bottom bar showed through. Pin it to the screen edges
+   instead, and place the slashes, menu and clock from the safe areas so nothing crosses the text. */
+@media screen and (max-width:600px) and (orientation:portrait){
+  html.mm27 #intro.show{inset:0!important;width:auto!important;height:auto!important;min-height:100%!important}
+  html.mm27 #intro.show .intro-left{top:-3%!important;height:108%!important}
+  html.mm27 #intro.show::before{top:calc(var(--safe-top) + 80px)!important}
+  html.mm27 #intro.show::after{bottom:calc(var(--safe-bottom) + 88px)!important}
+  html.mm27 #intro.show .intro-menu{
+    top:calc(var(--safe-top) + 124px + (100% - var(--safe-top) - var(--safe-bottom) - 600px) * .3)!important;
+    gap:clamp(4px,1.5vh,14px)!important}
+  html.mm27 #intro.show .intro-menu button{font-size:clamp(24px,min(8.4vw,4.4vh),38px)!important}
+  html.mm27 #intro.show .intro-word{bottom:calc(var(--safe-bottom) + 7%)!important}
+  html.mm27 #intro.show .mm-intel{margin-top:14px}
+}

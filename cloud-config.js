@@ -12,7 +12,7 @@ window.MOMENTUM_CLOUD_CONFIG = {
 /* Momentum Persona Overhaul + Motion v27 loader.
    Kept outside the monolithic index.html so the visual/system layer can evolve safely. */
 (()=>{
-  const VERSION="27.2.0";
+  const VERSION="27.3.0";
   const files=[["persona-overhaul","momentumPersona"],["persona-motion","momentumMotion"]];
   for(const [name,flag] of files){
     if(!document.querySelector(`link[data-${flag==="momentumPersona"?"momentum-persona":"momentum-motion"}]`)){
